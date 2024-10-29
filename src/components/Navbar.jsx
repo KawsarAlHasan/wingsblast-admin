@@ -3,7 +3,6 @@ import { Avatar, Menu, Dropdown, Button, Badge, Drawer } from "antd";
 import { Link } from "react-router-dom";
 import {
   MenuOutlined,
-  HomeOutlined,
   BellOutlined,
   UserOutlined,
   SettingOutlined,
@@ -19,19 +18,36 @@ const Navbar = ({ showDrawer }) => {
   };
 
   // Menu items for the dropdown under the profile
-  const profileMenu = (
-    <Menu>
-      <Menu.Item key="profile" icon={<UserOutlined />}>
-        <Link to="/profile">Profile</Link>
-      </Menu.Item>
-      <Menu.Item key="settings" icon={<SettingOutlined />}>
-        <Link to="/settings">Settings</Link>
-      </Menu.Item>
-      <Menu.Item key="logout" icon={<LogoutOutlined />}>
-        <span onClick={handleSignOut}>Logout</span>
-      </Menu.Item>
-    </Menu>
-  );
+  const profileMenuItems = [
+    {
+      key: "profile",
+      label: (
+        <Link to="/profile">
+          <UserOutlined /> Profile
+        </Link>
+      ),
+    },
+    {
+      key: "settings",
+      label: (
+        <Link to="/settings">
+          <SettingOutlined /> Settings
+        </Link>
+      ),
+    },
+    {
+      key: "logout",
+      label: (
+        <span onClick={handleSignOut}>
+          <LogoutOutlined /> Logout
+        </span>
+      ),
+    },
+  ];
+
+  const profileMenu = {
+    items: profileMenuItems,
+  };
 
   const headerItems = [
     {
@@ -46,7 +62,7 @@ const Navbar = ({ showDrawer }) => {
     },
     {
       label: (
-        <Dropdown overlay={profileMenu} trigger={["click", "hover"]}>
+        <Dropdown menu={profileMenu} trigger={["click", "hover"]}>
           <Avatar icon={<UserOutlined />} />
         </Dropdown>
       ),
@@ -86,7 +102,7 @@ const Navbar = ({ showDrawer }) => {
         title="Notifications"
         placement="right"
         onClose={() => setDrawerVisible(false)}
-        visible={drawerVisible}
+        open={drawerVisible} // 'visible' পরিবর্তে 'open' ব্যবহার করা হয়েছে
       >
         <p>No new notifications</p>
       </Drawer>

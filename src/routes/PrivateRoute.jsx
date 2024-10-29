@@ -4,15 +4,16 @@ import { useAdminProfile } from "../api/api";
 import { Spin } from "antd";
 
 const PrivateRoute = ({ children }) => {
-  const { admin, loading, error } = useAdminProfile();
+  const { admin, isLoading, isError, error } = useAdminProfile();
+
   const location = useLocation();
   const token = localStorage.getItem("token");
 
-  if (loading) {
+  if (isLoading) {
     return <Spin />;
   }
 
-  if (error || !admin || !token) {
+  if (isError || error || !admin || !token) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

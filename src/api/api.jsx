@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
@@ -13,34 +14,25 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// use admin
+// get admin
 export const useAdminProfile = () => {
-  const getAdminProfile = async () => {
-    try {
-      const response = await API.get("/admin/me");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching admin profile:", error);
-      throw error;
-    }
+  const getAdmin = async () => {
+    const response = await API.get("/admin/me");
+    return response.data;
   };
-  const [admin, setAdmin] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  useEffect(() => {
-    const fetchAdminProfile = async () => {
-      try {
-        const adminProfile = await getAdminProfile();
-        setAdmin(adminProfile);
-      } catch (error) {
-        setError("Failed to fetch admin profile.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAdminProfile();
-  }, []);
-  return { admin, loading, error };
+
+  const {
+    data: admin = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["admin"],
+    queryFn: getAdmin,
+  });
+
+  return { admin, isLoading, isError, error, refetch };
 };
 
 // sign out
@@ -49,241 +41,128 @@ export const signOutAdmin = () => {
   window.location.href = "/login";
 };
 
-// Category
+// get Category
 export const useCategory = () => {
   const getCategory = async () => {
-    try {
-      const response = await API.get("/category/all");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching Category:", error);
-      throw error;
-    }
+    const response = await API.get("/category/all");
+    return response.data.data;
   };
 
-  const [category, setCategory] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: category = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["category"],
+    queryFn: getCategory,
+  });
 
-  useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const categoryData = await getCategory();
-        setCategory(categoryData.data);
-      } catch (error) {
-        setError("Failed to fetch Category.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategory();
-  }, []);
-
-  return { category, loading, error };
+  return { category, isLoading, isError, error, refetch };
 };
 
-// Flavor
+// get Flavor
 export const useFlavor = () => {
   const getFlavor = async () => {
-    try {
-      const response = await API.get("/flavor/all");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching Flavor:", error);
-      throw error;
-    }
+    const response = await API.get("/flavor/all");
+    return response.data.data;
   };
 
-  const [flavor, setFlavor] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: flavor = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["flavor"],
+    queryFn: getFlavor,
+  });
 
-  useEffect(() => {
-    const fetchFlavor = async () => {
-      try {
-        const flavorData = await getFlavor();
-        setFlavor(flavorData.data);
-      } catch (error) {
-        setError("Failed to fetch Flavor.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFlavor();
-  }, []);
-
-  return { flavor, loading, error };
+  return { flavor, isLoading, isError, error, refetch };
 };
 
-// Dip
+// get Dip
 export const useDip = () => {
   const getDip = async () => {
-    try {
-      const response = await API.get("/dip/all");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching Dip:", error);
-      throw error;
-    }
+    const response = await API.get("/dip/all");
+    return response.data.data;
   };
 
-  const [dip, setDip] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: dip = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["dip"],
+    queryFn: getDip,
+  });
 
-  useEffect(() => {
-    const fetchDip = async () => {
-      try {
-        const dipData = await getDip();
-        setDip(dipData.data);
-      } catch (error) {
-        setError("Failed to fetch dip.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDip();
-  }, []);
-
-  return { dip, loading, error };
+  return { dip, isLoading, isError, error, refetch };
 };
 
-// Drink
+// get Drink
 export const useDrink = () => {
   const getDrink = async () => {
-    try {
-      const response = await API.get("/drink/all");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching drink:", error);
-      throw error;
-    }
+    const response = await API.get("/drink/all");
+    return response.data.data;
   };
 
-  const [drink, setDrink] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: drink = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["drink"],
+    queryFn: getDrink,
+  });
 
-  useEffect(() => {
-    const fetchDrink = async () => {
-      try {
-        const drinkData = await getDrink();
-        setDrink(drinkData.data);
-      } catch (error) {
-        setError("Failed to fetch drink.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDrink();
-  }, []);
-
-  return { drink, loading, error };
+  return { drink, isLoading, isError, error, refetch };
 };
 
-// Beverage
+// get Beverage
 export const useBeverage = () => {
   const getBeverage = async () => {
-    try {
-      const response = await API.get("/beverage/all");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching beverage:", error);
-      throw error;
-    }
+    const response = await API.get("/beverage/all");
+    return response.data.data;
   };
 
-  const [beverage, setBeverage] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: beverage = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["beverage"],
+    queryFn: getBeverage,
+  });
 
-  useEffect(() => {
-    const fetchBeverage = async () => {
-      try {
-        const beverageData = await getBeverage();
-        setBeverage(beverageData.data);
-      } catch (error) {
-        setError("Failed to fetch beverage.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBeverage();
-  }, []);
-
-  return { beverage, loading, error };
+  return { beverage, isLoading, isError, error, refetch };
 };
 
-// Side
+// get side
 export const useSide = () => {
   const getSide = async () => {
-    try {
-      const response = await API.get("/side/all");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching side:", error);
-      throw error;
-    }
+    const response = await API.get("/side/all");
+    return response.data.data;
   };
 
-  const [side, setSide] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: side = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["side"],
+    queryFn: getSide,
+  });
 
-  useEffect(() => {
-    const fetchSide = async () => {
-      try {
-        const sideData = await getSide();
-        setSide(sideData.data);
-      } catch (error) {
-        setError("Failed to fetch side.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSide();
-  }, []);
-
-  return { side, loading, error };
-};
-
-// Not use this project
-// get projects
-export const useProjects = (courseID) => {
-  const getProjects = async () => {
-    try {
-      const response = await API.get(`/project/all/${courseID}`);
-      return response.data.data;
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-      throw error;
-    }
-  };
-
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const projectsData = await getProjects();
-        setProjects(projectsData);
-      } catch (error) {
-        setError("Failed to fetch projects.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, [courseID]);
-
-  return { projects, loading, error };
+  return { side, isLoading, isError, error, refetch };
 };

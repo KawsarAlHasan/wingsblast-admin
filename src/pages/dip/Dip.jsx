@@ -8,7 +8,6 @@ import {
   Spin,
   Modal,
   notification,
-  message,
 } from "antd";
 import {
   EyeOutlined,
@@ -23,11 +22,9 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Dip = () => {
-  const { dip, loading, error } = useDip();
+  const { dip, isLoading, isError, error, refetch } = useDip();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [selectedDip, setSelectedDip] = useState(null); // selectedFlavor -> selectedDip
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -48,7 +45,7 @@ const Dip = () => {
       await API.delete(`/dip/delete/${id}`);
       openNotification("success", "Success", "Dip deleted successfully");
       setDeleteLoading(false);
-      window.location.reload();
+      refetch();
     } catch (error) {
       console.error("Error deleting dip:", error);
       openNotification("error", "Error", "Failed to delete the dip");
@@ -73,8 +70,13 @@ const Dip = () => {
     });
   };
 
-  if (loading) return <Spin size="large" className="block mx-auto my-10" />;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
+  if (isError)
+    return (
+      <div className="text-center text-red-500">
+        {error.message || "Something went wrong"}
+      </div>
+    );
 
   const filteredData = dip.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
@@ -161,7 +163,7 @@ const Dip = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddDip />
+        <AddDip refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>

@@ -62,8 +62,10 @@ const Main = () => {
           title="Navigation"
           placement="left"
           onClose={closeDrawer}
-          visible={drawerVisible}
-          bodyStyle={{ padding: 0 }}
+          open={drawerVisible}
+          styles={{
+            body: { padding: 0 },
+          }}
         >
           <Sidebar onClick={closeDrawer} />
         </Drawer>
@@ -75,11 +77,10 @@ const Main = () => {
           }}
         >
           <Content className="px-6">
-            <Breadcrumb className="my-4">
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb>
+            <Breadcrumb
+              className="my-4"
+              items={[{ title: "Home" }, { title: "List" }, { title: "App" }]}
+            />
 
             <div
               className="p-6 min-h-[380px]"

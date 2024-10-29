@@ -13,7 +13,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
 import { API } from "../../api/api";
 
-function AddSide() {
+function AddSide({ refetch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { control, register, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
@@ -44,6 +44,7 @@ function AddSide() {
     try {
       const response = await API.post("/side/create", formData); // Updated endpoint
       message.success("Side added successfully!");
+      refetch();
       handleCancel(); // Close modal on success
     } catch (error) {
       message.error("Failed to add Side. Try again.");

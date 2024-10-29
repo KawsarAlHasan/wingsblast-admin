@@ -21,7 +21,7 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Category = () => {
-  const { category, loading, error } = useCategory();
+  const { category, isLoading, isError, error, refetch } = useCategory();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
 
@@ -45,7 +45,7 @@ const Category = () => {
       await API.delete(`/category/delete/${id}`);
       openNotification("success", "Success", "Category deleted successfully");
       setDeleteLoading(false);
-      window.location.reload(); // Refresh the page after deletion
+      refetch(); // Refresh the page after deletion
     } catch (error) {
       console.error("Error deleting category:", error);
       openNotification("error", "Error", "Failed to delete the category");
@@ -70,9 +70,13 @@ const Category = () => {
     });
   };
 
-  if (loading) return <Spin size="large" className="block mx-auto my-10" />;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
-
+  if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
+  if (isError)
+    return (
+      <div className="text-center text-red-500">
+        {error.message || "Something went wrong"}
+      </div>
+    );
   const filteredData = category.filter((item) =>
     item?.category_name.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -147,7 +151,7 @@ const Category = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddCategory />
+        <AddCategory refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>

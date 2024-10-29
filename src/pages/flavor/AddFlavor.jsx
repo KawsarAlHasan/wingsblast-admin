@@ -13,7 +13,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
 import { API } from "../../api/api";
 
-function AddFlavor() {
+function AddFlavor({ refetch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { control, register, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
@@ -52,6 +52,7 @@ function AddFlavor() {
     try {
       const response = await API.post("/flavor/create", formData);
       message.success("Flavor added successfully!");
+      refetch();
       handleCancel(); // Close modal on success
     } catch (error) {
       message.error("Failed to add flavor. Try again.");

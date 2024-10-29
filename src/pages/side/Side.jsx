@@ -23,7 +23,7 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Side = () => {
-  const { side, loading, error } = useSide();
+  const { side, isLoading, isError, error, refetch } = useSide();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -46,7 +46,7 @@ const Side = () => {
       await API.delete(`/side/delete/${id}`);
       openNotification("success", "Success", "Side deleted successfully");
       setDeleteLoading(false);
-      window.location.reload();
+      refetch();
     } catch (error) {
       console.error("Error deleting Side:", error);
       openNotification("error", "Error", "Failed to delete the Side");
@@ -71,8 +71,13 @@ const Side = () => {
     });
   };
 
-  if (loading) return <Spin size="large" className="block mx-auto my-10" />;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
+  if (isError)
+    return (
+      <div className="text-center text-red-500">
+        {error.message || "Something went wrong"}
+      </div>
+    );
 
   const filteredData = side.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
@@ -164,7 +169,7 @@ const Side = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddSide />
+        <AddSide refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>

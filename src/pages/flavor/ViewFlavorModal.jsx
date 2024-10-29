@@ -1,11 +1,35 @@
 import React from "react";
-import { Modal, Image, Tag, Rate, Row, Col, Typography, Divider } from "antd";
-import { StarFilled } from "@ant-design/icons";
+import {
+  Modal,
+  Image,
+  Tag,
+  Rate,
+  Row,
+  Col,
+  Typography,
+  Divider,
+  Space,
+} from "antd";
+import {
+  StarFilled,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  FireOutlined,
+} from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
 function ViewFlavorModal({ flavor, isOpen, onClose }) {
-  if (!flavor) return null; // ফ্লেভার না থাকলে কিছুই রেন্ডার হবে না
+  if (!flavor) return null;
+
+  const statusTag = (status, text, color) => (
+    <Tag
+      icon={status ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
+      color={color}
+    >
+      {text}
+    </Tag>
+  );
 
   return (
     <Modal
@@ -17,23 +41,28 @@ function ViewFlavorModal({ flavor, isOpen, onClose }) {
       centered
     >
       <Row gutter={[16, 16]}>
+        {/* Left Column: Image and Rating */}
         <Col span={8}>
           <Image
             src={`https://wings-blast-backend.onrender.com${flavor.image}`}
             alt={flavor.name}
             width="100%"
+            style={{ borderRadius: 8 }}
           />
-          <Divider />
-          <Text strong>Rating: </Text>
-          <Rate
-            allowHalf
-            disabled
-            defaultValue={flavor.flavor_rating}
-            character={<StarFilled />}
-            style={{ color: "#faad14" }}
-          />
+
+          <Space direction="vertical" size="small">
+            <Text strong>Rating:</Text>
+            <Rate
+              allowHalf
+              disabled
+              defaultValue={flavor.flavor_rating}
+              character={<StarFilled />}
+              style={{ color: "#faad14" }}
+            />
+          </Space>
         </Col>
 
+        {/* Right Column: Description and Tags */}
         <Col span={16}>
           <Title level={4}>Description</Title>
           <Text>{flavor.description}</Text>
@@ -41,29 +70,34 @@ function ViewFlavorModal({ flavor, isOpen, onClose }) {
           <Divider />
 
           <Row gutter={[8, 8]}>
-            <Col span={12} className="pb-4">
-              <Text strong>Popular: </Text>
-              <Tag color="purple">{flavor.ispopular ? "Yes" : "No"}</Tag>
-            </Col>
-            <Col span={12} className="pb-4">
-              <Text strong>Dry: </Text>
-              <Tag color="blue">{flavor.isDry ? "Yes" : "No"}</Tag>
-            </Col>
-            <Col span={12} className="pb-4">
-              <Text strong>Popular: </Text>
-              <Tag color="purple">{flavor.ispopular ? "Yes" : "No"}</Tag>
-            </Col>
-            <Col span={12} className="pb-4">
-              <Text strong>Dry: </Text>
-              <Tag color="blue">{flavor.isDry ? "Yes" : "No"}</Tag>
-            </Col>
             <Col span={12}>
               <Text strong>Popular: </Text>
-              <Tag color="purple">{flavor.ispopular ? "Yes" : "No"}</Tag>
+              {statusTag(flavor.ispopular, "Popular", "purple")}
             </Col>
+
             <Col span={12}>
               <Text strong>Dry: </Text>
-              <Tag color="blue">{flavor.isDry ? "Yes" : "No"}</Tag>
+              {statusTag(flavor.isDry, "Dry Flavor", "blue")}
+            </Col>
+
+            <Col span={12} className="my-2">
+              <Text strong>Honey-based: </Text>
+              {statusTag(flavor.isHoney, "Honey-based", "gold")}
+            </Col>
+
+            <Col span={12} className="my-2">
+              <Text strong>Limited Time: </Text>
+              {statusTag(flavor.isLimitedTime, "Limited Time", "red")}
+            </Col>
+
+            <Col span={12}>
+              <Text strong>New Arrival: </Text>
+              {statusTag(flavor.isNew, "New", "green")}
+            </Col>
+
+            <Col span={12}>
+              <Text strong>Wet: </Text>
+              {statusTag(flavor.isWet, "Wet Flavor", "cyan")}
             </Col>
           </Row>
         </Col>

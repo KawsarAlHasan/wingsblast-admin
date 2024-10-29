@@ -24,7 +24,7 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Flavor = () => {
-  const { flavor, loading, error } = useFlavor();
+  const { flavor, isLoading, isError, error, refetch } = useFlavor();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedFlavor, setSelectedFlavor] = useState(null);
@@ -49,7 +49,7 @@ const Flavor = () => {
       await API.delete(`/flavor/delete/${id}`);
       openNotification("success", "Success", "Flavor deleted successfully");
       setDeleteLoading(false);
-      window.location.reload();
+      refetch();
     } catch (error) {
       console.error("Error deleting flavor:", error);
       openNotification("error", "Error", "Failed to delete the flavor");
@@ -79,8 +79,13 @@ const Flavor = () => {
     setIsModalOpen(true);
   };
 
-  if (loading) return <Spin size="large" className="block mx-auto my-10" />;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
+  if (isError)
+    return (
+      <div className="text-center text-red-500">
+        {error.message || "Something went wrong"}
+      </div>
+    );
 
   const filteredData = flavor.filter((flvr) =>
     flvr?.name.toLowerCase().includes(searchText.toLowerCase())
@@ -176,7 +181,7 @@ const Flavor = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddFlavor />
+        <AddFlavor refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>
@@ -184,7 +189,7 @@ const Flavor = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 20 }}
         />
       )}
 

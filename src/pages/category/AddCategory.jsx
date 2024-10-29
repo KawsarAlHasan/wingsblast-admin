@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Button, Modal, Form, Input, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { useForm, Controller } from "react-hook-form"; // Import Controller
+import { useForm, Controller } from "react-hook-form";
 import { API } from "../../api/api";
 
-function AddCategory() {
+function AddCategory({ refetch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { control, register, handleSubmit, reset } = useForm(); // Add control from react-hook-form
+  const { control, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
 
   // Open Modal
@@ -23,18 +23,19 @@ function AddCategory() {
   // Handle form submission
   const onSubmit = async (data) => {
     setLoading(true);
-    const formData = new FormData(); // To handle image uploads properly
+    const formData = new FormData(); // Handle image uploads properly
 
     formData.append("category_name", data.category_name);
-    formData.append("sn_number", data.sn_number || 0); // Optional field
+    formData.append("sn_number", data.sn_number || 0);
 
     if (data.category_image && data.category_image[0]) {
-      formData.append("category_image", data.category_image[0].originFileObj); // Uploads first file
+      formData.append("category_image", data.category_image[0].originFileObj);
     }
 
     try {
       const response = await API.post("/category/create", formData);
       message.success("Category added successfully!");
+      refetch();
       handleCancel(); // Close the modal on success
     } catch (error) {
       message.error("Failed to add category. Try again.");
@@ -52,13 +53,14 @@ function AddCategory() {
         title="Add Category"
         open={isModalOpen}
         onCancel={handleCancel}
-        footer={null} // Custom footer to use form submit instead
+        footer={null} // Custom footer to use form submit
       >
         <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
+          {/* Category Name */}
           <Form.Item label="Category Name">
             <Controller
               name="category_name"
-              rules={{ required: "Category image is required" }}
+              rules={{ required: "Category name is required" }}
               control={control}
               render={({ field }) => (
                 <Input placeholder="Category Name..." {...field} />
@@ -66,6 +68,7 @@ function AddCategory() {
             />
           </Form.Item>
 
+          {/* Serial Number */}
           <Form.Item label="Serial Number (Optional)">
             <Controller
               name="sn_number"
@@ -80,24 +83,40 @@ function AddCategory() {
             />
           </Form.Item>
 
+          {/* Category Image */}
           <Form.Item label="Category Image">
             <Controller
               name="category_image"
               control={control}
               render={({ field: { onChange, value } }) => (
                 <Upload
+                  listType="picture-card"
                   beforeUpload={() => false} // Prevent auto-upload
                   maxCount={1}
                   accept="image/*"
                   fileList={value || []} // Sync file list with form state
                   onChange={({ fileList }) => onChange(fileList)}
+                  onPreview={(file) => {
+                    const src =
+                      file.url || URL.createObjectURL(file.originFileObj);
+                    const imgWindow = window.open(src);
+                    imgWindow.document.write(
+                      `<img src="${src}" style="width: 100%;" />`
+                    );
+                  }}
                 >
-                  <Button icon={<UploadOutlined />}>Upload Image</Button>
+                  {value && value.length >= 1 ? null : (
+                    <div>
+                      <UploadOutlined />
+                      <div style={{ marginTop: 8 }}>Upload Image</div>
+                    </div>
+                  )}
                 </Upload>
               )}
             />
           </Form.Item>
 
+          {/* Submit Button */}
           <Form.Item>
             <Button
               type="primary"

@@ -23,7 +23,7 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Beverage = () => {
-  const { beverage, loading, error } = useBeverage();
+  const { beverage, isLoading, isError, error, refetch } = useBeverage();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -46,7 +46,7 @@ const Beverage = () => {
       await API.delete(`/beverage/delete/${id}`);
       openNotification("success", "Success", "Beverage deleted successfully");
       setDeleteLoading(false);
-      window.location.reload();
+      refetch();
     } catch (error) {
       console.error("Error deleting beverage:", error);
       openNotification("error", "Error", "Failed to delete the beverage");
@@ -71,8 +71,13 @@ const Beverage = () => {
     });
   };
 
-  if (loading) return <Spin size="large" className="block mx-auto my-10" />;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
+  if (isError)
+    return (
+      <div className="text-center text-red-500">
+        {error.message || "Something went wrong"}
+      </div>
+    );
 
   const filteredData = beverage.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
@@ -159,7 +164,7 @@ const Beverage = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddBeverage />
+        <AddBeverage refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>
