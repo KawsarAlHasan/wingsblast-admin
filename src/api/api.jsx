@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
   baseURL: "https://wings-blast-backend.onrender.com/api/v1",
+  //   baseURL: "http://localhost:8000/api/v1",
 });
 
 API.interceptors.request.use((config) => {
@@ -165,4 +165,46 @@ export const useSide = () => {
   });
 
   return { side, isLoading, isError, error, refetch };
+};
+
+// get Food Details
+export const useFoodDatails = () => {
+  const getFoodDetails = async () => {
+    const response = await API.get("/food-details/all");
+    return response.data.data;
+  };
+
+  const {
+    data: foodDetails = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["foodDetails"],
+    queryFn: getFoodDetails,
+  });
+
+  return { foodDetails, isLoading, isError, error, refetch };
+};
+
+// get Food Details
+export const useFoodDetail = (id) => {
+  const getFoodDetail = async () => {
+    const response = await API.get(`/food-details/${id}`);
+    return response.data.data;
+  };
+
+  const {
+    data: foodDetail = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["foodDetail", id],
+    queryFn: getFoodDetail,
+  });
+
+  return { foodDetail, isLoading, isError, error, refetch };
 };

@@ -34,7 +34,7 @@ const sidebarItems = [
       },
       {
         key: "4-2",
-        label: "Food Details",
+        label: <Link to="/food-details">Food Details</Link>,
       },
       {
         key: "4-3",

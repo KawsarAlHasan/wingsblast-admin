@@ -16,16 +16,18 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useSide } from "../../api/api";
-import AddSide from "./AddSide";
+import { API, useFoodDatails } from "../../api/api";
+import { Link, useNavigate } from "react-router-dom";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
-const Side = () => {
-  const { side, isLoading, isError, error, refetch } = useSide();
+const FoodDetails = () => {
+  const { foodDetails, isLoading, isError, error, refetch } = useFoodDatails();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -36,27 +38,23 @@ const Side = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing Side with ID: ${id}`);
-  };
-
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     try {
-      await API.delete(`/side/delete/${id}`);
-      openNotification("success", "Success", "Side deleted successfully");
+      await API.delete(`/flavor/delete/${id}`);
+      openNotification("success", "Success", "Flavor deleted successfully");
       setDeleteLoading(false);
       refetch();
     } catch (error) {
-      console.error("Error deleting Side:", error);
-      openNotification("error", "Error", "Failed to delete the Side");
+      console.error("Error deleting flavor:", error);
+      openNotification("error", "Error", "Failed to delete the flavor");
       setDeleteLoading(false);
     }
   };
 
   const showDeleteConfirm = (id) => {
     confirm({
-      title: "Are you sure you want to delete this Side?",
+      title: "Are you sure you want to delete this flavor?",
       icon: <ExclamationCircleOutlined />,
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
@@ -71,6 +69,10 @@ const Side = () => {
     });
   };
 
+  const handleViewButton = (id) => {
+    navigate(`/food-details/${id}`);
+  };
+
   if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
   if (isError)
     return (
@@ -79,20 +81,20 @@ const Side = () => {
       </div>
     );
 
-  const filteredData = side.filter((item) =>
-    item?.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredData = foodDetails.filter((foodDetail) =>
+    foodDetail?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const data = filteredData.map((item, index) => ({
+  const data = filteredData.map((foodDetail, index) => ({
     key: index,
-    ...item,
+    ...foodDetail,
   }));
 
   const columns = [
     {
       title: "SN",
-      dataIndex: "sn_number",
-      key: "sn_number",
+      dataIndex: "id",
+      key: "id",
       render: (text, record, index) => index + 1,
     },
     {
@@ -102,7 +104,7 @@ const Side = () => {
       render: (image) => (
         <Image
           src={`https://wings-blast-backend.onrender.com` + image}
-          alt="side"
+          alt="Flavor"
           width={50}
           height={50}
         />
@@ -114,32 +116,22 @@ const Side = () => {
       key: "name",
     },
     {
-      title: "Calories",
-      dataIndex: "cal",
-      key: "cal",
-    },
-    {
       title: "Price",
       dataIndex: "price",
       key: "price",
       render: (price) => <span>$ {price}</span>,
     },
     {
-      title: "Size",
-      dataIndex: "size",
-      key: "size",
-    },
-    {
-      title: "Edit",
-      key: "edit",
+      title: "View",
+      key: "view",
       render: (_, record) => (
         <Button
           type="primary"
           size="small"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleViewButton(record.id)}
+          icon={<EyeOutlined />}
         >
-          Edit
+          View
         </Button>
       ),
     },
@@ -162,14 +154,16 @@ const Side = () => {
 
   return (
     <div>
-      <h2 className="text-center text-2xl font-bold my-5">Side List</h2>
+      <h2 className="text-center text-2xl font-bold my-5">Food Details List</h2>
       <div className="flex justify-between mb-4">
         <Search
-          placeholder="Search Sides..."
+          placeholder="Search Food Details..."
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddSide refetch={refetch} />
+        <Link to="/food-details/add">
+          <Button type="primary">Add New Food</Button>
+        </Link>
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>
@@ -177,11 +171,11 @@ const Side = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 20 }}
         />
       )}
     </div>
   );
 };
 
-export default Side;
+export default FoodDetails;

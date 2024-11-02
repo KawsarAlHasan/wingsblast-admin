@@ -102,7 +102,7 @@ const Navbar = ({ showDrawer }) => {
         title="Notifications"
         placement="right"
         onClose={() => setDrawerVisible(false)}
-        open={drawerVisible} // 'visible' পরিবর্তে 'open' ব্যবহার করা হয়েছে
+        open={drawerVisible}
       >
         <p>No new notifications</p>
       </Drawer>

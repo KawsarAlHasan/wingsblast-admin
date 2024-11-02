@@ -26,7 +26,7 @@ function AddCategory({ refetch }) {
     const formData = new FormData(); // Handle image uploads properly
 
     formData.append("category_name", data.category_name);
-    formData.append("sn_number", data.sn_number || 0);
+    formData.append("sn_number", data.sn_number || 100);
 
     if (data.category_image && data.category_image[0]) {
       formData.append("category_image", data.category_image[0].originFileObj);

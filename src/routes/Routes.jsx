@@ -11,6 +11,10 @@ import Dip from "../pages/dip/Dip";
 import Drink from "../pages/drink/Drink";
 import Beverage from "../pages/beverage/Beverage";
 import Side from "../pages/side/Side";
+import FoodDetails from "../pages/foodDetails/FoodDetails";
+import FoodDetail from "../pages/foodDetails/FoodDetail";
+import AddFoodDetails from "../pages/foodDetails/AddFoodDetails";
+import AddFood from "../pages/foodDetails/AddFood";
 
 export const router = createBrowserRouter([
   {
@@ -52,6 +56,22 @@ export const router = createBrowserRouter([
       {
         path: "/side",
         element: <Side />,
+      },
+      {
+        path: "/food-details",
+        element: <FoodDetails />,
+      },
+      // {
+      //   path: "/food-details/add",
+      //   element: <AddFoodDetails />,
+      // },
+      {
+        path: "/food-details/add",
+        element: <AddFood />,
+      },
+      {
+        path: "/food-details/:foodDetailId",
+        element: <FoodDetail />,
       },
       {
         path: "/users",
