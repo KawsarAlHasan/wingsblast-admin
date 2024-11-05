@@ -43,7 +43,7 @@ function FoodDetail() {
       <div className="grid grid-cols-2 gap-4">
         <Image
           alt={foodDetail.name}
-          src={`https://wings-blast-backend.onrender.com${foodDetail.image}`}
+          src={`https://api.wingsblast.com${foodDetail.image}`}
           className="h-64 object-cover"
         />
         <div>
@@ -89,7 +89,7 @@ function FoodDetail() {
         {dips.map((dip) => (
           <Card key={dip.dip_id} title={dip.dip_name} bordered={false}>
             <Image
-              src={`https://wings-blast-backend.onrender.com${dip.dip_image}`}
+              src={`https://api.wingsblast.com${dip.dip_image}`}
               alt={dip.dip_name}
               className="h-24 object-cover"
             />
@@ -104,7 +104,7 @@ function FoodDetail() {
         {sides.map((side) => (
           <Card key={side.side_id} title={side.side_name} bordered={false}>
             <Image
-              src={`https://wings-blast-backend.onrender.com${side.side_image}`}
+              src={`https://api.wingsblast.com${side.side_image}`}
               alt={side.side_name}
               className="h-24 object-cover"
             />
@@ -123,7 +123,7 @@ function FoodDetail() {
         {drinks.map((drink) => (
           <Card key={drink.drink_id} title={drink.drink_name} bordered={false}>
             <Image
-              src={`https://wings-blast-backend.onrender.com${drink.drink_image}`}
+              src={`https://api.wingsblast.com${drink.drink_image}`}
               alt={drink.drink_name}
               className="h-24 object-cover"
             />
@@ -146,7 +146,7 @@ function FoodDetail() {
             bordered={false}
           >
             <Image
-              src={`https://wings-blast-backend.onrender.com${beverage.beverage_image}`}
+              src={`https://api.wingsblast.com${beverage.beverage_image}`}
               alt={beverage.beverage_name}
               className="h-24 object-cover"
             />

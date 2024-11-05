@@ -7,77 +7,245 @@ import {
   InputNumber,
   Upload,
   Select,
+  Collapse,
   message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
+import SideSelection from "./SideSelection";
+import DipSelection from "./DipSelection";
 import {
-  useBeverage,
   useCategory,
+  useSide,
   useDip,
   useDrink,
-  useSide,
+  useBeverage,
+  API,
+  useFoodMenu,
 } from "../../api/api";
+import DrinkSelection from "./DrinkSelection";
+import BeverageSelect from "./BeverageSelect";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
 const AddFoodDetails = () => {
   const { category } = useCategory();
+  const { foodMenu } = useFoodMenu();
   const { side } = useSide();
-  const { beverage } = useBeverage();
-  const { drink } = useDrink();
   const { dip } = useDip();
-
+  const { drink } = useDrink();
+  const { beverage } = useBeverage();
+  const [selectedSides, setSelectedSides] = useState([]);
+  const [selectedDips, setSelectedDips] = useState([]);
+  const [selectedDrinks, setSelectedDrinks] = useState([]);
+  const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const {
     handleSubmit,
     control,
-    reset,
     formState: { errors },
   } = useForm();
 
-  // Handle form submission
-  const onSubmit = async (data) => {
-    // setLoading(true);
-    const formDataObj = new FormData();
-
-    // Append all form data to FormData object
-    Object.keys(data).forEach((key) => {
-      if (key === "file" && data.file?.[0]) {
-        formDataObj.append("file", data.file[0].originFileObj);
+  // side selection Handling
+  const handleSideSelection = (id, isChecked) => {
+    setSelectedSides((prevSides) => {
+      if (isChecked) {
+        return [...prevSides, { side_id: id, isPaid: false }];
       } else {
-        formDataObj.append(key, data[key]);
+        return prevSides.filter((side) => side.side_id !== id);
       }
     });
-
-    console.log(formDataObj);
-    console.log(data);
-
-    // try {
-    //   const response = await axios.post(
-    //     "http://localhost:5000/api/food-details",
-    //     formDataObj,
-    //     {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //       },
-    //     }
-    //   );
-
-    //   if (response.data.success) {
-    //     message.success("Food details added successfully!");
-    //     reset(); // Reset form fields
-    //   } else {
-    //     message.error(response.data.message);
-    //   }
-    // } catch (error) {
-    //   message.error("Failed to add food details. Please try again.");
-    // } finally {
-    //   setLoading(false);
-    // }
   };
+
+  // side paid unpaid
+  const handleToggleSidePaid = (id, isChecked) => {
+    setSelectedSides((prevSides) =>
+      prevSides.map((side) =>
+        side.side_id === id ? { ...side, isPaid: isChecked } : side
+      )
+    );
+  };
+
+  // Dip Selection Handling
+  const handleDipSelection = (id, isChecked) => {
+    setSelectedDips((prevDips) => {
+      if (isChecked) {
+        return [...prevDips, { dip_id: id, isPaid: false }];
+      } else {
+        return prevDips.filter((dip) => dip.dip_id !== id);
+      }
+    });
+  };
+
+  // Dip paid unpaid
+  const handleToggleDipPaid = (id, isChecked) => {
+    setSelectedDips((prevDips) =>
+      prevDips.map((dip) =>
+        dip.dip_id === id ? { ...dip, isPaid: isChecked } : dip
+      )
+    );
+  };
+
+  // Drink Selection Handling
+  const handleDrinkSelection = (id, isChecked) => {
+    setSelectedDrinks((prevDrinks) => {
+      if (isChecked) {
+        return [...prevDrinks, { drink_id: id, isPaid: false }];
+      } else {
+        return prevDrinks.filter((drink) => drink.drink_id !== id);
+      }
+    });
+  };
+
+  // Drink paid unpaid
+  const handleToggleDrinkPaid = (id, isChecked) => {
+    setSelectedDrinks((prevDrinks) =>
+      prevDrinks.map((drink) =>
+        drink.drink_id === id ? { ...drink, isPaid: isChecked } : drink
+      )
+    );
+  };
+
+  // Beverage Selection Handling
+  const handleBeverageSelection = (id, isChecked) => {
+    setSelectedBeverages((prevBeverages) => {
+      if (isChecked) {
+        return [...prevBeverages, { beverage_id: id, isPaid: false }];
+      } else {
+        return prevBeverages.filter((beverage) => beverage.beverage_id !== id);
+      }
+    });
+  };
+
+  // Beverage paid unpaid
+  const handleToggleBeveragePaid = (id, isChecked) => {
+    setSelectedBeverages((prevBeverages) =>
+      prevBeverages.map((beverage) =>
+        beverage.beverage_id === id
+          ? { ...beverage, isPaid: isChecked }
+          : beverage
+      )
+    );
+  };
+
+  // submit button
+  const onSubmit = async (data) => {
+    setLoading(true);
+    const formDataObj = new FormData();
+    if (data.file?.[0]) {
+      formDataObj.append("image", data.file[0].originFileObj);
+    }
+    formDataObj.append("name", data.name);
+    formDataObj.append("category_id", data.category_id);
+    formDataObj.append("price", data.price);
+    formDataObj.append("cal", data.cal);
+    formDataObj.append("description", data.description);
+    formDataObj.append("howManyFlavor", data.howManyFlavor || 0);
+    formDataObj.append("howManyChoiceFlavor", data.howManyChoiceFlavor || 0);
+    formDataObj.append("howManyChoiceSide", data.howManyChoiceSide || 0);
+    formDataObj.append("howManyChoiceDip", data.howManyChoiceDip || 0);
+    formDataObj.append("howManyChoiceDrink", data.howManyChoiceDrink || 0);
+    formDataObj.append(
+      "howManyChoiceBeverage",
+      data.howManyChoiceBeverage || 0
+    );
+    formDataObj.append("food_menu_id", data.food_menu_id);
+    formDataObj.append("food_menu_name", data.food_menu_name);
+    formDataObj.append("food_menu_price", data.food_menu_price);
+    formDataObj.append("food_menu_cal", data.food_menu_cal);
+
+    formDataObj.append("sides", JSON.stringify(selectedSides));
+    formDataObj.append("dips", JSON.stringify(selectedDips));
+    formDataObj.append("drinks", JSON.stringify(selectedDrinks));
+    formDataObj.append("beverages", JSON.stringify(selectedBeverages));
+
+    try {
+      const response = await API.post("/food-details/create", formDataObj);
+      console.log(response);
+      if (response.data.success) {
+        message.success("Food details added successfully!");
+      } else {
+        message.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error.response?.data); // Error logging
+      message.error("Failed to add food details. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const panelStyle = {
+    marginBottom: 15,
+    background: "#e9f0fa",
+    borderRadius: 10,
+    border: "none",
+  };
+
+  const items = (panelStyle) => [
+    {
+      key: "1",
+      label: <h2 className="font-semibold">Sides</h2>,
+      children: (
+        <Form.Item>
+          <SideSelection
+            side={side}
+            selectedSides={selectedSides}
+            handleSideSelection={handleSideSelection}
+            handleToggleSidePaid={handleToggleSidePaid}
+          />
+        </Form.Item>
+      ),
+      style: panelStyle,
+    },
+    {
+      key: "2",
+      label: <h2 className="font-semibold">Dips</h2>,
+      children: (
+        <Form.Item>
+          <DipSelection
+            dip={dip}
+            selectedDips={selectedDips}
+            handleDipSelection={handleDipSelection}
+            handleToggleDipPaid={handleToggleDipPaid}
+          />
+        </Form.Item>
+      ),
+      style: panelStyle,
+    },
+    {
+      key: "3",
+      label: <h2 className="font-semibold">Drinks</h2>,
+      children: (
+        <Form.Item label="Drinks">
+          <DrinkSelection
+            drink={drink}
+            selectedDrinks={selectedDrinks}
+            handleDrinkSelection={handleDrinkSelection}
+            handleToggleDrinkPaid={handleToggleDrinkPaid}
+          />
+        </Form.Item>
+      ),
+      style: panelStyle,
+    },
+    {
+      key: "4",
+      label: <h2 className="font-semibold">Beverages</h2>,
+      children: (
+        <Form.Item>
+          <BeverageSelect
+            beverage={beverage}
+            selectedBeverages={selectedBeverages}
+            handleBeverageSelection={handleBeverageSelection}
+            handleToggleBeveragePaid={handleToggleBeveragePaid}
+          />
+        </Form.Item>
+      ),
+      style: panelStyle,
+    },
+  ];
+
   return (
     <div className="p-10 bg-white rounded-md shadow-lg mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">Add Food Details</h2>
@@ -149,23 +317,6 @@ const AddFoodDetails = () => {
             />
             {errors.category_id && (
               <span className="text-red-500">{errors.category_id.message}</span>
-            )}
-          </Form.Item>
-
-          {/* Food Menu ID */}
-          <Form.Item label="Food Menu ID" required>
-            <Controller
-              name="food_menu_id"
-              control={control}
-              rules={{ required: "Food Menu ID is required" }}
-              render={({ field }) => (
-                <Input {...field} placeholder="Enter food menu ID" />
-              )}
-            />
-            {errors.food_menu_id && (
-              <span className="text-red-500">
-                {errors.food_menu_id.message}
-              </span>
             )}
           </Form.Item>
 
@@ -334,6 +485,85 @@ const AddFoodDetails = () => {
               </span>
             )}
           </Form.Item>
+
+          {/* Food Menu ID Select */}
+          <Form.Item label="Food Menu ID" required>
+            <Controller
+              name="food_menu_id"
+              control={control}
+              rules={{ required: "Food Menu ID is required" }}
+              render={({ field }) => (
+                <Select {...field} placeholder="Select a Food Menu ID">
+                  {foodMenu?.map((fm) => (
+                    <Option key={fm.id} value={fm.id}>
+                      {fm.name}
+                    </Option>
+                  ))}
+                </Select>
+              )}
+            />
+            {errors.food_menu_id && (
+              <span className="text-red-500">
+                {errors.food_menu_id.message}
+              </span>
+            )}
+          </Form.Item>
+
+          {/* food menu name */}
+          <Form.Item label="food Menu Name" required>
+            <Controller
+              name="food_menu_name"
+              control={control}
+              rules={{ required: "food Menu Name is required" }}
+              render={({ field }) => (
+                <Input {...field} placeholder="Enter food menu name" />
+              )}
+            />
+            {errors.food_menu_name && (
+              <span className="text-red-500">
+                {errors.food_menu_name.message}
+              </span>
+            )}
+          </Form.Item>
+
+          {/* food_menu_price */}
+          <Form.Item label="Food Menu Price" required>
+            <Controller
+              name="food_menu_price"
+              control={control}
+              rules={{ required: "Food menuprice is required" }}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  className="w-full"
+                  min={0}
+                  placeholder="Enter Food menuprice"
+                />
+              )}
+            />
+            {errors.food_menu_price && (
+              <span className="text-red-500">
+                {errors.food_menu_price.message}
+              </span>
+            )}
+          </Form.Item>
+
+          {/* Food Menu Cal */}
+          <Form.Item label="Food Menu Cal" required>
+            <Controller
+              name="food_menu_cal"
+              control={control}
+              rules={{ required: "Food Menu Cal is required" }}
+              render={({ field }) => (
+                <Input {...field} placeholder="Enter Food Menu Cal" />
+              )}
+            />
+            {errors.food_menu_cal && (
+              <span className="text-red-500">
+                {errors.food_menu_cal.message}
+              </span>
+            )}
+          </Form.Item>
         </div>
 
         {/* Description */}
@@ -347,83 +577,16 @@ const AddFoodDetails = () => {
           />
         </Form.Item>
 
-        {/* Side Select */}
-        <Form.Item label="Side">
-          <Controller
-            name="side_id"
-            control={control}
-            render={({ field }) => (
-              <Select {...field} placeholder="Select a side">
-                {side?.map((item) => (
-                  <Option key={item.id} value={item.id}>
-                    {item.name}
-                  </Option>
-                ))}
-              </Select>
-            )}
-          />
-        </Form.Item>
-
-        {/* Beverage Select */}
-        <Form.Item label="Beverage">
-          <Controller
-            name="beverage_id"
-            control={control}
-            render={({ field }) => (
-              <Select {...field} placeholder="Select a beverage">
-                {beverage?.map((bev) => (
-                  <Option key={bev.id} value={bev.id}>
-                    {bev.name}
-                  </Option>
-                ))}
-              </Select>
-            )}
-          />
-        </Form.Item>
-
-        {/* Drink Select */}
-        <Form.Item label="Drink">
-          <Controller
-            name="drink_id"
-            control={control}
-            render={({ field }) => (
-              <Select {...field} placeholder="Select a drink">
-                {drink?.map((dr) => (
-                  <Option key={dr.id} value={dr.id}>
-                    {dr.name}
-                  </Option>
-                ))}
-              </Select>
-            )}
-          />
-        </Form.Item>
-
-        {/* Dip Select */}
-        <Form.Item label="Dip">
-          <Controller
-            name="dip_id"
-            control={control}
-            render={({ field }) => (
-              <Select {...field} placeholder="Select a dip">
-                {dip?.map((d) => (
-                  <Option key={d.id} value={d.id}>
-                    {d.name}
-                  </Option>
-                ))}
-              </Select>
-            )}
-          />
-        </Form.Item>
+        <Collapse
+          items={items(panelStyle)}
+          bordered={false}
+          defaultActiveKey={["1"]}
+        />
 
         {/* Submit Button */}
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            className="w-full"
-          >
-            Add Food
+          <Button loading={loading} type="primary" htmlType="submit" block>
+            Submit
           </Button>
         </Form.Item>
       </Form>

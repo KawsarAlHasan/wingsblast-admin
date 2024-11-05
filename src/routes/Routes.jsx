@@ -14,7 +14,8 @@ import Side from "../pages/side/Side";
 import FoodDetails from "../pages/foodDetails/FoodDetails";
 import FoodDetail from "../pages/foodDetails/FoodDetail";
 import AddFoodDetails from "../pages/foodDetails/AddFoodDetails";
-import AddFood from "../pages/foodDetails/AddFood";
+import Food from "../pages/food/Food";
+import Analytics from "../pages/analytics/Analytics";
 
 export const router = createBrowserRouter([
   {
@@ -61,21 +62,25 @@ export const router = createBrowserRouter([
         path: "/food-details",
         element: <FoodDetails />,
       },
-      // {
-      //   path: "/food-details/add",
-      //   element: <AddFoodDetails />,
-      // },
       {
         path: "/food-details/add",
-        element: <AddFood />,
+        element: <AddFoodDetails />,
       },
       {
         path: "/food-details/:foodDetailId",
         element: <FoodDetail />,
       },
       {
+        path: "/food",
+        element: <Food />,
+      },
+      {
         path: "/users",
         element: <Users />,
+      },
+      {
+        path: "/analytics",
+        element: <Analytics />,
       },
     ],
   },

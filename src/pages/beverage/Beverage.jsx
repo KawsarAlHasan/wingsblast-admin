@@ -101,7 +101,7 @@ const Beverage = () => {
       key: "image",
       render: (image) => (
         <Image
-          src={`https://wings-blast-backend.onrender.com` + image}
+          src={`https://api.wingsblast.com` + image}
           alt="beverage"
           width={50}
           height={50}

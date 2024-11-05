@@ -2,8 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://wings-blast-backend.onrender.com/api/v1",
-  //   baseURL: "http://localhost:8000/api/v1",
+  baseURL: "https://api.wingsblast.com/api/v1",
 });
 
 API.interceptors.request.use((config) => {
@@ -167,6 +166,27 @@ export const useSide = () => {
   return { side, isLoading, isError, error, refetch };
 };
 
+// get Food Menu
+export const useFoodMenu = () => {
+  const getFoodMenu = async () => {
+    const response = await API.get("/foodmenu/all");
+    return response.data.data;
+  };
+
+  const {
+    data: foodMenu = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["foodMenu"],
+    queryFn: getFoodMenu,
+  });
+
+  return { foodMenu, isLoading, isError, error, refetch };
+};
+
 // get Food Details
 export const useFoodDatails = () => {
   const getFoodDetails = async () => {
@@ -207,4 +227,25 @@ export const useFoodDetail = (id) => {
   });
 
   return { foodDetail, isLoading, isError, error, refetch };
+};
+
+// get Users
+export const useUsers = () => {
+  const getUsers = async () => {
+    const response = await API.get("/user/all");
+    return response.data.data;
+  };
+
+  const {
+    data: users = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: getUsers,
+  });
+
+  return { users, isLoading, isError, error, refetch };
 };

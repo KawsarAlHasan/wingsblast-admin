@@ -1,24 +1,18 @@
 import React, { useState } from "react";
 import { Button, Row, Col, Card, Statistic, DatePicker, Divider } from "antd";
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   ReloadOutlined,
   ShareAltOutlined,
   EllipsisOutlined,
-  UserOutlined,
-  DollarOutlined,
-  DatabaseOutlined,
 } from "@ant-design/icons";
-import MonthlyActiveUsersChart from "../components/MonthlyActiveUsersChart";
-import RevenueChart from "../components/RevenueChart.js";
-import OrdersByFoodChart from "../components/OrdersByFoodChart.jsx";
-import DashboardCard from "../components/DashboardCard.jsx";
+import MonthlyActiveUsersChart from "../../components/MonthlyActiveUsersChart";
+import RevenueChart from "../../components/RevenueChart.js";
+import OrdersByFoodChart from "../../components/OrdersByFoodChart.jsx";
+import SalesChart from "../../components/SalesChart.jsx";
 
 const { RangePicker } = DatePicker;
 
-function Dashboard() {
-  // State to hold selected date range
+function Analytics() {
   const [dates, setDates] = useState(null);
 
   // Handler for date change
@@ -46,41 +40,6 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
-        <DashboardCard
-          title="New Users"
-          value="34.7k"
-          icon={<UserOutlined />}
-          description="23 (22%)"
-          change="23 (22%)"
-          changeType="increase"
-        />
-        <DashboardCard
-          title="Total Sales"
-          value="$34,545"
-          icon={<DollarOutlined />}
-          description="Current month"
-        />
-        <DashboardCard
-          title="Pending Leads"
-          value="450"
-          icon={<DatabaseOutlined />}
-          description="50 in hot leads"
-        />
-
-        <DashboardCard
-          title="Active Users"
-          value="5.6k"
-          description="300 (18%)"
-          icon={<UserOutlined />}
-          change="300 (18%)"
-          changeType="decrease"
-        />
-      </div>
-
-      <Divider />
-
-      {/* Monthly Active Users and Revenue Charts */}
       <Row gutter={16}>
         <Col span={12}>
           <Card
@@ -102,15 +61,20 @@ function Dashboard() {
         </Col>
       </Row>
 
-      <Card
-        title="Orders by Food"
-        bordered={false}
-        style={{ borderRadius: "8px" }}
-      >
-        <OrdersByFoodChart />
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2">
+        <Card
+          title="Orders by Food"
+          bordered={false}
+          style={{ borderRadius: "8px" }}
+        >
+          <OrdersByFoodChart />
+        </Card>
+        <Card title="Sales" bordered={false} style={{ borderRadius: "8px" }}>
+          <SalesChart />
+        </Card>
+      </div>
     </div>
   );
 }
 
-export default Dashboard;
+export default Analytics;

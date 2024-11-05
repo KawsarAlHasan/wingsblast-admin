@@ -100,7 +100,7 @@ const Category = () => {
       render: (imageUrl) => (
         <Image
           width={50}
-          src={`https://wings-blast-backend.onrender.com` + imageUrl}
+          src={`https://api.wingsblast.com` + imageUrl}
           alt="Category Image"
           style={{ borderRadius: "8px" }}
         />

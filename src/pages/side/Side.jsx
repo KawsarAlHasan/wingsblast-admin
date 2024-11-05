@@ -101,7 +101,7 @@ const Side = () => {
       key: "image",
       render: (image) => (
         <Image
-          src={`https://wings-blast-backend.onrender.com` + image}
+          src={`https://api.wingsblast.com` + image}
           alt="side"
           width={50}
           height={50}
