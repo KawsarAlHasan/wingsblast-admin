@@ -70,12 +70,26 @@ const sidebarItems = [
   {
     key: "7",
     icon: <CloudOutlined />,
-    label: "Orders",
+    label: <Link to="/order">Order</Link>,
   },
   {
     key: "5",
     icon: <SettingOutlined />,
     label: "Settings",
+    children: [
+      {
+        key: "4-1",
+        label: <Link to="/profile">Profile</Link>,
+      },
+      {
+        key: "4-2",
+        label: <Link to="/team-members">Team Members</Link>,
+      },
+      {
+        key: "4-3",
+        label: <Link to="/web-settings">Web Settings</Link>,
+      },
+    ],
   },
 ];
 

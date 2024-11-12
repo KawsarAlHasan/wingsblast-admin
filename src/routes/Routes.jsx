@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/Login";
 import Main from "../layout/Main";
 import Dashboard from "../pages/Dashboard";
-import Users from "../pages/Users";
+import Users from "../pages/users/Users";
 import NotFound from "../pages/NotFound";
 import PrivateRoute from "./PrivateRoute";
 import Category from "../pages/category/Category";
@@ -16,6 +16,9 @@ import FoodDetail from "../pages/foodDetails/FoodDetail";
 import AddFoodDetails from "../pages/foodDetails/AddFoodDetails";
 import Food from "../pages/food/Food";
 import Analytics from "../pages/analytics/Analytics";
+import Order from "../pages/order/Order";
+import OrderDetails from "../pages/order/OrderDetails";
+import User from "../pages/users/User";
 
 export const router = createBrowserRouter([
   {
@@ -79,8 +82,20 @@ export const router = createBrowserRouter([
         element: <Users />,
       },
       {
+        path: "/users/:userID",
+        element: <User />,
+      },
+      {
         path: "/analytics",
         element: <Analytics />,
+      },
+      {
+        path: "/order",
+        element: <Order />,
+      },
+      {
+        path: "/order/:orderID",
+        element: <OrderDetails />,
       },
     ],
   },

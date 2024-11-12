@@ -143,17 +143,8 @@ const AddFoodDetails = () => {
     formDataObj.append("description", data.description);
     formDataObj.append("howManyFlavor", data.howManyFlavor || 0);
     formDataObj.append("howManyChoiceFlavor", data.howManyChoiceFlavor || 0);
-    formDataObj.append("howManyChoiceSide", data.howManyChoiceSide || 0);
-    formDataObj.append("howManyChoiceDip", data.howManyChoiceDip || 0);
-    formDataObj.append("howManyChoiceDrink", data.howManyChoiceDrink || 0);
-    formDataObj.append(
-      "howManyChoiceBeverage",
-      data.howManyChoiceBeverage || 0
-    );
     formDataObj.append("food_menu_id", data.food_menu_id);
     formDataObj.append("food_menu_name", data.food_menu_name);
-    formDataObj.append("food_menu_price", data.food_menu_price);
-    formDataObj.append("food_menu_cal", data.food_menu_cal);
 
     formDataObj.append("sides", JSON.stringify(selectedSides));
     formDataObj.append("dips", JSON.stringify(selectedDips));
@@ -347,12 +338,7 @@ const AddFoodDetails = () => {
               control={control}
               rules={{ required: "Calories are required" }}
               render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter calories"
-                />
+                <Input {...field} placeholder="Enter calories" />
               )}
             />
             {errors.cal && (
@@ -402,90 +388,6 @@ const AddFoodDetails = () => {
             )}
           </Form.Item>
 
-          {/* How Many Choice Side */}
-          <Form.Item label="How Many Choice Side">
-            <Controller
-              name="howManyChoiceSide"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Choice Side"
-                />
-              )}
-            />
-            {errors.howManyChoiceSide && (
-              <span className="text-red-500">
-                {errors.howManyChoiceSide.message}
-              </span>
-            )}
-          </Form.Item>
-
-          {/* How Many Choice Dip */}
-          <Form.Item label="How Many Choice Dip">
-            <Controller
-              name="howManyChoiceDip"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Choice Dip"
-                />
-              )}
-            />
-            {errors.howManyChoiceDip && (
-              <span className="text-red-500">
-                {errors.howManyChoiceDip.message}
-              </span>
-            )}
-          </Form.Item>
-
-          {/* How Many Choice Drink */}
-          <Form.Item label="How Many Choice Drink">
-            <Controller
-              name="howManyChoiceDrink"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Choice Drink"
-                />
-              )}
-            />
-            {errors.howManyChoiceDrink && (
-              <span className="text-red-500">
-                {errors.howManyChoiceDrink.message}
-              </span>
-            )}
-          </Form.Item>
-
-          {/* How Many Choice Beverage */}
-          <Form.Item label="How Many Choice Beverage">
-            <Controller
-              name="howManyChoiceBeverage"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Choice Beverage"
-                />
-              )}
-            />
-            {errors.howManyChoiceBeverage && (
-              <span className="text-red-500">
-                {errors.howManyChoiceBeverage.message}
-              </span>
-            )}
-          </Form.Item>
-
           {/* Food Menu ID Select */}
           <Form.Item label="Food Menu ID" required>
             <Controller
@@ -522,45 +424,6 @@ const AddFoodDetails = () => {
             {errors.food_menu_name && (
               <span className="text-red-500">
                 {errors.food_menu_name.message}
-              </span>
-            )}
-          </Form.Item>
-
-          {/* food_menu_price */}
-          <Form.Item label="Food Menu Price" required>
-            <Controller
-              name="food_menu_price"
-              control={control}
-              rules={{ required: "Food menuprice is required" }}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter Food menuprice"
-                />
-              )}
-            />
-            {errors.food_menu_price && (
-              <span className="text-red-500">
-                {errors.food_menu_price.message}
-              </span>
-            )}
-          </Form.Item>
-
-          {/* Food Menu Cal */}
-          <Form.Item label="Food Menu Cal" required>
-            <Controller
-              name="food_menu_cal"
-              control={control}
-              rules={{ required: "Food Menu Cal is required" }}
-              render={({ field }) => (
-                <Input {...field} placeholder="Enter Food Menu Cal" />
-              )}
-            />
-            {errors.food_menu_cal && (
-              <span className="text-red-500">
-                {errors.food_menu_cal.message}
               </span>
             )}
           </Form.Item>

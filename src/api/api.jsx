@@ -249,3 +249,65 @@ export const useUsers = () => {
 
   return { users, isLoading, isError, error, refetch };
 };
+
+// get User Details
+export const useuserDetails = (id) => {
+  const getUserDetails = async () => {
+    const response = await API.get(`/user/${id}`);
+    return response.data;
+  };
+
+  const {
+    data: userDetails = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["userDetails", id],
+    queryFn: getUserDetails,
+  });
+
+  return { userDetails, isLoading, isError, error, refetch };
+};
+
+// Order
+export const useOrders = () => {
+  const getOrders = async () => {
+    const response = await API.get("/orders/all");
+    return response.data.data;
+  };
+  const {
+    data: orders = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["orders"],
+    queryFn: getOrders,
+  });
+
+  return { orders, isLoading, isError, error, refetch };
+};
+
+// get Food Details
+export const useOrderDetails = (id) => {
+  const getOrderDetails = async () => {
+    const response = await API.get(`/orders/${id}`);
+    return response.data.data;
+  };
+
+  const {
+    data: orderDetails = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["orderDetails", id],
+    queryFn: getOrderDetails,
+  });
+
+  return { orderDetails, isLoading, isError, error, refetch };
+};

@@ -63,22 +63,6 @@ function FoodDetail() {
               <strong>How Many Choice Flavor:</strong>{" "}
               {foodDetail.howManyChoiceFlavor}
             </p>
-            <p>
-              <strong>How Many Choice Side:</strong>{" "}
-              {foodDetail.howManyChoiceSide}
-            </p>
-            <p>
-              <strong>How Many Choice Dip:</strong>{" "}
-              {foodDetail.howManyChoiceDip}
-            </p>
-            <p>
-              <strong>How Many Choice Drink:</strong>{" "}
-              {foodDetail.howManyChoiceDrink}
-            </p>
-            <p>
-              <strong>How Many Choice Beverage:</strong>{" "}
-              {foodDetail.howManyChoiceBeverage}
-            </p>
           </div>
         </div>
       </div>
