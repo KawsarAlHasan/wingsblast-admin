@@ -21,9 +21,13 @@ import {
   useBeverage,
   API,
   useFoodMenu,
+  useToppings,
+  useSandCust,
 } from "../../api/api";
 import DrinkSelection from "./DrinkSelection";
 import BeverageSelect from "./BeverageSelect";
+import ToppingsSelect from "./ToppingsSelect";
+import SandCustSelect from "./SandCustSelect";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -35,10 +39,14 @@ const AddFoodDetails = () => {
   const { dip } = useDip();
   const { drink } = useDrink();
   const { beverage } = useBeverage();
+  const { toppings } = useToppings();
+  const { sandCust } = useSandCust();
   const [selectedSides, setSelectedSides] = useState([]);
   const [selectedDips, setSelectedDips] = useState([]);
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
+  const [selectedToppings, setSelectedToppings] = useState([]);
+  const [selectedSandCust, setSelectedSandCust] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -129,6 +137,50 @@ const AddFoodDetails = () => {
     );
   };
 
+  // Toppings Selection Handling
+  const handleToppingsSelection = (id, isChecked) => {
+    setSelectedToppings((prevToppings) => {
+      if (isChecked) {
+        return [...prevToppings, { toppings_id: id, isPaid: false }];
+      } else {
+        return prevToppings.filter((toppings) => toppings.toppings_id !== id);
+      }
+    });
+  };
+
+  // Toppings paid unpaid
+  const handleToggleToppingsPaid = (id, isChecked) => {
+    setSelectedToppings((prevToppings) =>
+      prevToppings.map((toppings) =>
+        toppings.toppings_id === id
+          ? { ...toppings, isPaid: isChecked }
+          : toppings
+      )
+    );
+  };
+
+  // sandCust Selection Handling
+  const handleSandCustSelection = (id, isChecked) => {
+    setSelectedSandCust((prevSandCust) => {
+      if (isChecked) {
+        return [...prevSandCust, { sandCust_id: id, isPaid: false }];
+      } else {
+        return prevSandCust.filter((sandCust) => sandCust.sandCust_id !== id);
+      }
+    });
+  };
+
+  // sandCust paid unpaid
+  const handleToggleSandCustPaid = (id, isChecked) => {
+    setSelectedSandCust((prevSandCust) =>
+      prevSandCust.map((sandCust) =>
+        sandCust.sandCust_id === id
+          ? { ...sandCust, isPaid: isChecked }
+          : sandCust
+      )
+    );
+  };
+
   // submit button
   const onSubmit = async (data) => {
     setLoading(true);
@@ -150,20 +202,21 @@ const AddFoodDetails = () => {
     formDataObj.append("dips", JSON.stringify(selectedDips));
     formDataObj.append("drinks", JSON.stringify(selectedDrinks));
     formDataObj.append("beverages", JSON.stringify(selectedBeverages));
+    formDataObj.append("toppings", JSON.stringify(selectedToppings));
+    formDataObj.append("sandCust", JSON.stringify(selectedSandCust));
 
     try {
       const response = await API.post("/food-details/create", formDataObj);
-      console.log(response);
       if (response.data.success) {
         message.success("Food details added successfully!");
       } else {
         message.error(response.data.message);
       }
     } catch (error) {
-      console.log(error.response?.data); // Error logging
       message.error("Failed to add food details. Please try again.");
     } finally {
       setLoading(false);
+      // window.location.href = "/food-details";
     }
   };
 
@@ -230,6 +283,36 @@ const AddFoodDetails = () => {
             selectedBeverages={selectedBeverages}
             handleBeverageSelection={handleBeverageSelection}
             handleToggleBeveragePaid={handleToggleBeveragePaid}
+          />
+        </Form.Item>
+      ),
+      style: panelStyle,
+    },
+    {
+      key: "5",
+      label: <h2 className="font-semibold">Toppings</h2>,
+      children: (
+        <Form.Item>
+          <ToppingsSelect
+            toppings={toppings}
+            selectedToppings={selectedToppings}
+            handleToppingsSelection={handleToppingsSelection}
+            handleToggleToppingsPaid={handleToggleToppingsPaid}
+          />
+        </Form.Item>
+      ),
+      style: panelStyle,
+    },
+    {
+      key: "6",
+      label: <h2 className="font-semibold">Sandwich Customize</h2>,
+      children: (
+        <Form.Item>
+          <SandCustSelect
+            sandCust={sandCust}
+            selectedSandCust={selectedSandCust}
+            handleSandCustSelection={handleSandCustSelection}
+            handleToggleSandCustPaid={handleToggleSandCustPaid}
           />
         </Form.Item>
       ),
@@ -389,11 +472,10 @@ const AddFoodDetails = () => {
           </Form.Item>
 
           {/* Food Menu ID Select */}
-          <Form.Item label="Food Menu ID" required>
+          <Form.Item label="Food Menu ID">
             <Controller
               name="food_menu_id"
               control={control}
-              rules={{ required: "Food Menu ID is required" }}
               render={({ field }) => (
                 <Select {...field} placeholder="Select a Food Menu ID">
                   {foodMenu?.map((fm) => (
@@ -404,28 +486,17 @@ const AddFoodDetails = () => {
                 </Select>
               )}
             />
-            {errors.food_menu_id && (
-              <span className="text-red-500">
-                {errors.food_menu_id.message}
-              </span>
-            )}
           </Form.Item>
 
           {/* food menu name */}
-          <Form.Item label="food Menu Name" required>
+          <Form.Item label="food Menu Name">
             <Controller
               name="food_menu_name"
               control={control}
-              rules={{ required: "food Menu Name is required" }}
               render={({ field }) => (
                 <Input {...field} placeholder="Enter food menu name" />
               )}
             />
-            {errors.food_menu_name && (
-              <span className="text-red-500">
-                {errors.food_menu_name.message}
-              </span>
-            )}
           </Form.Item>
         </div>
 

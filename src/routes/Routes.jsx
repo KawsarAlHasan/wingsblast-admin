@@ -19,6 +19,8 @@ import Analytics from "../pages/analytics/Analytics";
 import Order from "../pages/order/Order";
 import OrderDetails from "../pages/order/OrderDetails";
 import User from "../pages/users/User";
+import Toppings from "../pages/tippings/Toppings";
+import SandCust from "../pages/sandCust/SandCust";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +62,14 @@ export const router = createBrowserRouter([
       {
         path: "/side",
         element: <Side />,
+      },
+      {
+        path: "/toppings",
+        element: <Toppings />,
+      },
+      {
+        path: "/sandwich-customize",
+        element: <SandCust />,
       },
       {
         path: "/food-details",

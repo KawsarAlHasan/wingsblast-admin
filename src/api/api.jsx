@@ -166,6 +166,48 @@ export const useSide = () => {
   return { side, isLoading, isError, error, refetch };
 };
 
+// get Toppings
+export const useToppings = () => {
+  const getToppings = async () => {
+    const response = await API.get("/toppings/all");
+    return response.data.data;
+  };
+
+  const {
+    data: toppings = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["toppings"],
+    queryFn: getToppings,
+  });
+
+  return { toppings, isLoading, isError, error, refetch };
+};
+
+// get sand-cust
+export const useSandCust = () => {
+  const getSandCust = async () => {
+    const response = await API.get("/sand-cust/all");
+    return response.data.data;
+  };
+
+  const {
+    data: sandCust = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["sandCust"],
+    queryFn: getSandCust,
+  });
+
+  return { sandCust, isLoading, isError, error, refetch };
+};
+
 // get Food Menu
 export const useFoodMenu = () => {
   const getFoodMenu = async () => {

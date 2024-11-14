@@ -100,7 +100,7 @@ const Category = () => {
       render: (imageUrl) => (
         <Image
           width={50}
-          src={`https://api.wingsblast.com` + imageUrl}
+          src={imageUrl}
           alt="Category Image"
           style={{ borderRadius: "8px" }}
         />

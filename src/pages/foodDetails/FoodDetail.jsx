@@ -2,7 +2,6 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { Card, Spin, Image, Button, Divider, Alert } from "antd";
 import { useFoodDetail } from "../../api/api";
-import "tailwindcss/tailwind.css";
 
 function FoodDetail() {
   const { foodDetailId } = useParams();
@@ -37,6 +36,8 @@ function FoodDetail() {
   const sides = foodDetail?.sides || [];
   const drinks = foodDetail?.drinks || [];
   const beverages = foodDetail?.beverages || [];
+  const toppings = foodDetail?.toppings || [];
+  const sandCust = foodDetail?.sandCust || [];
 
   return (
     <div className="">
@@ -67,8 +68,7 @@ function FoodDetail() {
         </div>
       </div>
 
-      <Divider>Dip</Divider>
-
+      {dips.length > 0 ? <Divider>Dip</Divider> : ""}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {dips.map((dip) => (
           <Card key={dip.dip_id} title={dip.dip_name} bordered={false}>
@@ -83,7 +83,7 @@ function FoodDetail() {
         ))}
       </div>
 
-      <Divider>Side</Divider>
+      {sides.length > 0 ? <Divider>Side</Divider> : ""}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {sides.map((side) => (
           <Card key={side.side_id} title={side.side_name} bordered={false}>
@@ -102,7 +102,7 @@ function FoodDetail() {
         ))}
       </div>
 
-      <Divider>Drink</Divider>
+      {drinks.length > 0 ? <Divider>Drink</Divider> : ""}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {drinks.map((drink) => (
           <Card key={drink.drink_id} title={drink.drink_name} bordered={false}>
@@ -121,7 +121,7 @@ function FoodDetail() {
         ))}
       </div>
 
-      <Divider>Beverage</Divider>
+      {beverages.length > 0 ? <Divider>Bakery</Divider> : ""}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {beverages.map((beverage) => (
           <Card
@@ -139,6 +139,52 @@ function FoodDetail() {
               <p>Unpaid</p>
             ) : (
               <p>Price: ${beverage.beverage_price}</p>
+            )}
+          </Card>
+        ))}
+      </div>
+
+      {toppings.length > 0 ? <Divider>Toppings</Divider> : ""}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {toppings.map((topping) => (
+          <Card
+            key={topping.toppings_id}
+            title={topping.toppings_name}
+            bordered={false}
+          >
+            <Image
+              src={`https://api.wingsblast.com${topping.toppings_image}`}
+              alt={topping.toppings_name}
+              className="h-24 object-cover"
+            />
+            <p>Calories: {topping.toppings_cal}</p>
+            {topping.isPaid == 0 ? (
+              <p>Unpaid</p>
+            ) : (
+              <p>Price: ${topping.toppings_price}</p>
+            )}
+          </Card>
+        ))}
+      </div>
+
+      {sandCust.length > 0 ? <Divider>Sandwich Customize</Divider> : ""}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {sandCust.map((sandCt) => (
+          <Card
+            key={sandCt.sandCust_id}
+            title={sandCt.sandCust_name}
+            bordered={false}
+          >
+            <Image
+              src={`https://api.wingsblast.com${sandCt.sandCust_image}`}
+              alt={sandCt.sandCust_name}
+              className="h-24 object-cover"
+            />
+            <p>Calories: {sandCt.sandCust_cal}</p>
+            {sandCt.isPaid == 0 ? (
+              <p>Unpaid</p>
+            ) : (
+              <p>Price: ${sandCt.sandCust_price}</p>
             )}
           </Card>
         ))}

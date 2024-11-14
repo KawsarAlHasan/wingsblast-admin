@@ -3,12 +3,28 @@ import React, { useState, useEffect } from "react";
 import { Breadcrumb, Layout, Drawer } from "antd";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const Main = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+  const location = useLocation();
+
+  const generateBreadcrumbItems = () => {
+    const pathnames = location.pathname.split("/").filter((x) => x);
+    return [
+      { title: "Home", href: "/" },
+      ...pathnames.map((value, index) => {
+        const url = `/${pathnames.slice(0, index + 1).join("/")}`;
+        return {
+          title: value.charAt(0).toUpperCase() + value.slice(1),
+          href: url,
+        };
+      }),
+    ];
+  };
 
   // Toggle the Drawer (sidebar) visibility
   const showDrawer = () => {
@@ -77,10 +93,7 @@ const Main = () => {
           }}
         >
           <Content className="px-6">
-            <Breadcrumb
-              className="my-4"
-              items={[{ title: "Home" }, { title: "List" }, { title: "App" }]}
-            />
+            <Breadcrumb className="my-4" items={generateBreadcrumbItems()} />
 
             <div
               className="p-6 min-h-[380px]"

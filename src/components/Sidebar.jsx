@@ -34,7 +34,7 @@ const sidebarItems = [
       },
       {
         key: "4-2",
-        label: <Link to="/food">Food Menu</Link>,
+        label: <Link to="/food">Combo Food Menu</Link>,
       },
       {
         key: "4-3",
@@ -58,35 +58,43 @@ const sidebarItems = [
       },
       {
         key: "4-8",
-        label: <Link to="/beverage">Beverage</Link>,
+        label: <Link to="/beverage">Bakery</Link>,
+      },
+      {
+        key: "4-9",
+        label: <Link to="/toppings">Toppings</Link>,
+      },
+      {
+        key: "4-10",
+        label: <Link to="/sandwich-customize">Sandwich Customize</Link>,
       },
     ],
   },
   {
-    key: "6",
+    key: "5",
     icon: <BarChartOutlined />,
     label: <Link to="/analytics">Analytics</Link>,
   },
   {
-    key: "7",
+    key: "6",
     icon: <CloudOutlined />,
     label: <Link to="/order">Order</Link>,
   },
   {
-    key: "5",
+    key: "7",
     icon: <SettingOutlined />,
     label: "Settings",
     children: [
       {
-        key: "4-1",
+        key: "7-1",
         label: <Link to="/profile">Profile</Link>,
       },
       {
-        key: "4-2",
+        key: "7-2",
         label: <Link to="/team-members">Team Members</Link>,
       },
       {
-        key: "4-3",
+        key: "7-3",
         label: <Link to="/web-settings">Web Settings</Link>,
       },
     ],

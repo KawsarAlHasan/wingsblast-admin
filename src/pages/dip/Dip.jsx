@@ -98,14 +98,7 @@ const Dip = () => {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (image) => (
-        <Image
-          src={`https://api.wingsblast.com` + image}
-          alt="Dip"
-          width={50}
-          height={50}
-        />
-      ),
+      render: (image) => <Image src={image} alt="Dip" width={50} height={50} />,
     },
     {
       title: "Name",

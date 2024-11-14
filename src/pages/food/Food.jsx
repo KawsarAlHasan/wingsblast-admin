@@ -105,12 +105,7 @@ const Food = () => {
       dataIndex: "image",
       key: "image",
       render: (image) => (
-        <Image
-          src={`https://api.wingsblast.com` + image}
-          alt="Food Item"
-          width={50}
-          height={50}
-        />
+        <Image src={image} alt="Food Item" width={50} height={50} />
       ),
     },
     {
