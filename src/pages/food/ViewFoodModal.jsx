@@ -18,11 +18,7 @@ function ViewFoodModal({ foodItem, isOpen, onClose }) {
       {/* Main Food Item Details */}
       <Row gutter={16}>
         <Col span={8}>
-          <Image
-            src={`https://api.wingsblast.com${foodItem.image}`}
-            alt={foodItem.name}
-            width={150}
-          />
+          <Image src={foodItem.image} alt={foodItem.name} width={150} />
         </Col>
         <Col span={16}>
           <Title level={4}>{foodItem.name}</Title>

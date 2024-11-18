@@ -3,10 +3,10 @@ import { Menu } from "antd";
 import {
   AppstoreOutlined,
   BarChartOutlined,
-  CloudOutlined,
   TeamOutlined,
+  ContainerOutlined,
   SettingOutlined,
-  UserOutlined,
+  BarsOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 
@@ -25,7 +25,7 @@ const sidebarItems = [
   },
   {
     key: "4",
-    icon: <BarChartOutlined />,
+    icon: <ContainerOutlined />,
     label: "Products",
     children: [
       {
@@ -34,38 +34,34 @@ const sidebarItems = [
       },
       {
         key: "4-2",
-        label: <Link to="/food">Combo Food Menu</Link>,
+        label: <Link to="/food">Menu</Link>,
       },
       {
         key: "4-3",
-        label: <Link to="/food-details">Food Details</Link>,
-      },
-      {
-        key: "4-4",
         label: <Link to="/flavor">Flavor</Link>,
       },
       {
-        key: "4-5",
+        key: "4-4",
         label: <Link to="/dip">Dip</Link>,
       },
       {
-        key: "4-6",
+        key: "4-5",
         label: <Link to="/side">Side</Link>,
       },
       {
-        key: "4-7",
+        key: "4-6",
         label: <Link to="/drink">Drink</Link>,
       },
       {
-        key: "4-8",
+        key: "4-7",
         label: <Link to="/beverage">Bakery</Link>,
       },
       {
-        key: "4-9",
+        key: "4-8",
         label: <Link to="/toppings">Toppings</Link>,
       },
       {
-        key: "4-10",
+        key: "4-9",
         label: <Link to="/sandwich-customize">Sandwich Customize</Link>,
       },
     ],
@@ -77,7 +73,7 @@ const sidebarItems = [
   },
   {
     key: "6",
-    icon: <CloudOutlined />,
+    icon: <BarsOutlined />,
     label: <Link to="/order">Order</Link>,
   },
   {
@@ -86,16 +82,25 @@ const sidebarItems = [
     label: "Settings",
     children: [
       {
-        key: "7-1",
-        label: <Link to="/profile">Profile</Link>,
-      },
-      {
-        key: "7-2",
-        label: <Link to="/team-members">Team Members</Link>,
-      },
-      {
         key: "7-3",
-        label: <Link to="/web-settings">Web Settings</Link>,
+        label: <Link to="/tax-&-delivery-fee">Tax-& Delivery Fee</Link>,
+      },
+
+      {
+        key: "7-5",
+        label: <Link to="/banner">Banner</Link>,
+      },
+      {
+        key: "7-6",
+        label: <Link to="/terms">Terms</Link>,
+      },
+      {
+        key: "7-7",
+        label: <Link to="/privacy">Privacy</Link>,
+      },
+      {
+        key: "7-8",
+        label: <Link to="/about-us">About us</Link>,
       },
     ],
   },

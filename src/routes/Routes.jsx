@@ -21,6 +21,11 @@ import OrderDetails from "../pages/order/OrderDetails";
 import User from "../pages/users/User";
 import Toppings from "../pages/tippings/Toppings";
 import SandCust from "../pages/sandCust/SandCust";
+import Terms from "../pages/Terms";
+import Privacy from "../pages/Privacy";
+import TaxAndDeliveryFee from "../pages/tax&Delivery/TaxAndDeliveryFee";
+import Banner from "../pages/Banner";
+import AboutUs from "../pages/AboutUs";
 
 export const router = createBrowserRouter([
   {
@@ -72,20 +77,20 @@ export const router = createBrowserRouter([
         element: <SandCust />,
       },
       {
-        path: "/food-details",
+        path: "/food",
+        element: <Food />,
+      },
+      {
+        path: "/food/:foodMenuID",
         element: <FoodDetails />,
       },
       {
-        path: "/food-details/add",
-        element: <AddFoodDetails />,
-      },
-      {
-        path: "/food-details/:foodDetailId",
+        path: "/food/:foodMenuID/:foodDetailId",
         element: <FoodDetail />,
       },
       {
-        path: "/food",
-        element: <Food />,
+        path: "/food/:foodMenuID/add",
+        element: <AddFoodDetails />,
       },
       {
         path: "/users",
@@ -106,6 +111,28 @@ export const router = createBrowserRouter([
       {
         path: "/order/:orderID",
         element: <OrderDetails />,
+      },
+
+      {
+        path: "/tax-&-delivery-fee",
+        element: <TaxAndDeliveryFee />,
+      },
+
+      {
+        path: "/terms",
+        element: <Terms />,
+      },
+      {
+        path: "/privacy",
+        element: <Privacy />,
+      },
+      {
+        path: "/banner",
+        element: <Banner />,
+      },
+      {
+        path: "/about-us",
+        element: <AboutUs />,
       },
     ],
   },

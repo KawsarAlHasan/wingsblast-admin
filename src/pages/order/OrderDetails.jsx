@@ -151,11 +151,6 @@ function OrderDetails() {
                   className="flex justify-between items-center bg-white p-4 rounded-lg shadow"
                 >
                   <div className="flex items-center">
-                    <img
-                      src={`https://api.wingsblast.com${food.image}`}
-                      alt={food.name}
-                      className="w-16 h-16 object-cover rounded-lg mr-4"
-                    />
                     <div>
                       <h3 className="font-semibold">{food.name}</h3>
                       <p className="text-gray-600">{food.description}</p>

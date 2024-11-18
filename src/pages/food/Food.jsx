@@ -18,6 +18,7 @@ import {
 import { API, useFoodMenu } from "../../api/api";
 import ViewFoodModal from "./ViewFoodModal";
 import AddFood from "./AddFood";
+import { Link } from "react-router-dom";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -26,8 +27,6 @@ const Food = () => {
   const { foodMenu, isLoading, isError, error, refetch } = useFoodMenu();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [selectedFood, setSelectedFood] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -71,11 +70,6 @@ const Food = () => {
     });
   };
 
-  const handleViewFood = (food) => {
-    setSelectedFood(food);
-    setIsModalOpen(true);
-  };
-
   if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
   if (isError)
     return (
@@ -117,13 +111,8 @@ const Food = () => {
       title: "View",
       key: "view",
       render: (_, record) => (
-        <Button
-          type="primary"
-          size="small"
-          icon={<EyeOutlined />}
-          onClick={() => handleViewFood(record)}
-        >
-          View
+        <Button type="primary" size="small" icon={<EyeOutlined />}>
+          <Link to={`/food/${record.id}`}>View</Link>
         </Button>
       ),
     },
@@ -178,12 +167,6 @@ const Food = () => {
           pagination={{ pageSize: 20 }}
         />
       )}
-
-      <ViewFoodModal
-        foodItem={selectedFood}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </div>
   );
 };

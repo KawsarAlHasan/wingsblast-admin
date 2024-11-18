@@ -28,11 +28,13 @@ import DrinkSelection from "./DrinkSelection";
 import BeverageSelect from "./BeverageSelect";
 import ToppingsSelect from "./ToppingsSelect";
 import SandCustSelect from "./SandCustSelect";
+import { useParams } from "react-router-dom";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
 const AddFoodDetails = () => {
+  const { foodMenuID } = useParams();
   const { category } = useCategory();
   const { foodMenu } = useFoodMenu();
   const { side } = useSide();
@@ -195,7 +197,7 @@ const AddFoodDetails = () => {
     formDataObj.append("description", data.description);
     formDataObj.append("howManyFlavor", data.howManyFlavor || 0);
     formDataObj.append("howManyChoiceFlavor", data.howManyChoiceFlavor || 0);
-    formDataObj.append("food_menu_id", data.food_menu_id);
+    formDataObj.append("food_menu_id", foodMenuID);
     formDataObj.append("food_menu_name", data.food_menu_name);
 
     formDataObj.append("sides", JSON.stringify(selectedSides));
@@ -216,7 +218,7 @@ const AddFoodDetails = () => {
       message.error("Failed to add food details. Please try again.");
     } finally {
       setLoading(false);
-      // window.location.href = "/food-details";
+      window.location.href = `/food/${foodMenuID}`;
     }
   };
 
@@ -472,7 +474,7 @@ const AddFoodDetails = () => {
           </Form.Item>
 
           {/* Food Menu ID Select */}
-          <Form.Item label="Food Menu ID">
+          {/* <Form.Item label="Food Menu ID">
             <Controller
               name="food_menu_id"
               control={control}
@@ -486,7 +488,7 @@ const AddFoodDetails = () => {
                 </Select>
               )}
             />
-          </Form.Item>
+          </Form.Item> */}
 
           {/* food menu name */}
           <Form.Item label="food Menu Name">

@@ -44,7 +44,7 @@ function ViewFlavorModal({ flavor, isOpen, onClose }) {
         {/* Left Column: Image and Rating */}
         <Col span={8}>
           <Image
-            src={`https://api.wingsblast.com${flavor.image}`}
+            src={flavor.image}
             alt={flavor.name}
             width="100%"
             style={{ borderRadius: 8 }}

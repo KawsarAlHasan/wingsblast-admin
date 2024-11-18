@@ -229,10 +229,33 @@ export const useFoodMenu = () => {
   return { foodMenu, isLoading, isError, error, refetch };
 };
 
+// get single Food Menu
+export const useSingleFoodMenu = (foodMenuID) => {
+  const getSingleFoodMenu = async () => {
+    const response = await API.get(`/foodmenu/${foodMenuID}`);
+    return response.data.data;
+  };
+
+  const {
+    data: singleFoodMenu = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["singleFoodMenu"],
+    queryFn: getSingleFoodMenu,
+  });
+
+  return { singleFoodMenu, isLoading, isError, error, refetch };
+};
+
 // get Food Details
-export const useFoodDatails = () => {
+export const useFoodDatails = (foodMenuID) => {
   const getFoodDetails = async () => {
-    const response = await API.get("/food-details/all");
+    const response = await API.get(
+      `/food-details/all?food_menu_id=${foodMenuID}`
+    );
     return response.data.data;
   };
 
@@ -243,7 +266,7 @@ export const useFoodDatails = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["foodDetails"],
+    queryKey: ["foodDetails", foodMenuID],
     queryFn: getFoodDetails,
   });
 
@@ -352,4 +375,109 @@ export const useOrderDetails = (id) => {
   });
 
   return { orderDetails, isLoading, isError, error, refetch };
+};
+
+// get delevery-fee
+export const useDeleveryFee = () => {
+  const getDeleveryFee = async () => {
+    const response = await API.get("/settings/delevery-fee");
+    return response.data.data;
+  };
+
+  const {
+    data: deleveryFee = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["deleveryFee"],
+    queryFn: getDeleveryFee,
+  });
+
+  return { deleveryFee, isLoading, isError, error, refetch };
+};
+
+// get terms
+export const useTerms = () => {
+  const getTerms = async () => {
+    const response = await API.get("/settings/terms");
+    return response.data.data;
+  };
+
+  const {
+    data: terms = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["terms"],
+    queryFn: getTerms,
+  });
+
+  return { terms, isLoading, isError, error, refetch };
+};
+
+// get privacy
+export const usePrivacy = () => {
+  const getPrivacy = async () => {
+    const response = await API.get("/settings/privacy");
+    return response.data.data;
+  };
+
+  const {
+    data: privacy = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["privacy"],
+    queryFn: getPrivacy,
+  });
+
+  return { privacy, isLoading, isError, error, refetch };
+};
+
+// get tax
+export const useTax = () => {
+  const getTax = async () => {
+    const response = await API.get("/settings/tax");
+    return response.data.data;
+  };
+
+  const {
+    data: tax = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["tax"],
+    queryFn: getTax,
+  });
+
+  return { tax, isLoading, isError, error, refetch };
+};
+
+// get banner
+export const useBanner = () => {
+  const getBanner = async () => {
+    const response = await API.get("/settings/banner");
+    return response.data.data;
+  };
+
+  const {
+    data: banner = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["banner"],
+    queryFn: getBanner,
+  });
+
+  return { banner, isLoading, isError, error, refetch };
 };
