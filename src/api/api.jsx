@@ -440,6 +440,27 @@ export const usePrivacy = () => {
   return { privacy, isLoading, isError, error, refetch };
 };
 
+// get about
+export const useAbout = () => {
+  const getAbout = async () => {
+    const response = await API.get("/settings/about");
+    return response.data.data;
+  };
+
+  const {
+    data: about = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["about"],
+    queryFn: getAbout,
+  });
+
+  return { about, isLoading, isError, error, refetch };
+};
+
 // get tax
 export const useTax = () => {
   const getTax = async () => {

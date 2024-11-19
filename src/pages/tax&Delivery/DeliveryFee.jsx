@@ -88,7 +88,7 @@ function DeliveryFee() {
       {/* Modal for Editing deleveryFee */}
       <Modal
         title="Edit Delevery Fee Information"
-        visible={isModalOpen}
+        open={isModalOpen}
         onCancel={handleCancel}
         footer={[
           <Button key="cancel" onClick={handleCancel}>

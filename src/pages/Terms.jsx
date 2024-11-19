@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // ReactQuill CSS
 import { API, useTerms } from "../api/api";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Modal, Spin, message } from "antd";
@@ -8,6 +10,7 @@ function Terms() {
   const { terms, isLoading, isError, error, refetch } = useTerms();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [content, setContent] = useState("");
 
   const {
     register,
@@ -20,20 +23,22 @@ function Terms() {
   const handleEdit = () => {
     setIsModalOpen(true);
     setValue("content", terms.content);
+    setContent(terms.content);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
     reset();
+    setContent("");
   };
 
   const handleSave = async (data) => {
     setIsSaving(true);
     try {
-      const response = await API.put(
-        `/settings/terms/update/${terms.id}`,
-        data
-      );
+      const response = await API.put(`/settings/terms/update/${terms.id}`, {
+        ...data,
+        content,
+      });
 
       message.success("Terms information updated successfully");
       setIsModalOpen(false);
@@ -73,19 +78,19 @@ function Terms() {
         </div>
 
         <p className="mb-2">
-          <span className="font-bold">Content: </span> {terms.content}
-        </p>
-        <p className="mb-2">
           <span className="font-bold">Last Updated:</span>{" "}
           {new Date(terms.updated_at).toLocaleString()}
         </p>
+
+        <div dangerouslySetInnerHTML={{ __html: terms.content }} />
       </div>
 
       {/* Modal for Editing terms */}
       <Modal
         title="Edit Terms Information"
-        visible={isModalOpen}
+        open={isModalOpen}
         onCancel={handleCancel}
+        width={1000}
         footer={[
           <Button key="cancel" onClick={handleCancel}>
             Cancel
@@ -93,8 +98,8 @@ function Terms() {
           <Button
             key="save"
             type="primary"
-            loading={isSaving} // Show loading spinner
-            onClick={handleSubmit(handleSave)}
+            loading={isSaving}
+            onClick={handleSubmit((data) => handleSave(data))}
           >
             Save
           </Button>,
@@ -103,12 +108,8 @@ function Terms() {
         <form>
           <div className="mb-4">
             <label className="block text-gray-700">Content</label>
-            <textarea
-              className="w-full p-2 border rounded"
-              type="text"
-              rows="6"
-              {...register("content", { required: "content is required" })}
-            />
+            {/* ReactQuill */}
+            <ReactQuill theme="snow" value={content} onChange={setContent} />
             {errors.content && (
               <p className="text-red-500 text-sm">{errors.content.message}</p>
             )}

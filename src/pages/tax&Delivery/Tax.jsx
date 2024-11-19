@@ -87,7 +87,7 @@ function Tax() {
       {/* Modal for Editing Tax */}
       <Modal
         title="Edit Tax Information"
-        visible={isModalOpen}
+        open={isModalOpen}
         onCancel={handleCancel}
         footer={[
           <Button key="cancel" onClick={handleCancel}>

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // ReactQuill CSS
 import { API, usePrivacy } from "../api/api";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Modal, Spin, message } from "antd";
@@ -8,6 +10,7 @@ function Privacy() {
   const { privacy, isLoading, isError, error, refetch } = usePrivacy();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [content, setContent] = useState(""); // ReactQuill content এর জন্য state
 
   const {
     register,
@@ -20,25 +23,27 @@ function Privacy() {
   const handleEdit = () => {
     setIsModalOpen(true);
     setValue("content", privacy.content);
+    setContent(privacy.content);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
     reset();
+    setContent("");
   };
 
   const handleSave = async (data) => {
     setIsSaving(true);
     try {
-      const response = await API.put(
-        `/settings/privacy/update/${privacy.id}`,
-        data
-      );
+      const response = await API.put(`/settings/privacy/update/${privacy.id}`, {
+        ...data,
+        content,
+      });
 
-      message.success("privacy information updated successfully");
+      message.success("Privacy information updated successfully");
       setIsModalOpen(false);
       setIsSaving(false);
-      refetch(); // Refresh privacy data
+      refetch();
     } catch (error) {
       message.error(error.message);
       setIsSaving(false);
@@ -73,19 +78,19 @@ function Privacy() {
         </div>
 
         <p className="mb-2">
-          <span className="font-bold">Content: </span> {privacy.content}
-        </p>
-        <p className="mb-2">
           <span className="font-bold">Last Updated:</span>{" "}
           {new Date(privacy.updated_at).toLocaleString()}
         </p>
+
+        <div dangerouslySetInnerHTML={{ __html: privacy.content }} />
       </div>
 
       {/* Modal for Editing privacy */}
       <Modal
-        title="Edit privacy Information"
-        visible={isModalOpen}
+        title="Edit Privacy Information"
+        open={isModalOpen}
         onCancel={handleCancel}
+        width={1000}
         footer={[
           <Button key="cancel" onClick={handleCancel}>
             Cancel
@@ -94,7 +99,7 @@ function Privacy() {
             key="save"
             type="primary"
             loading={isSaving} // Show loading spinner
-            onClick={handleSubmit(handleSave)}
+            onClick={handleSubmit((data) => handleSave(data))}
           >
             Save
           </Button>,
@@ -103,12 +108,8 @@ function Privacy() {
         <form>
           <div className="mb-4">
             <label className="block text-gray-700">Content</label>
-            <textarea
-              className="w-full p-2 border rounded"
-              type="text"
-              rows="6"
-              {...register("content", { required: "content is required" })}
-            />
+            {/* ReactQuill */}
+            <ReactQuill theme="snow" value={content} onChange={setContent} />
             {errors.content && (
               <p className="text-red-500 text-sm">{errors.content.message}</p>
             )}
