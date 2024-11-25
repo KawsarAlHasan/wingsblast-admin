@@ -18,7 +18,6 @@ function Analytics() {
   // Handler for date change
   const onDateChange = (dates) => {
     setDates(dates);
-    console.log("Selected dates:", dates); // You can add logic here to filter data based on the date range
   };
 
   const onRefresh = () => {

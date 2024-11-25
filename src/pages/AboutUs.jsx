@@ -11,7 +11,7 @@ function AboutUs() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [content, setContent] = useState(""); // ReactQuill content এর জন্য state
+  const [content, setContent] = useState("");
 
   const {
     register,

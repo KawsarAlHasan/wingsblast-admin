@@ -32,7 +32,6 @@ const Login = () => {
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
     message.error("Please input valid email and password.");
   };
 
