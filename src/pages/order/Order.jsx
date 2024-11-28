@@ -1,11 +1,39 @@
-import React from "react";
-import { Table, Button, Spin } from "antd";
+import React, { useState } from "react";
+import { Table, Button, Spin, Input } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import { useOrders } from "../../api/api";
 import { Link } from "react-router-dom";
+const { Search } = Input;
 
 function Order() {
-  const { orders, isLoading, isError, error, refetch } = useOrders();
+  const [searchText, setSearchText] = useState("");
+  // Maintain state for filters
+  const [filters, setFilters] = useState({
+    page: 1,
+    limit: 10,
+    status: null,
+  });
+
+  // Fetch orders using the API hook
+  const { orders, pagination, isLoading, isError, error, refetch } =
+    useOrders(filters);
+
+  // Handle table changes (pagination, filters, sorter)
+  const handleTableChange = (pagination, tableFilters) => {
+    const { current: page, pageSize: limit } = pagination;
+    const status = tableFilters.status ? tableFilters.status[0] : null;
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      page,
+      limit,
+      status,
+    }));
+  };
+
+  React.useEffect(() => {
+    refetch(); // Refetch data whenever filters are updated
+  }, [filters, refetch]);
 
   if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
   if (isError)
@@ -20,6 +48,12 @@ function Order() {
       title: "Serial",
       dataIndex: "id",
       key: "id",
+      render: (text, record, index) => index + 1,
+    },
+    {
+      title: "Order Id",
+      dataIndex: "order_id",
+      key: "order_id",
     },
     {
       title: "User Name",
@@ -51,26 +85,12 @@ function Order() {
       dataIndex: "status",
       key: "status",
       filters: [
-        {
-          text: "Pending",
-          value: "Pending",
-        },
-        {
-          text: "Processing",
-          value: "Processing",
-        },
-        {
-          text: "Completed",
-          value: "Completed",
-        },
-        {
-          text: "Cancelled",
-          value: "Cancelled",
-        },
+        { text: "Pending", value: "Pending" },
+        { text: "Processing", value: "Processing" },
+        { text: "Completed", value: "Completed" },
+        { text: "Cancelled", value: "Cancelled" },
       ],
-      onFilter: (value, record) => record.status === value,
     },
-
     {
       title: "Details",
       dataIndex: "Details",
@@ -84,18 +104,35 @@ function Order() {
       ),
     },
   ];
-  const data = orders.map((order, index) => ({
+
+  const filteredData = orders.filter((item) =>
+    item?.order_id.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const data = filteredData.map((item, index) => ({
     key: index,
-    ...order,
+    ...item,
   }));
 
   return (
     <div>
       <h2 className="text-center text-2xl font-semibold my-4">Orders List</h2>
+      <div className="flex justify-between mb-4">
+        <Search
+          placeholder="Search Order ID..."
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 300 }}
+        />
+      </div>
       <Table
         columns={columns}
         dataSource={data}
-        pagination={{ pageSize: 10 }}
+        pagination={{
+          current: filters.page,
+          pageSize: filters.limit,
+          total: pagination.total,
+        }}
+        onChange={handleTableChange}
         bordered
       />
     </div>

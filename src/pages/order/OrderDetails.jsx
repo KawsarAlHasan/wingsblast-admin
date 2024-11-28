@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Card, Divider, message, Select, Spin } from "antd";
 import html2pdf from "html2pdf.js";
-import { useOrderDetails } from "../../api/api";
+import { API, useOrderDetails } from "../../api/api";
 
 function OrderDetails() {
   const { orderID } = useParams();
@@ -22,20 +22,11 @@ function OrderDetails() {
 
   const handleStatusChange = async (value) => {
     try {
-      const response = await fetch(
-        `https://api.wingsblast.com/api/v1/orders/status/${orderID}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: value }),
-        }
-      );
+      const response = await API.put(`/orders/status/${orderID}`, {
+        status: value,
+      });
 
-      refetch();
-
-      if (response.ok) {
+      if (response.statusText == "OK") {
         setStatus(value); // Update status locally
         message.success("Order status updated successfully");
         refetch(); // Refresh order details after update

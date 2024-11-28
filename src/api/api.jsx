@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://api.wingsblast.com/api/v1",
+  // baseURL: "https://api.wingsblast.com/api/v1",
+  baseURL: "http://localhost:6001/api/v1",
 });
 
 API.interceptors.request.use((config) => {
@@ -32,6 +33,27 @@ export const useAdminProfile = () => {
   });
 
   return { admin, isLoading, isError, error, refetch };
+};
+
+// get notification
+export const useNotification = () => {
+  const getNotification = async () => {
+    const response = await API.get("/notification");
+    return response.data.data;
+  };
+
+  const {
+    data: notification = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["notification"],
+    queryFn: getNotification,
+  });
+
+  return { notification, isLoading, isError, error, refetch };
 };
 
 // sign out
@@ -337,23 +359,29 @@ export const useuserDetails = (id) => {
 };
 
 // Order
-export const useOrders = () => {
+export const useOrders = ({ page = 1, limit = 10, status } = {}) => {
   const getOrders = async () => {
-    const response = await API.get("/orders/all");
-    return response.data.data;
+    const response = await API.get("/orders/all", {
+      params: { page, limit, status },
+    });
+    return response.data;
   };
+
   const {
-    data: orders = [],
+    data: response = {},
     isLoading,
     isError,
     error,
     refetch,
   } = useQuery({
-    queryKey: ["orders"],
+    queryKey: ["orders", page, limit, status],
     queryFn: getOrders,
+    keepPreviousData: true,
   });
 
-  return { orders, isLoading, isError, error, refetch };
+  const { data: orders = [], pagination = {} } = response;
+
+  return { orders, pagination, isLoading, isError, error, refetch };
 };
 
 // get Food Details

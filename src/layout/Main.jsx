@@ -1,17 +1,34 @@
-// Main.js
-import React, { useState, useEffect } from "react";
-import { Breadcrumb, Layout, Drawer } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Breadcrumb, Layout, Drawer, Button } from "antd";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import SocketNotifications from "../components/SocketNotifications";
+import NotiSount from "../assets/notification.wav";
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const Main = () => {
+  const [alerm, setAlerm] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+  const [isAudioAllowed, setIsAudioAllowed] = useState(false);
   const location = useLocation();
 
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (alerm && isAudioAllowed && audioRef.current) {
+      audioRef.current
+        .play()
+        .catch((err) => console.error("Audio play failed:", err));
+    } else if (!alerm && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [alerm, isAudioAllowed]);
+
+  // Breadcrumb create
   const generateBreadcrumbItems = () => {
     const pathnames = location.pathname.split("/").filter((x) => x);
     return [
@@ -26,7 +43,18 @@ const Main = () => {
     ];
   };
 
-  // Toggle the Drawer (sidebar) visibility
+  const enableAudio = () => {
+    if (audioRef.current) {
+      audioRef.current
+        .play()
+        .then(() => {
+          audioRef.current.pause();
+          setIsAudioAllowed(true);
+        })
+        .catch((err) => console.error("Audio enable failed:", err));
+    }
+  };
+
   const showDrawer = () => {
     setDrawerVisible(true);
   };
@@ -35,7 +63,6 @@ const Main = () => {
     setDrawerVisible(false);
   };
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
@@ -47,15 +74,21 @@ const Main = () => {
     };
   }, []);
 
+  const sendAlerm = (data) => {
+    setAlerm(data);
+  };
+
   return (
     <Layout>
+      {/* audio element */}
+      <audio ref={audioRef} src={NotiSount} loop />
+
       {/* Header */}
       <Header className="bg-white sticky top-0 z-10 w-full flex items-center">
         <Navbar showDrawer={showDrawer} />
       </Header>
 
       <Layout>
-        {/* Sidebar for larger screens */}
         {isLargeScreen && (
           <Sider
             className="hidden lg:block h-screen fixed left-0 top-16"
@@ -73,7 +106,6 @@ const Main = () => {
           </Sider>
         )}
 
-        {/* Drawer for mobile view */}
         <Drawer
           title="Navigation"
           placement="left"
@@ -86,19 +118,38 @@ const Main = () => {
           <Sidebar onClick={closeDrawer} />
         </Drawer>
 
-        {/* Main Content Layout */}
         <Layout
           style={{
             marginLeft: isLargeScreen ? 320 : 0,
           }}
         >
           <Content className="px-6">
-            <Breadcrumb className="my-4" items={generateBreadcrumbItems()} />
+            <div className="flex justify-between">
+              <Breadcrumb className="my-4">
+                {generateBreadcrumbItems().map((item, index) => (
+                  <Breadcrumb.Item key={index}>
+                    <Link to={item.href}>{item.title}</Link>
+                  </Breadcrumb.Item>
+                ))}
+              </Breadcrumb>
+
+              {!isAudioAllowed && (
+                <div style={{ padding: "10px", textAlign: "center" }}>
+                  <Button onClick={enableAudio} type="primary">
+                    Enable Notifications
+                  </Button>
+                </div>
+              )}
+            </div>
 
             <div
               className="p-6 min-h-[380px]"
               style={{ background: "#fff", borderRadius: "8px" }}
             >
+              {/* SocketNotifications */}
+              <SocketNotifications sendAlerm={sendAlerm} />
+
+              {/* Placeholder for dynamic content */}
               <Outlet />
             </div>
           </Content>

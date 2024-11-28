@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Menu, Dropdown, Button, Badge, Drawer } from "antd";
 import { Link } from "react-router-dom";
+
 import {
   MenuOutlined,
   BellOutlined,
@@ -8,10 +9,17 @@ import {
   SettingOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { signOutAdmin } from "../api/api";
+import { signOutAdmin, useNotification } from "../api/api";
+import Notification from "./Notification";
 
 const Navbar = ({ showDrawer }) => {
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const { notification, isLoading, isError, error, refetch } =
+    useNotification();
+
+  const unreadCount = notification.filter(
+    (notif) => notif.is_read === 0
+  ).length;
 
   const handleSignOut = () => {
     signOutAdmin();
@@ -52,7 +60,7 @@ const Navbar = ({ showDrawer }) => {
   const headerItems = [
     {
       label: (
-        <Badge count={1} className="mt-[24px]">
+        <Badge count={unreadCount} className="mt-[24px]">
           <BellOutlined
             style={{ fontSize: "24px", cursor: "pointer" }}
             onClick={() => setDrawerVisible(true)}
@@ -104,7 +112,13 @@ const Navbar = ({ showDrawer }) => {
         onClose={() => setDrawerVisible(false)}
         open={drawerVisible}
       >
-        <p>No new notifications</p>
+        <Notification
+          notification={notification}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          refetch={refetch}
+        />
       </Drawer>
     </div>
   );
