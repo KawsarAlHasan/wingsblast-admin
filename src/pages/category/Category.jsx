@@ -16,6 +16,7 @@ import {
 } from "@ant-design/icons";
 import { useCategory, API } from "../../api/api"; // Assuming this hook fetches category data
 import AddCategory from "./AddCategory";
+import EditCategory from "./EditCategory";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -24,6 +25,9 @@ const Category = () => {
   const { category, isLoading, isError, error, refetch } = useCategory();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
+
+  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
+  const [categoryDetails, setCategoryDetails] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -34,9 +38,14 @@ const Category = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing category with ID: ${id}`);
-    // Add your logic to open a form or redirect to edit page.
+  const handleEdit = (sandCustDetail) => {
+    setCategoryDetails(sandCustDetail);
+    setIsEditCategoryOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setCategoryDetails(null); // Reset the details
+    setIsEditCategoryOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -119,7 +128,7 @@ const Category = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -159,9 +168,16 @@ const Category = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 10 }}
         />
       )}
+
+      <EditCategory
+        categoryDetails={categoryDetails}
+        isOpen={isEditCategoryOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };

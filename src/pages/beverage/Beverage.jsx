@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { API, useBeverage } from "../../api/api";
 import AddBeverage from "./AddBeverage";
+import EditBeverage from "./EditBeverage";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -26,6 +27,9 @@ const Beverage = () => {
   const { beverage, isLoading, isError, error, refetch } = useBeverage();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const [isEditBeverageOpen, setIsEditBeverageOpen] = useState(false);
+  const [beverages, setBeverages] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -36,8 +40,14 @@ const Beverage = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing Beverage with ID: ${id}`);
+  const handleEdit = (sandCustDetail) => {
+    setBeverages(sandCustDetail);
+    setIsEditBeverageOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setBeverages(null); // Reset the details
+    setIsEditBeverageOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -127,7 +137,7 @@ const Beverage = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -170,6 +180,13 @@ const Beverage = () => {
           pagination={{ pageSize: 5 }}
         />
       )}
+
+      <EditBeverage
+        beverageData={beverages}
+        isOpen={isEditBeverageOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };

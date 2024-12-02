@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { API, useDrink } from "../../api/api";
 import AddDrink from "./AddDrink";
+import EditDrink from "./EditDrink";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -26,6 +27,8 @@ const Drink = () => {
   const { drink, isLoading, isError, error, refetch } = useDrink();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isEditDrinksOpen, setIsDrinksOpen] = useState(false);
+  const [drinks, setDrinks] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -36,8 +39,14 @@ const Drink = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing drink with ID: ${id}`);
+  const handleEdit = (sandCustDetail) => {
+    setDrinks(sandCustDetail);
+    setIsDrinksOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setDrinks(null); // Reset the details
+    setIsDrinksOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -127,7 +136,7 @@ const Drink = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -170,6 +179,13 @@ const Drink = () => {
           pagination={{ pageSize: 5 }}
         />
       )}
+
+      <EditDrink
+        drinks={drinks}
+        isOpen={isEditDrinksOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };

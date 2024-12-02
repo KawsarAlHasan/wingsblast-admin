@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { API, useSide } from "../../api/api";
 import AddSide from "./AddSide";
+import EditSide from "./EditSide";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -26,6 +27,8 @@ const Side = () => {
   const { side, isLoading, isError, error, refetch } = useSide();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isEditSideOpen, setIsEditSideOpen] = useState(false);
+  const [sideDetails, setSideDetails] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -36,8 +39,14 @@ const Side = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing Side with ID: ${id}`);
+  const handleEdit = (sandCustDetail) => {
+    setSideDetails(sandCustDetail);
+    setIsEditSideOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setSideDetails(null); // Reset the details
+    setIsEditSideOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -132,7 +141,7 @@ const Side = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -175,6 +184,13 @@ const Side = () => {
           pagination={{ pageSize: 10 }}
         />
       )}
+
+      <EditSide
+        sideDetails={sideDetails}
+        isOpen={isEditSideOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };

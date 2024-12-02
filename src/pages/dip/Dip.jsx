@@ -17,6 +17,7 @@ import {
 } from "@ant-design/icons";
 import { API, useDip } from "../../api/api";
 import AddDip from "./AddDip";
+import EditDip from "./EditDip";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -25,6 +26,8 @@ const Dip = () => {
   const { dip, isLoading, isError, error, refetch } = useDip();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isEditDipOpen, setIsEditDipOpen] = useState(false);
+  const [dipDetails, setDipDetails] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -35,8 +38,14 @@ const Dip = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing dip with ID: ${id}`);
+  const handleEdit = (sandCustDetail) => {
+    setDipDetails(sandCustDetail);
+    setIsEditDipOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setDipDetails(null); // Reset the details
+    setIsEditDipOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -124,7 +133,7 @@ const Dip = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -167,6 +176,13 @@ const Dip = () => {
           pagination={{ pageSize: 5 }}
         />
       )}
+
+      <EditDip
+        dipDetails={dipDetails}
+        isOpen={isEditDipOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };

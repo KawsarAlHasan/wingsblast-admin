@@ -103,6 +103,7 @@ function OrderDetails() {
                 <p>
                   Date: {new Date(orderDetails.created_at).toLocaleDateString()}
                 </p>
+                <p>Order ID: {orderDetails.order_id || orderDetails.id}</p>
                 <p>Status: {orderDetails.status || "Pending"}</p>
                 <p>
                   Customer Name: {orderDetails.first_name}{" "}

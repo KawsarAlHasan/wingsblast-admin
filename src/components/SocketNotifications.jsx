@@ -3,7 +3,7 @@ import { ExclamationCircleFilled } from "@ant-design/icons";
 import { Modal } from "antd";
 import { io } from "socket.io-client";
 
-const SOCKET_SERVER_URL = "http://localhost:6001";
+const SOCKET_SERVER_URL = "https://api.wingsblast.com/";
 const { confirm } = Modal;
 
 function SocketNotifications({ sendAlerm }) {

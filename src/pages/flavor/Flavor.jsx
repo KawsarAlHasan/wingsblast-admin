@@ -19,6 +19,7 @@ import {
 import { API, useFlavor } from "../../api/api";
 import AddFlavor from "./AddFlavor";
 import ViewFlavorModal from "./ViewFlavorModal";
+import EditFlavor from "./EditFlavor";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -30,6 +31,9 @@ const Flavor = () => {
   const [selectedFlavor, setSelectedFlavor] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [isEditFlavorOpen, setIsEditFlavorOpen] = useState(false);
+  const [flavorDetails, setFlavorDetails] = useState(null);
+
   const openNotification = (type, message, description) => {
     notification[type]({
       message,
@@ -39,10 +43,15 @@ const Flavor = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing flavor with ID: ${id}`);
+  const handleEdit = (sandCustDetail) => {
+    setFlavorDetails(sandCustDetail);
+    setIsEditFlavorOpen(true);
   };
 
+  const handleModalClose = () => {
+    setFlavorDetails(null); // Reset the details
+    setIsEditFlavorOpen(false); // Close modal
+  };
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     try {
@@ -144,7 +153,7 @@ const Flavor = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -166,6 +175,8 @@ const Flavor = () => {
       ),
     },
   ];
+
+  console.log(flavor, "flavor");
 
   return (
     <div>
@@ -192,6 +203,13 @@ const Flavor = () => {
         flavor={selectedFlavor}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <EditFlavor
+        flavorDetails={flavorDetails}
+        isOpen={isEditFlavorOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
       />
     </div>
   );

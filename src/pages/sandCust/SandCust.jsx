@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { API, useSandCust } from "../../api/api";
 import AddSandCust from "./AddSandCust";
+import EditSandCust from "./EditSandCust";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -26,6 +27,8 @@ const SandCust = () => {
   const { sandCust, isLoading, isError, error, refetch } = useSandCust();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isEditSandCustOpen, setIsEditSandCustOpen] = useState(false);
+  const [sandCustDetails, setSandCustDetails] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -36,8 +39,14 @@ const SandCust = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing Sandwich Customize with ID: ${id}`);
+  const handleEdit = (sandCustDetail) => {
+    setSandCustDetails(sandCustDetail);
+    setIsEditSandCustOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setSandCustDetails(null); // Reset the details
+    setIsEditSandCustOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -140,7 +149,7 @@ const SandCust = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -185,6 +194,13 @@ const SandCust = () => {
           pagination={{ pageSize: 10 }}
         />
       )}
+
+      <EditSandCust
+        sandCustDetails={sandCustDetails}
+        isOpen={isEditSandCustOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };

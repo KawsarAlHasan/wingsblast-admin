@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { API, useToppings } from "../../api/api";
 import AddToppings from "./AddToppings";
+import EditToppings from "./EditToppings";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -26,6 +27,8 @@ const Toppings = () => {
   const { toppings, isLoading, isError, error, refetch } = useToppings();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isEditToppingsOpen, setIsEditToppingsOpen] = useState(false);
+  const [toppingsDetails, setToppingsDetails] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -36,8 +39,14 @@ const Toppings = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing toppings with ID: ${id}`);
+  const handleEdit = (sandCustDetail) => {
+    setToppingsDetails(sandCustDetail);
+    setIsEditToppingsOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setToppingsDetails(null); // Reset the details
+    setIsEditToppingsOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -132,7 +141,7 @@ const Toppings = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -175,6 +184,13 @@ const Toppings = () => {
           pagination={{ pageSize: 10 }}
         />
       )}
+
+      <EditToppings
+        toppingsDetails={toppingsDetails}
+        isOpen={isEditToppingsOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };

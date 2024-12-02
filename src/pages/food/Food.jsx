@@ -19,6 +19,7 @@ import { API, useFoodMenu } from "../../api/api";
 import ViewFoodModal from "./ViewFoodModal";
 import AddFood from "./AddFood";
 import { Link } from "react-router-dom";
+import EditFood from "./EditFood";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -27,6 +28,8 @@ const Food = () => {
   const { foodMenu, isLoading, isError, error, refetch } = useFoodMenu();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isEditFoodMenusOpen, setIsEditFoodMenusOpen] = useState(false);
+  const [foodMenus, setFoodMenus] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -37,9 +40,14 @@ const Food = () => {
     });
   };
 
-  const handleEdit = (id) => {
-    console.log(`Editing food item with ID: ${id}`);
-    // Implement edit logic here
+  const handleEdit = (sandCustDetail) => {
+    setFoodMenus(sandCustDetail);
+    setIsEditFoodMenusOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setFoodMenus(null); // Reset the details
+    setIsEditFoodMenusOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
@@ -124,7 +132,7 @@ const Food = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record.id)}
+          onClick={() => handleEdit(record)}
         >
           Edit
         </Button>
@@ -167,6 +175,13 @@ const Food = () => {
           pagination={{ pageSize: 20 }}
         />
       )}
+
+      <EditFood
+        foodMenus={foodMenus}
+        isOpen={isEditFoodMenusOpen}
+        onClose={handleModalClose}
+        refetch={refetch}
+      />
     </div>
   );
 };
