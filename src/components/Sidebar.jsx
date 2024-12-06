@@ -34,7 +34,11 @@ const sidebarItems = [
       },
       {
         key: "4-2",
-        label: <Link to="/food">Menu</Link>,
+        label: <Link to="/sub-category">Sub Category & Foods</Link>,
+      },
+      {
+        key: "4-2-1",
+        label: <Link to="/allfood-details">All Foods Details</Link>,
       },
       {
         key: "4-3",

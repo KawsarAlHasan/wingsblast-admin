@@ -1,46 +1,32 @@
 import React, { useState } from "react";
-import {
-  Table,
-  Button,
-  Image,
-  Input,
-  Rate,
-  Spin,
-  Modal,
-  notification,
-  message,
-  Row,
-  Col,
-  Typography,
-} from "antd";
-
-const { Title, Text } = Typography;
-
+import { Table, Image, Modal, notification, Button, Spin, Input } from "antd";
 import {
   EyeOutlined,
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useFoodDatails, useSingleFoodMenu } from "../../api/api";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import EditFoodDetails from "./EditFoodDetails";
+import { API, useAllFoodDetails } from "../../api/api";
+import { Link } from "react-router-dom";
+import EditFoodDetails from "../foodDetails/EditFoodDetails";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
-const FoodDetails = () => {
-  const { foodMenuID } = useParams();
-  const { foodDetails, isLoading, isError, error, refetch } =
-    useFoodDatails(foodMenuID);
-  const { singleFoodMenu } = useSingleFoodMenu(foodMenuID);
+function AllFoodDetails() {
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    page: 1,
+    limit: 10,
+    status: null,
+  });
+
+  const { allFoodDetails, pagination, isLoading, isError, error, refetch } =
+    useAllFoodDetails(filters);
 
   const [isEditFoodDetailsOpen, setIsEditFoodDetailsOpen] = useState(false);
   const [fdDetails, setFdDetails] = useState(null);
-
-  const navigate = useNavigate();
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -59,6 +45,19 @@ const FoodDetails = () => {
   const handleModalClose = () => {
     setFdDetails(null); // Reset the details
     setIsEditFoodDetailsOpen(false); // Close modal
+  };
+
+  // Handle table changes (pagination, filters)
+  const handleTableChange = (pagination, tableFilters) => {
+    const { current: page, pageSize: limit } = pagination;
+    const status = tableFilters.status ? tableFilters.status[0] : null;
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      page,
+      limit,
+      status,
+    }));
   };
 
   const handleDelete = async (id) => {
@@ -96,9 +95,9 @@ const FoodDetails = () => {
     });
   };
 
-  const handleViewButton = (id) => {
-    navigate(`/sub-category/${foodMenuID}/${id}`);
-  };
+  React.useEffect(() => {
+    refetch(); // Refetch data whenever filters are updated
+  }, [filters, refetch]);
 
   if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
   if (isError)
@@ -108,32 +107,22 @@ const FoodDetails = () => {
       </div>
     );
 
-  const filteredData = foodDetails.filter((foodDetail) =>
-    foodDetail?.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  const data = filteredData.map((foodDetail, index) => ({
-    key: index,
-    ...foodDetail,
-  }));
-
   const columns = [
     {
-      title: "SN",
+      title: "Serial",
       dataIndex: "id",
       key: "id",
-      render: (text, record, index) => index + 1,
+      render: (text, record, index) =>
+        index + 1 + (filters.page - 1) * filters.limit,
     },
     {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (image) => (
-        <Image src={image} alt="Food" width={50} height={50} />
-      ),
+      render: (image) => <Image src={image} alt="Dip" width={50} height={50} />,
     },
     {
-      title: "Name",
+      title: "Food Name",
       dataIndex: "name",
       key: "name",
     },
@@ -141,7 +130,18 @@ const FoodDetails = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price) => <span>$ {price}</span>,
+      render: (price) => `$${price.toFixed(2)}`,
+    },
+    {
+      title: "Calories",
+      dataIndex: "cal",
+      key: "cal",
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => <span title={text}>{text.slice(0, 50)}...</span>,
     },
     {
       title: "Status",
@@ -159,20 +159,6 @@ const FoodDetails = () => {
         ),
     },
     {
-      title: "View",
-      key: "view",
-      render: (_, record) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => handleViewButton(record.id)}
-          icon={<EyeOutlined />}
-        >
-          View
-        </Button>
-      ),
-    },
-    {
       title: "Edit",
       key: "edit",
       render: (_, record) => (
@@ -184,6 +170,17 @@ const FoodDetails = () => {
         >
           Edit
         </Button>
+      ),
+    },
+    {
+      title: "Details",
+      key: "details",
+      render: (_, record) => (
+        <Link to={`/allfood-details/${record.id}`}>
+          <Button type="primary" size="small" icon={<EyeOutlined />}>
+            Details
+          </Button>
+        </Link>
       ),
     },
     {
@@ -203,48 +200,38 @@ const FoodDetails = () => {
     },
   ];
 
+  const filteredData = allFoodDetails.filter((item) =>
+    item?.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const data = filteredData.map((item, index) => ({
+    key: index,
+    ...item,
+  }));
+
   return (
     <div>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Image
-            src={singleFoodMenu[0]?.image}
-            alt={singleFoodMenu[0]?.name}
-            width={150}
-          />
-        </Col>
-        <Col span={16}>
-          <Title level={4}>{singleFoodMenu[0]?.name}</Title>
-          <Text>
-            <b>Description:</b> {singleFoodMenu[0]?.details}
-          </Text>
-          <br />
-          <Text>
-            <b>SN Number:</b> {singleFoodMenu[0]?.sn_number}
-          </Text>
-        </Col>
-      </Row>
-
-      <h2 className="text-center text-2xl font-bold my-5">Food Details List</h2>
+      <h2 className="text-center text-2xl font-semibold my-4">
+        All Food Details List
+      </h2>
       <div className="flex justify-between mb-4">
         <Search
-          placeholder="Search Food Details..."
+          placeholder="Search Food Name..."
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <Link to={`/food/${foodMenuID}/add`}>
-          <Button type="primary">Add New Food</Button>
-        </Link>
       </div>
-      {data.length === 0 ? (
-        <div className="text-center text-gray-500">No data found</div>
-      ) : (
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={{ pageSize: 20 }}
-        />
-      )}
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          current: filters.page,
+          pageSize: filters.limit,
+          total: pagination.total,
+        }}
+        onChange={handleTableChange}
+        bordered
+      />
 
       <EditFoodDetails
         fdDetails={fdDetails}
@@ -254,6 +241,6 @@ const FoodDetails = () => {
       />
     </div>
   );
-};
+}
 
-export default FoodDetails;
+export default AllFoodDetails;

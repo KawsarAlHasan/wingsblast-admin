@@ -120,7 +120,7 @@ const Food = () => {
       key: "view",
       render: (_, record) => (
         <Button type="primary" size="small" icon={<EyeOutlined />}>
-          <Link to={`/food/${record.id}`}>View</Link>
+          <Link to={`/sub-category/${record.id}`}>View</Link>
         </Button>
       ),
     },
@@ -157,7 +157,9 @@ const Food = () => {
 
   return (
     <div>
-      <h2 className="text-center text-2xl font-bold my-5">Food Menu List</h2>
+      <h2 className="text-center text-2xl font-bold my-5">
+        Sub Category Food List
+      </h2>
       <div className="flex justify-between mb-4">
         <Search
           placeholder="Search food items..."

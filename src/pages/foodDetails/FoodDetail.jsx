@@ -1,12 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Spin, Image, Button, Divider, Alert } from "antd";
-import { useFoodDetail } from "../../api/api";
+import {
+  Card,
+  Spin,
+  Image,
+  Select,
+  message,
+  Button,
+  Divider,
+  Alert,
+} from "antd";
+import { API, useFoodDetail } from "../../api/api";
 
 function FoodDetail() {
   const { foodDetailId } = useParams();
   const { foodDetail, isLoading, isError, error, refetch } =
     useFoodDetail(foodDetailId);
+
+  const [status, setStatus] = useState(foodDetail.status);
+
+  useEffect(() => {
+    if (foodDetail) {
+      setStatus(foodDetail.status);
+    }
+  }, [foodDetail]);
 
   if (isLoading) {
     return (
@@ -32,6 +49,24 @@ function FoodDetail() {
     );
   }
 
+  const handleStatusChange = async (value) => {
+    try {
+      const response = await API.put(`/food-details/status/${foodDetailId}`, {
+        status: value,
+      });
+
+      if (response.statusText == "OK") {
+        setStatus(value); // Update status locally
+        message.success("Food Details status updated successfully");
+        refetch(); // Refresh Food Details details after update
+      } else {
+        message.error("Failed to update Food Details status");
+      }
+    } catch (error) {
+      message.error(`Error updating status ${error.message}`);
+    }
+  };
+
   const dips = foodDetail?.dips || [];
   const sides = foodDetail?.sides || [];
   const drinks = foodDetail?.drinks || [];
@@ -41,6 +76,20 @@ function FoodDetail() {
 
   return (
     <div className="">
+      <div className="flex justify-between p-4">
+        <h2 className="font-semibold text-2xl">Food Details</h2>
+        <div>
+          <Select
+            value={status}
+            onChange={handleStatusChange}
+            style={{ width: 120 }}
+            options={[
+              { value: "active", label: "Active" },
+              { value: "deactivate", label: "Deactivate" },
+            ]}
+          />
+        </div>
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <Image
           alt={foodDetail.name}

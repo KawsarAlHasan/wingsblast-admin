@@ -26,6 +26,7 @@ import Privacy from "../pages/Privacy";
 import TaxAndDeliveryFee from "../pages/tax&Delivery/TaxAndDeliveryFee";
 import Banner from "../pages/Banner";
 import AboutUs from "../pages/AboutUs";
+import AllFoodDetails from "../pages/allFoodDetails/AllFoodDetails";
 
 export const router = createBrowserRouter([
   {
@@ -77,20 +78,28 @@ export const router = createBrowserRouter([
         element: <SandCust />,
       },
       {
-        path: "/food",
+        path: "/sub-category",
         element: <Food />,
       },
       {
-        path: "/food/:foodMenuID",
+        path: "/sub-category/:foodMenuID",
         element: <FoodDetails />,
       },
       {
-        path: "/food/:foodMenuID/:foodDetailId",
+        path: "/sub-category/:foodMenuID/:foodDetailId",
         element: <FoodDetail />,
       },
       {
-        path: "/food/:foodMenuID/add",
+        path: "/sub-category/:foodMenuID/add",
         element: <AddFoodDetails />,
+      },
+      {
+        path: "/allfood-details",
+        element: <AllFoodDetails />,
+      },
+      {
+        path: "/allfood-details/:foodDetailId",
+        element: <FoodDetail />,
       },
       {
         path: "/users",

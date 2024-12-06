@@ -316,6 +316,32 @@ export const useFoodDetail = (id) => {
   return { foodDetail, isLoading, isError, error, refetch };
 };
 
+// get all food details
+export const useAllFoodDetails = ({ page = 1, limit = 10, status } = {}) => {
+  const getAllFoodDetails = async () => {
+    const response = await API.get("/food-details/all", {
+      params: { page, limit, status },
+    });
+    return response.data;
+  };
+
+  const {
+    data: response = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["allFoodDetails", page, limit, status],
+    queryFn: getAllFoodDetails,
+    keepPreviousData: true,
+  });
+
+  const { data: allFoodDetails = [], pagination = {} } = response;
+
+  return { allFoodDetails, pagination, isLoading, isError, error, refetch };
+};
+
 // get Users
 export const useUsers = () => {
   const getUsers = async () => {
