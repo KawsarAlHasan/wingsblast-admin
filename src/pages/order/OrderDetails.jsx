@@ -99,11 +99,12 @@ function OrderDetails() {
             {/* Order and Customer Details */}
             <div className="flex justify-between">
               <div>
-                <p className="font-semibold">Order ID: {orderDetails.id}</p>
+                <p className="font-semibold">
+                  Order ID: {orderDetails.order_id || orderDetails.id}
+                </p>
                 <p>
                   Date: {new Date(orderDetails.created_at).toLocaleDateString()}
                 </p>
-                <p>Order ID: {orderDetails.order_id || orderDetails.id}</p>
                 <p>Status: {orderDetails.status || "Pending"}</p>
                 <p>
                   Customer Name: {orderDetails.first_name}{" "}
@@ -157,6 +158,7 @@ function OrderDetails() {
                       {Object.entries(food.addons).map(([key, addons]) => (
                         <div key={key} className="text-sm mt-2">
                           <p className="font-semibold capitalize">{key}:</p>
+
                           {addons.map((addon, index) => (
                             <div key={index} className="ml-4">
                               <p>

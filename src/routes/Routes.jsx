@@ -27,6 +27,15 @@ import TaxAndDeliveryFee from "../pages/tax&Delivery/TaxAndDeliveryFee";
 import Banner from "../pages/Banner";
 import AboutUs from "../pages/AboutUs";
 import AllFoodDetails from "../pages/allFoodDetails/AllFoodDetails";
+import Coupons from "../pages/coupons/Coupons";
+import ProductFeature from "../pages/productFeature/ProductFeature";
+import Test from "../pages/Test";
+import Feature from "../pages/feature/Feature";
+import Promotion from "../pages/promotion/Promotion";
+import OpeningScheduleTable from "../pages/opening/OpeningSchedule";
+import RegularOrder from "../pages/regularOrder/RegularOrder";
+import ScheduleOrder from "../pages/ScheduleOrder/ScheduleOrder";
+import BirthdayPromotion from "../pages/promotion/BirthdayPromotion";
 
 export const router = createBrowserRouter([
   {
@@ -64,6 +73,14 @@ export const router = createBrowserRouter([
       {
         path: "/beverage",
         element: <Beverage />,
+      },
+      {
+        path: "/feature",
+        element: <Feature />,
+      },
+      {
+        path: "/product-feature/:featuteID",
+        element: <ProductFeature />,
       },
       {
         path: "/side",
@@ -118,12 +135,20 @@ export const router = createBrowserRouter([
         element: <Order />,
       },
       {
+        path: "/order/regular",
+        element: <RegularOrder />,
+      },
+      {
+        path: "/order/schedule",
+        element: <ScheduleOrder />,
+      },
+      {
         path: "/order/:orderID",
         element: <OrderDetails />,
       },
 
       {
-        path: "/tax-&-delivery-fee",
+        path: "/tax-&-fees",
         element: <TaxAndDeliveryFee />,
       },
 
@@ -142,6 +167,26 @@ export const router = createBrowserRouter([
       {
         path: "/about-us",
         element: <AboutUs />,
+      },
+      {
+        path: "/coupons",
+        element: <Coupons />,
+      },
+      {
+        path: "/opening",
+        element: <OpeningScheduleTable />,
+      },
+      {
+        path: "/promotion",
+        element: <Promotion />,
+      },
+      {
+        path: "/birthday-voucher",
+        element: <BirthdayPromotion />,
+      },
+      {
+        path: "/test",
+        element: <Test />,
       },
     ],
   },

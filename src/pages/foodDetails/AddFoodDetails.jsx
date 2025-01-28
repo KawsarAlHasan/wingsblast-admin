@@ -29,6 +29,7 @@ import BeverageSelect from "./BeverageSelect";
 import ToppingsSelect from "./ToppingsSelect";
 import SandCustSelect from "./SandCustSelect";
 import { useParams } from "react-router-dom";
+import RicePlatter from "./RicePlatter";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -44,6 +45,7 @@ const AddFoodDetails = () => {
   const { toppings } = useToppings();
   const { sandCust } = useSandCust();
   const [selectedSides, setSelectedSides] = useState([]);
+  const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
   const [selectedDips, setSelectedDips] = useState([]);
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
@@ -71,6 +73,25 @@ const AddFoodDetails = () => {
   // side paid unpaid
   const handleToggleSidePaid = (id, isChecked) => {
     setSelectedSides((prevSides) =>
+      prevSides.map((side) =>
+        side.side_id === id ? { ...side, isPaid: isChecked } : side
+      )
+    );
+  };
+  // Rice Platter selection Handling
+  const handleRicePlatterSelection = (id, isChecked) => {
+    setSelectedRicePlatter((prevSides) => {
+      if (isChecked) {
+        return [...prevSides, { side_id: id, isPaid: false }];
+      } else {
+        return prevSides.filter((side) => side.side_id !== id);
+      }
+    });
+  };
+
+  // Rice Platter paid unpaid
+  const handleToggleRicePlatterPaid = (id, isChecked) => {
+    setSelectedRicePlatter((prevSides) =>
       prevSides.map((side) =>
         side.side_id === id ? { ...side, isPaid: isChecked } : side
       )
@@ -201,6 +222,7 @@ const AddFoodDetails = () => {
     formDataObj.append("food_menu_name", data.food_menu_name);
 
     formDataObj.append("sides", JSON.stringify(selectedSides));
+    formDataObj.append("ricePlatter", JSON.stringify(selectedRicePlatter));
     formDataObj.append("dips", JSON.stringify(selectedDips));
     formDataObj.append("drinks", JSON.stringify(selectedDrinks));
     formDataObj.append("beverages", JSON.stringify(selectedBeverages));
@@ -218,7 +240,7 @@ const AddFoodDetails = () => {
       message.error("Failed to add food details. Please try again.");
     } finally {
       setLoading(false);
-      window.location.href = `/food/${foodMenuID}`;
+      window.location.href = `/sub-category/${foodMenuID}`;
     }
   };
 
@@ -315,6 +337,21 @@ const AddFoodDetails = () => {
             selectedSandCust={selectedSandCust}
             handleSandCustSelection={handleSandCustSelection}
             handleToggleSandCustPaid={handleToggleSandCustPaid}
+          />
+        </Form.Item>
+      ),
+      style: panelStyle,
+    },
+    {
+      key: "7",
+      label: <h2 className="font-semibold">Rice Platter</h2>,
+      children: (
+        <Form.Item>
+          <RicePlatter
+            side={side}
+            selectedRicePlatter={selectedRicePlatter}
+            handleRicePlatterSelection={handleRicePlatterSelection}
+            handleToggleRicePlatterPaid={handleToggleRicePlatterPaid}
           />
         </Form.Item>
       ),
@@ -421,7 +458,6 @@ const AddFoodDetails = () => {
             <Controller
               name="cal"
               control={control}
-              rules={{ required: "Calories are required" }}
               render={({ field }) => (
                 <Input {...field} placeholder="Enter calories" />
               )}

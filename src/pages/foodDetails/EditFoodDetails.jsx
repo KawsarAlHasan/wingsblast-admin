@@ -27,12 +27,10 @@ import {
   useCategory,
   useDip,
   useDrink,
-  useFoodMenu,
   useSandCust,
   useSide,
   useToppings,
 } from "../../api/api";
-import { useParams } from "react-router-dom";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -47,8 +45,6 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
     reset,
   } = useForm();
 
-  const { foodMenuID } = useParams();
-  const { foodMenu } = useFoodMenu();
   const { side } = useSide();
   const { dip } = useDip();
   const { drink } = useDrink();
@@ -197,6 +193,8 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
         cal: fdDetails.cal || "",
         description: fdDetails.description || "",
         price: fdDetails.price || 0,
+        howManyFlavor: fdDetails.howManyFlavor || 0,
+        howManyChoiceFlavor: fdDetails.howManyChoiceFlavor || 0,
         category_id: fdDetails.category_id || undefined,
         food_menu_name: fdDetails.food_menu_name || "",
       });
@@ -218,7 +216,7 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
 
     formData.append("howManyFlavor", data.howManyFlavor || 0);
     formData.append("howManyChoiceFlavor", data.howManyChoiceFlavor || 0);
-    formData.append("food_menu_id", foodMenuID);
+    formData.append("food_menu_id", fdDetails?.food_menu_id);
 
     formData.append("sides", JSON.stringify(selectedSides));
     formData.append("dips", JSON.stringify(selectedDips));
@@ -460,17 +458,58 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
           </Form.Item>
 
           {/* Calories */}
-          <Form.Item label="Calories" required>
+          <Form.Item label="Calories">
             <Controller
               name="cal"
               control={control}
-              rules={{ required: "Calories are required" }}
               render={({ field }) => (
                 <Input {...field} placeholder="Enter calories" />
               )}
             />
             {errors.cal && (
               <span className="text-red-500">{errors.cal.message}</span>
+            )}
+          </Form.Item>
+
+          {/* howManyFlavor */}
+          <Form.Item label="How Many Flavor">
+            <Controller
+              name="howManyFlavor"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  className="w-full"
+                  min={0}
+                  placeholder="Enter howManyFlavor"
+                />
+              )}
+            />
+            {errors.howManyFlavor && (
+              <span className="text-red-500">
+                {errors.howManyFlavor.message}
+              </span>
+            )}
+          </Form.Item>
+
+          {/* howManyChoiceFlavor */}
+          <Form.Item label="How Many Choice Flavor">
+            <Controller
+              name="howManyChoiceFlavor"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  className="w-full"
+                  min={0}
+                  placeholder="Enter howManyChoiceFlavor"
+                />
+              )}
+            />
+            {errors.howManyChoiceFlavor && (
+              <span className="text-red-500">
+                {errors.howManyChoiceFlavor.message}
+              </span>
             )}
           </Form.Item>
 

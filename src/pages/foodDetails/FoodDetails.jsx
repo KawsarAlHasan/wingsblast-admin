@@ -232,7 +232,7 @@ const FoodDetails = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <Link to={`/food/${foodMenuID}/add`}>
+        <Link to={`/sub-category/${foodMenuID}/add`}>
           <Button type="primary">Add New Food</Button>
         </Link>
       </div>

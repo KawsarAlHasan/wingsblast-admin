@@ -20,6 +20,7 @@ function AllFoodDetails() {
     page: 1,
     limit: 10,
     status: null,
+    name: null,
   });
 
   const { allFoodDetails, pagination, isLoading, isError, error, refetch } =
@@ -43,11 +44,10 @@ function AllFoodDetails() {
   };
 
   const handleModalClose = () => {
-    setFdDetails(null); // Reset the details
-    setIsEditFoodDetailsOpen(false); // Close modal
+    setFdDetails(null);
+    setIsEditFoodDetailsOpen(false);
   };
 
-  // Handle table changes (pagination, filters)
   const handleTableChange = (pagination, tableFilters) => {
     const { current: page, pageSize: limit } = pagination;
     const status = tableFilters.status ? tableFilters.status[0] : null;
@@ -200,15 +200,6 @@ function AllFoodDetails() {
     },
   ];
 
-  const filteredData = allFoodDetails.filter((item) =>
-    item?.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  const data = filteredData.map((item, index) => ({
-    key: index,
-    ...item,
-  }));
-
   return (
     <div>
       <h2 className="text-center text-2xl font-semibold my-4">
@@ -217,13 +208,24 @@ function AllFoodDetails() {
       <div className="flex justify-between mb-4">
         <Search
           placeholder="Search Food Name..."
+          value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
+          onSearch={(value) => {
+            setFilters((prevFilters) => ({
+              ...prevFilters,
+              name: value || null,
+              page: 1, // Reset to the first page
+            }));
+          }}
           style={{ width: 300 }}
         />
       </div>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={allFoodDetails.map((item, index) => ({
+          key: index,
+          ...item,
+        }))}
         pagination={{
           current: filters.page,
           pageSize: filters.limit,

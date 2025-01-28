@@ -104,6 +104,48 @@ export const useFlavor = () => {
   return { flavor, isLoading, isError, error, refetch };
 };
 
+// get Product feature
+export const useFeature = () => {
+  const getFeature = async () => {
+    const response = await API.get(`/feature/all/1`);
+    return response.data;
+  };
+
+  const {
+    data: feature = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["feature"],
+    queryFn: getFeature,
+  });
+
+  return { feature, isLoading, isError, error, refetch };
+};
+
+// get Product feature
+export const useProductFeature = (productFeatureID) => {
+  const getProductFeature = async () => {
+    const response = await API.get(`/product-feature/all/${productFeatureID}`);
+    return response.data;
+  };
+
+  const {
+    data: productFeature = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["productFeature", productFeatureID],
+    queryFn: getProductFeature,
+  });
+
+  return { productFeature, isLoading, isError, error, refetch };
+};
+
 // get Dip
 export const useDip = () => {
   const getDip = async () => {
@@ -317,10 +359,15 @@ export const useFoodDetail = (id) => {
 };
 
 // get all food details
-export const useAllFoodDetails = ({ page = 1, limit = 10, status } = {}) => {
+export const useAllFoodDetails = ({
+  page = 1,
+  limit = 10,
+  status,
+  name,
+} = {}) => {
   const getAllFoodDetails = async () => {
     const response = await API.get("/food-details/all", {
-      params: { page, limit, status },
+      params: { page, limit, status, name },
     });
     return response.data;
   };
@@ -332,7 +379,7 @@ export const useAllFoodDetails = ({ page = 1, limit = 10, status } = {}) => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["allFoodDetails", page, limit, status],
+    queryKey: ["allFoodDetails", page, limit, status, name],
     queryFn: getAllFoodDetails,
     keepPreviousData: true,
   });
@@ -385,10 +432,10 @@ export const useuserDetails = (id) => {
 };
 
 // Order
-export const useOrders = ({ page = 1, limit = 10, status } = {}) => {
+export const useOrders = ({ page = 1, limit = 10, status, isLater } = {}) => {
   const getOrders = async () => {
     const response = await API.get("/orders/all", {
-      params: { page, limit, status },
+      params: { page, limit, status, isLater },
     });
     return response.data;
   };
@@ -400,7 +447,7 @@ export const useOrders = ({ page = 1, limit = 10, status } = {}) => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["orders", page, limit, status],
+    queryKey: ["orders", page, limit, status, isLater],
     queryFn: getOrders,
     keepPreviousData: true,
   });
@@ -555,4 +602,46 @@ export const useBanner = () => {
   });
 
   return { banner, isLoading, isError, error, refetch };
+};
+
+// get Fees
+export const useFees = () => {
+  const getFees = async () => {
+    const response = await API.get(`/fees`);
+    return response.data.data;
+  };
+
+  const {
+    data: fees = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["fees"],
+    queryFn: getFees,
+  });
+
+  return { fees, isLoading, isError, error, refetch };
+};
+
+// get coupons
+export const useCoupons = () => {
+  const getCoupons = async () => {
+    const response = await API.get(`/coupons/`);
+    return response.data.data;
+  };
+
+  const {
+    data: coupons = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["coupons"],
+    queryFn: getCoupons,
+  });
+
+  return { coupons, isLoading, isError, error, refetch };
 };

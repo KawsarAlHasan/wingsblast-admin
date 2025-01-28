@@ -94,12 +94,14 @@ const Main = () => {
             className="hidden lg:block h-screen fixed left-0 top-16"
             width={320}
             style={{
-              overflow: "auto",
-              height: "100vh",
-              position: "fixed",
-              left: 0,
-              top: 64,
               backgroundColor: "#fff",
+              overflow: "auto",
+              height: "90vh",
+              position: "fixed",
+              insetInlineStart: 0,
+              bottom: 64,
+              scrollbarWidth: "thin",
+              scrollbarGutter: "stable",
             }}
           >
             <Sidebar />

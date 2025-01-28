@@ -5,13 +5,14 @@ import { useOrders } from "../../api/api";
 import { Link } from "react-router-dom";
 const { Search } = Input;
 
-function Order() {
+function RegularOrder() {
   const [searchText, setSearchText] = useState("");
   // Maintain state for filters
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
     status: null,
+    isLater: 0,
   });
 
   // Fetch orders using the API hook
@@ -28,6 +29,7 @@ function Order() {
       page,
       limit,
       status,
+      isLater: 0,
     }));
   };
 
@@ -128,7 +130,7 @@ function Order() {
   return (
     <div>
       <h2 className="text-center text-2xl font-semibold my-4">
-        All Orders List
+        Regular Orders List
       </h2>
       <div className="flex justify-between mb-4">
         <Search
@@ -152,4 +154,4 @@ function Order() {
   );
 }
 
-export default Order;
+export default RegularOrder;

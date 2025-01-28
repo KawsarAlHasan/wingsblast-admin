@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { API, useTax } from "../../api/api";
+import { API } from "../../api/api";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Modal, Spin, message } from "antd";
 import { useForm } from "react-hook-form";
 
-function Tax() {
-  const { tax, isLoading, isError, error, refetch } = useTax();
+function Fees({ fee, refetch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -19,9 +18,9 @@ function Tax() {
 
   const handleEdit = () => {
     setIsModalOpen(true);
-    setValue("tax_name", tax.tax_name);
-    setValue("tax_rate", tax.tax_rate);
-    setValue("region", tax.region);
+    setValue("fee_name", fee.fee_name);
+    setValue("fee_amount", fee.fee_amount);
+    setValue("fee_description", fee.fee_description);
   };
 
   const handleCancel = () => {
@@ -32,33 +31,28 @@ function Tax() {
   const handleSave = async (data) => {
     setIsSaving(true);
     try {
-      const response = await API.put(`/settings/tax/update/${tax.id}`, data);
+      const response = await API.put(`/fees/update/${fee.id}`, data);
 
-      message.success("Tax information updated successfully");
+      console.log(response);
+
+      message.success("Fee information updated successfully");
       setIsModalOpen(false);
       setIsSaving(false);
-      refetch(); // Refresh tax data
+      refetch(); // Refresh Delevery Fee data
     } catch (error) {
       message.error(error.message);
       setIsSaving(false);
     }
   };
 
-  if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
-  if (isError)
-    return (
-      <div className="text-center text-red-500">
-        {error.message || "Something went wrong"}
-      </div>
-    );
-
   return (
-    <div className=" bg-gray-50  flex items-center justify-center">
+    <div className=" bg-gray-50 lg:mt-16 flex items-center justify-center">
       <div className="p-6 shadow-lg w-full max-w-md">
         <div className="flex justify-between">
           <div>
             <p className="mb-2">
-              <span className="font-bold">Tax Information:</span> {tax.tax_name}
+              <span className="font-bold">{fee.fee_name}: </span>
+              <span className="text-blue-500"> {fee.fee_amount}</span>
             </p>
           </div>
           <Button
@@ -72,21 +66,17 @@ function Tax() {
         </div>
 
         <p className="mb-2">
-          <span className="font-bold">Tax Rate:</span>{" "}
-          <span className="text-blue-500">{tax.tax_rate}%</span>
-        </p>
-        <p className="mb-2">
-          <span className="font-bold">Region: </span> {tax.region}
+          <span className="font-bold">Region: </span> {fee.fee_description}
         </p>
         <p className="mb-2">
           <span className="font-bold">Last Updated:</span>{" "}
-          {new Date(tax.updated_at).toLocaleString()}
+          {new Date(fee.updated_at).toLocaleString()}
         </p>
       </div>
 
-      {/* Modal for Editing Tax */}
+      {/* Modal for Editing deleveryFee */}
       <Modal
-        title="Edit Tax Information"
+        title={`Edit ${fee.fee_name}`}
         open={isModalOpen}
         onCancel={handleCancel}
         footer={[
@@ -105,42 +95,55 @@ function Tax() {
       >
         <form>
           <div className="mb-4">
-            <label className="block text-gray-700">Tax Name</label>
+            <label className="block text-gray-700">Fee Name</label>
             <input
               className="w-full p-2 border rounded"
               type="text"
-              {...register("tax_name", { required: "Tax name is required" })}
+              {...register("fee_name", {
+                required: "Fee Name is required",
+              })}
             />
-            {errors.tax_name && (
-              <p className="text-red-500 text-sm">{errors.tax_name.message}</p>
+            {errors.fee_name && (
+              <p className="text-red-500 text-sm">{errors.fee_name.message}</p>
             )}
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700">Tax Rate (%)</label>
+            <label className="block text-gray-700">Fee Amount</label>
             <input
               className="w-full p-2 border rounded"
               type="number"
-              {...register("tax_rate", {
-                required: "Tax rate is required",
+              {...register("fee_amount", {
+                required: "Fee Amount rate is required",
                 min: { value: 0, message: "Rate must be at least 0" },
-                max: { value: 100, message: "Rate cannot exceed 100" },
               })}
             />
-            {errors.tax_rate && (
-              <p className="text-red-500 text-sm">{errors.tax_rate.message}</p>
+            {errors.fee_amount && (
+              <p className="text-red-500 text-sm">
+                {errors.fee_amount.message}
+              </p>
             )}
           </div>
 
           <div className="mb-4">
+            {/* Label */}
             <label className="block text-gray-700">Region</label>
-            <input
+
+            {/* Text Area */}
+            <textarea
               className="w-full p-2 border rounded"
-              type="text"
-              {...register("region", { required: "Region is required" })}
+              rows="4" // Optional: Adjust height
+              {...register("fee_description", {
+                required: "Region is required", // Validation rule
+              })}
             />
-            {errors.region && (
-              <p className="text-red-500 text-sm">{errors.region.message}</p>
+
+            {/* Error Message */}
+            {errors.fee_description && (
+              <p className="text-red-500 text-sm">
+                {errors.fee_description.message}{" "}
+                {/* Display validation message */}
+              </p>
             )}
           </div>
         </form>
@@ -149,4 +152,4 @@ function Tax() {
   );
 }
 
-export default Tax;
+export default Fees;

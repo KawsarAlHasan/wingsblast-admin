@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import {
   Card,
   Spin,
@@ -9,7 +10,10 @@ import {
   Button,
   Divider,
   Alert,
+  Modal,
+  DatePicker,
 } from "antd";
+
 import { API, useFoodDetail } from "../../api/api";
 
 function FoodDetail() {
@@ -18,6 +22,9 @@ function FoodDetail() {
     useFoodDetail(foodDetailId);
 
   const [status, setStatus] = useState(foodDetail.status);
+
+  const [statusDeactivateDate, setStatusDeactivateDate] = useState(null); // New state for deactivate date
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal control
 
   useEffect(() => {
     if (foodDetail) {
@@ -49,21 +56,33 @@ function FoodDetail() {
     );
   }
 
-  const handleStatusChange = async (value) => {
+  // Function to handle status change
+  const handleStatusChange = (value) => {
+    setStatus(value);
+    if (value === "deactivate") {
+      setIsModalOpen(true); // Open modal for deactivate date
+    } else {
+      updateStatus(value, null); // No date needed for active
+    }
+  };
+
+  // Function to update status in the backend
+  const updateStatus = async (newStatus, deactivateDate) => {
     try {
       const response = await API.put(`/food-details/status/${foodDetailId}`, {
-        status: value,
+        status: newStatus,
+        status_deactivate_date: deactivateDate,
       });
 
-      if (response.statusText == "OK") {
-        setStatus(value); // Update status locally
+      if (response.status === 200) {
+        setStatus(newStatus);
         message.success("Food Details status updated successfully");
-        refetch(); // Refresh Food Details details after update
+        refetch(); // Refresh data
       } else {
         message.error("Failed to update Food Details status");
       }
     } catch (error) {
-      message.error(`Error updating status ${error.message}`);
+      message.error(`Error updating status: ${error.message}`);
     }
   };
 
@@ -78,6 +97,7 @@ function FoodDetail() {
     <div className="">
       <div className="flex justify-between p-4">
         <h2 className="font-semibold text-2xl">Food Details</h2>
+
         <div>
           <Select
             value={status}
@@ -88,6 +108,30 @@ function FoodDetail() {
               { value: "deactivate", label: "Deactivate" },
             ]}
           />
+
+          {/* Modal for Deactivate Date */}
+          <Modal
+            title="Set Deactivate Date"
+            visible={isModalOpen}
+            onOk={() => {
+              updateStatus(status, statusDeactivateDate);
+              setIsModalOpen(false); // Close modal
+            }}
+            onCancel={() => {
+              setIsModalOpen(false);
+              setStatus("active"); // Reset status to active
+            }}
+            okText="Update"
+            cancelText="Cancel"
+          >
+            <p>Please select a date for deactivation:</p>
+            <DatePicker
+              style={{ width: "100%" }}
+              onChange={(date, dateString) =>
+                setStatusDeactivateDate(dateString)
+              }
+            />
+          </Modal>
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -113,6 +157,30 @@ function FoodDetail() {
               <strong>How Many Choice Flavor:</strong>{" "}
               {foodDetail.howManyChoiceFlavor}
             </p>
+
+            {/* Display Status Information */}
+            <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-100">
+              <h3 className="text-lg font-medium mb-2">Status Information:</h3>
+              <p>
+                <strong>Current Status:</strong>{" "}
+                <span
+                  className={`${
+                    status === "active" ? "text-green-600" : "text-red-600"
+                  } font-semibold`}
+                >
+                  {status === "active" ? "Active" : "Deactivated"}
+                </span>
+              </p>
+
+              {status === "deactivate" && foodDetail.status_deactivate_date ? (
+                <p>
+                  <strong>Deactivate Until: </strong>
+                  {new Date(
+                    foodDetail.status_deactivate_date
+                  ).toLocaleDateString()}
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>

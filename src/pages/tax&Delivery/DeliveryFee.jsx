@@ -57,7 +57,7 @@ function DeliveryFee() {
     );
 
   return (
-    <div className=" bg-gray-50 min-h-[65vh] flex items-center justify-center">
+    <div className=" bg-gray-50  flex items-center justify-center">
       <div className="p-6 shadow-lg w-full max-w-md">
         <div className="flex justify-between">
           <div>
