@@ -1,14 +1,31 @@
 import React, { useState } from "react";
 import { Table, Button, Spin, Modal, notification } from "antd";
 import {
-  EyeOutlined,
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useCoupons } from "../../api/api";
+import { API } from "../../api/api";
+import { useCoupons } from "../../api/settingsApi";
 import EditCoupon from "./EditCoupon";
 import AddCoupons from "./AddCoupons";
+import { Link } from "react-router-dom";
+
+const CustomSendIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22 2L11 13" />
+    <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+  </svg>
+);
 
 const { confirm } = Modal;
 
@@ -89,6 +106,11 @@ const Coupons = () => {
       render: (text, record, index) => index + 1,
     },
     {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
       title: "Code",
       dataIndex: "code",
       key: "code",
@@ -97,6 +119,29 @@ const Coupons = () => {
       title: "Discount Price",
       dataIndex: "discount_price",
       key: "discount_price",
+      render: (_, record) => (
+        <div>
+          {record.is_discount_percentage == 0 ? (
+            <div>$ {record.discount_price} </div>
+          ) : (
+            <p className="text-gray-500">No Discount Price</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Discount Percentage",
+      dataIndex: "discount_percentage",
+      key: "discount_percentage",
+      render: (_, record) => (
+        <div>
+          {record.is_discount_percentage == 0 ? (
+            <p className="text-gray-500">No Discount Percentage</p>
+          ) : (
+            <div>$ {record.discount_percentage} </div>
+          )}
+        </div>
+      ),
     },
     {
       title: "Expiration Date",
@@ -123,6 +168,18 @@ const Coupons = () => {
     },
 
     {
+      title: "Send to User",
+      key: "sendtouser",
+      render: (_, record) => (
+        <Link to={`/coupons/${record.id}`}>
+          <Button type="primary" size="small" icon={<CustomSendIcon />}>
+            Send to User
+          </Button>
+        </Link>
+      ),
+    },
+
+    {
       title: "Edit",
       key: "edit",
       render: (_, record) => (
@@ -130,7 +187,7 @@ const Coupons = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
+          onClick={() => handleEdit(record.id)}
         >
           Edit
         </Button>

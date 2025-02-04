@@ -79,7 +79,7 @@ function AddPromotion({ refetch }) {
         handleCancel(); // Close modal on success
       }
     } catch (error) {
-      message.error(`Failed to add ${data.name}. Try again.`);
+      message.error(`Failed to Create ${data.name}. Try again.`);
     } finally {
       setLoading(false);
     }
@@ -88,10 +88,10 @@ function AddPromotion({ refetch }) {
   return (
     <div>
       <Button type="primary" onClick={showModal}>
-        Add Promotion
+        Create Promotion
       </Button>
       <Modal
-        title={`Add Promotion`}
+        title={`Create Promotion`}
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null} // Custom footer to use form submit

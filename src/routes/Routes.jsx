@@ -36,6 +36,8 @@ import OpeningScheduleTable from "../pages/opening/OpeningSchedule";
 import RegularOrder from "../pages/regularOrder/RegularOrder";
 import ScheduleOrder from "../pages/ScheduleOrder/ScheduleOrder";
 import BirthdayPromotion from "../pages/promotion/BirthdayPromotion";
+import Coupon from "../pages/coupons/Coupon";
+import SinglePromotion from "../pages/promotion/SinglePromotion";
 
 export const router = createBrowserRouter([
   {
@@ -173,12 +175,20 @@ export const router = createBrowserRouter([
         element: <Coupons />,
       },
       {
+        path: "/coupons/:couponsID",
+        element: <Coupon />,
+      },
+      {
         path: "/opening",
         element: <OpeningScheduleTable />,
       },
       {
         path: "/promotion",
         element: <Promotion />,
+      },
+      {
+        path: "/promotion/:promotionID",
+        element: <SinglePromotion />,
       },
       {
         path: "/birthday-voucher",

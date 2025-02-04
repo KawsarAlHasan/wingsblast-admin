@@ -157,7 +157,7 @@ const Main = () => {
           </Content>
 
           <Footer className="text-center">
-            Ant Design ©{new Date().getFullYear()} Created by Ant UED
+            Wingsblast ©{new Date().getFullYear()} Created by ABS
           </Footer>
         </Layout>
       </Layout>

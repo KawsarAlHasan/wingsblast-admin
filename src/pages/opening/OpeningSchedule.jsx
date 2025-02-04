@@ -79,23 +79,7 @@ const OpeningScheduleTable = () => {
           "Cloased Day"
         ),
     },
-    {
-      title: "Time Slots",
-      dataIndex: "timeSlots",
-      key: "timeSlots",
-      render: (_, render) =>
-        render?.day_info?.is_day_on ? (
-          <ul className="list-disc pl-4">
-            {render.timeSlots.map((slot, index) => (
-              <li key={index} className="text-sm text-gray-600">
-                {slot}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          "Cloased Day"
-        ),
-    },
+
     {
       title: "Update Time",
       key: "update_time",
@@ -110,7 +94,7 @@ const OpeningScheduleTable = () => {
             Update Time
           </Button>
         ) : (
-          <Button size="small" disabled>
+          <Button icon={<EditOutlined />} size="small" disabled>
             Update Time
           </Button>
         ),

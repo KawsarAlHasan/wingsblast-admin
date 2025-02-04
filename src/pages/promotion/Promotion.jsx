@@ -18,6 +18,23 @@ import { API } from "../../api/api";
 import { usePromotions } from "../../api/settingsApi";
 import EditPromotion from "./EditPromotion";
 import AddPromotion from "./AddPromotion";
+import { Link } from "react-router-dom";
+
+const CustomSendIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22 2L11 13" />
+    <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+  </svg>
+);
 
 const EditableContext = React.createContext(null);
 const { Search } = Input;
@@ -245,6 +262,18 @@ const Promotion = () => {
             </div>
           )}
         </div>
+      ),
+    },
+
+    {
+      title: "Send to User",
+      key: "sendtouser",
+      render: (_, record) => (
+        <Link to={`/promotion/${record.id}`}>
+          <Button type="primary" size="small" icon={<CustomSendIcon />}>
+            Send to User
+          </Button>
+        </Link>
       ),
     },
 

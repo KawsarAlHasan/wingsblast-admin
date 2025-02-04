@@ -624,24 +624,3 @@ export const useFees = () => {
 
   return { fees, isLoading, isError, error, refetch };
 };
-
-// get coupons
-export const useCoupons = () => {
-  const getCoupons = async () => {
-    const response = await API.get(`/coupons/`);
-    return response.data.data;
-  };
-
-  const {
-    data: coupons = [],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["coupons"],
-    queryFn: getCoupons,
-  });
-
-  return { coupons, isLoading, isError, error, refetch };
-};

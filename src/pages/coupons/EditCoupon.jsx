@@ -8,6 +8,7 @@ import {
   Typography,
   InputNumber,
   DatePicker,
+  Radio,
 } from "antd";
 import dayjs from "dayjs";
 const dateFormat = "YYYY/MM/DD";
@@ -19,15 +20,23 @@ const { Title } = Typography;
 function EditCoupon({ couponDetails, isOpen, onClose, refetch }) {
   const { control, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
+  const [discountType, setDiscountType] = useState("is_discount_percentage");
 
   useEffect(() => {
     // Reset form fields when couponDetails changes
     if (couponDetails) {
       reset({
+        name: couponDetails?.name || "",
         code: couponDetails?.code || "",
         discount_price: couponDetails?.discount_price || 0,
         expiration_date: couponDetails?.expiration_date || null,
       });
+
+      setDiscountType(
+        couponDetails.is_discount_percentage
+          ? "is_discount_percentage"
+          : "is_discount_price"
+      );
     }
   }, [couponDetails, reset]);
 
@@ -35,19 +44,35 @@ function EditCoupon({ couponDetails, isOpen, onClose, refetch }) {
   const onSubmit = async (data) => {
     setLoading(true);
 
+    const isDiscountPercentage =
+      discountType == "is_discount_percentage" ? 1 : 0;
+    const discountPercentage =
+      discountType == "is_discount_percentage" ? data.discount_percentage : 0;
+    const discountPrice =
+      discountType == "is_discount_price" ? data.discount_price : 0;
+
+    const submitData = {
+      name: data.name,
+      code: data.code,
+      expiration_date: data.expiration_date,
+      discount_percentage: discountPercentage,
+      discount_price: discountPrice,
+      is_discount_percentage: isDiscountPercentage,
+    };
+
     try {
       const response = await API.put(
         `/coupons/update/${couponDetails?.id}`,
-        data
+        submitData
       );
 
       if (response.status === 200) {
-        message.success(`${data.code} updated successfully!`);
+        message.success(`${data.name} updated successfully!`);
         refetch();
         onClose(); // Close modal on success
       }
     } catch (error) {
-      message.error(`Failed to update ${data.code}. Try again.`);
+      message.error(`Failed to update ${data.name}. Try again.`);
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -63,6 +88,17 @@ function EditCoupon({ couponDetails, isOpen, onClose, refetch }) {
       centered
     >
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
+        {/* Name */}
+        <Form.Item label="Name">
+          <Controller
+            name="name"
+            control={control}
+            rules={{ required: "Name is required" }}
+            render={({ field }) => (
+              <Input placeholder="Enter Name..." {...field} />
+            )}
+          />
+        </Form.Item>
         {/* Code */}
         <Form.Item label="Code">
           <Controller
@@ -75,22 +111,50 @@ function EditCoupon({ couponDetails, isOpen, onClose, refetch }) {
           />
         </Form.Item>
 
-        {/* Discount Price */}
-        <Form.Item label="Discount Price">
-          <Controller
-            name="discount_price"
-            control={control}
-            rules={{ required: "Discount price is required" }}
-            render={({ field }) => (
-              <InputNumber
-                min={0}
-                className="w-full"
-                placeholder="Enter discount price..."
-                {...field}
-              />
-            )}
-          />
+        {/* Discount Type Selector */}
+        <Form.Item label="Discount Type">
+          <Radio.Group
+            onChange={(e) => setDiscountType(e.target.value)}
+            value={discountType}
+          >
+            <Radio value="is_discount_percentage">Percentage</Radio>
+            <Radio value="is_discount_price">Price</Radio>
+          </Radio.Group>
         </Form.Item>
+
+        {discountType === "is_discount_percentage" ? (
+          <Form.Item label="Discount Percentage">
+            <Controller
+              name="discount_percentage"
+              control={control}
+              rules={{ required: "Discount Percentage is required" }}
+              render={({ field }) => (
+                <InputNumber
+                  min={0}
+                  className="w-full"
+                  placeholder="Enter discount Percentage..."
+                  {...field}
+                />
+              )}
+            />
+          </Form.Item>
+        ) : (
+          <Form.Item label="Discount Price">
+            <Controller
+              name="discount_price"
+              control={control}
+              rules={{ required: "Discount price is required" }}
+              render={({ field }) => (
+                <InputNumber
+                  min={0}
+                  className="w-full"
+                  placeholder="Enter discount price..."
+                  {...field}
+                />
+              )}
+            />
+          </Form.Item>
+        )}
 
         {/* Expiration Date */}
         <Form.Item label="Expiration Date">

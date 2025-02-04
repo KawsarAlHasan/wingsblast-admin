@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { API } from "../../api/api";
 import { EditOutlined } from "@ant-design/icons";
-import { Badge, Button, Modal, Spin, message } from "antd";
+import { Badge, Button, Image, Modal, Spin, Upload, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { useForm } from "react-hook-form";
 import { useVoucher } from "../../api/settingsApi";
+import UserBirthdayPromotionTable from "./UserBirthdayPromotionTable";
 
 function BirthdayPromotion({ fee }) {
   const { voucher, isLoading, isError, error, refetch } =
@@ -31,6 +33,24 @@ function BirthdayPromotion({ fee }) {
   const handleCancel = () => {
     setIsModalOpen(false);
     reset();
+  };
+
+  const props = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    headers: {
+      authorization: "authorization-text",
+    },
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
   };
 
   const handleSave = async (data) => {
@@ -65,6 +85,11 @@ function BirthdayPromotion({ fee }) {
       </h2>
       <div className=" flex items-center justify-center">
         <div className="p-6 shadow-lg w-full max-w-md">
+          <Image
+            className="w-full h-[200px]"
+            src={data?.image}
+            alt={data?.title}
+          />
           <div className="flex justify-between">
             <div>
               <p className="mb-2">
@@ -72,6 +97,7 @@ function BirthdayPromotion({ fee }) {
               </p>
             </div>
             <Button
+              className="ml-3"
               type="primary"
               size="small"
               icon={<EditOutlined />}
@@ -169,7 +195,9 @@ function BirthdayPromotion({ fee }) {
         </Modal>
       </div>
 
-      <div>{/* user */}</div>
+      <div>
+        <UserBirthdayPromotionTable />
+      </div>
     </div>
   );
 }

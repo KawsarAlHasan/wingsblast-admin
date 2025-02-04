@@ -129,24 +129,6 @@ const Sidebar = ({ onClick }) => {
           label: <Link to="/opening">Opening & Closing</Link>,
         },
         {
-          key: "8-4",
-          label: "Terms, Privacy & About Us",
-          children: [
-            {
-              key: "8-4-1",
-              label: <Link to="/terms">Terms</Link>,
-            },
-            {
-              key: "8-4-2",
-              label: <Link to="/privacy">Privacy</Link>,
-            },
-            {
-              key: "8-4-3",
-              label: <Link to="/about-us">About us</Link>,
-            },
-          ],
-        },
-        {
           key: "8-11",
           label: "Promotion & Coupons",
           children: [
@@ -161,6 +143,24 @@ const Sidebar = ({ onClick }) => {
             {
               key: "8-11-3",
               label: <Link to="/coupons">Coupons</Link>,
+            },
+          ],
+        },
+        {
+          key: "8-4",
+          label: "Terms, Privacy & About Us",
+          children: [
+            {
+              key: "8-4-1",
+              label: <Link to="/terms">Terms</Link>,
+            },
+            {
+              key: "8-4-2",
+              label: <Link to="/privacy">Privacy</Link>,
+            },
+            {
+              key: "8-4-3",
+              label: <Link to="/about-us">About us</Link>,
             },
           ],
         },

@@ -115,7 +115,6 @@ function AddDrink({ refetch }) {
             <Controller
               name="cal"
               control={control}
-              rules={{ required: "Calories information is required" }}
               render={({ field }) => (
                 <Input placeholder="e.g., 234 Cal" {...field} />
               )}
