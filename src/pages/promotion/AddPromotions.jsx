@@ -43,39 +43,40 @@ function AddPromotion({ refetch }) {
   const onSubmit = async (data) => {
     setLoading(true);
     const isDate = dateType == "is_date" ? 1 : 0;
+    const isDurationDate = dateType == "is_duration_date" ? 1 : 0;
     const isDiscountPercentage =
       discountType == "is_discount_percentage" ? 1 : 0;
+    const isDiscountAmount = discountType == "is_discount_amount" ? 1 : 0;
 
     const singleDate = dateType == "is_date" ? date : 0;
-    const startDate = dateType == "is_date" ? 0 : dates[0];
-    const endDate = dateType == "is_date" ? 0 : dates[1];
+    const startDate = dateType == "is_duration_date" ? dates[0] : 0;
+    const endDate = dateType == "is_duration_date" ? dates[1] : 0;
     const discountPercentage =
       discountType == "is_discount_percentage" ? data.discount_percentage : 0;
     const discountAmount =
-      discountType == "is_discount_percentage" ? 0 : data.discount_amount;
+      discountType == "is_discount_amount" ? data.discount_amount : 0;
 
     const submitData = {
-      bonus_type: "promotions",
       name: data.name,
       code: data.code,
       date: singleDate,
       start_date: startDate,
       end_date: endDate,
       is_date: isDate,
+      is_duration_date: isDurationDate,
       discount_percentage: discountPercentage,
       discount_amount: discountAmount,
       is_discount_percentage: isDiscountPercentage,
+      is_discount_amount: isDiscountAmount,
     };
 
     try {
-      const response = await API.post("/bonus/create", submitData); // Updated endpoint
+      const response = await API.post("/promotion/create", submitData); // Updated endpoint
+
       if (response.status == 200) {
         message.success(`${data?.name} added successfully!`);
         refetch();
         handleCancel(); // Close modal on success
-      }
-      if (response.status == 201) {
-        message.error(`Error: ${response.data?.message}`);
       }
     } catch (error) {
       message.error(`Failed to Create ${data.name}. Try again.`);

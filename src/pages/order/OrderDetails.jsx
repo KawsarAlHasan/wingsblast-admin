@@ -73,6 +73,8 @@ function OrderDetails() {
       });
   };
 
+  console.log(orderDetails, "orderDetails");
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex justify-between p-4">

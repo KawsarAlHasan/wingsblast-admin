@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { API } from "../../api/api";
 import { EditOutlined } from "@ant-design/icons";
-import { Badge, Button, Image, Modal, Spin, Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Button, Image, Modal, Spin, message } from "antd";
 import { useForm } from "react-hook-form";
 import { useVoucher } from "../../api/settingsApi";
 import UserBirthdayPromotionTable from "./UserBirthdayPromotionTable";
 
 function BirthdayPromotion({ fee }) {
+  const [discountType, setDiscountType] = useState("is_discount_percentage");
   const { voucher, isLoading, isError, error, refetch } =
     useVoucher("birthday");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,6 +27,7 @@ function BirthdayPromotion({ fee }) {
     setIsModalOpen(true);
     setValue("title", data?.title);
     setValue("discount_percentage", data?.discount_percentage);
+    setValue("discount_amount", data?.discount_amount);
     setValue("message", data?.message);
   };
 
@@ -35,28 +36,26 @@ function BirthdayPromotion({ fee }) {
     reset();
   };
 
-  const props = {
-    name: "file",
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
-
   const handleSave = async (data) => {
     setIsSaving(true);
+    const isDiscountPercentage =
+      discountType == "is_discount_percentage" ? 1 : 0;
+
+    const discountPercentage =
+      discountType == "is_discount_percentage" ? data.discount_percentage : 0;
+
+    const discountAmount =
+      discountType == "is_discount_percentage" ? 0 : data.discount_amount;
+
+    const submitData = {
+      title: data.title,
+      is_discount_percentage: isDiscountPercentage,
+      discount_amount: discountAmount,
+      discount_percentage: discountPercentage,
+    };
+
     try {
-      const response = await API.put(`/voucher/birthday`, data);
+      const response = await API.put(`/voucher/birthday`, submitData);
 
       if (response.status == 200) {
         message.success("Fee information updated successfully");
@@ -109,12 +108,14 @@ function BirthdayPromotion({ fee }) {
 
           <p className="mb-2">
             <span className="font-bold">Offer:</span>{" "}
-            {`${data?.discount_percentage}% OFF`}
+            {data?.is_discount_percentage
+              ? `${data?.discount_percentage}% OFF`
+              : `$${data?.discount_amount} OFF`}
           </p>
 
-          <p className="mb-2">
+          {/* <p className="mb-2">
             <span className="font-bold">Message: </span> {data?.message}
-          </p>
+          </p> */}
         </div>
 
         {/* Modal for Editing deleveryFee */}
@@ -151,46 +152,90 @@ function BirthdayPromotion({ fee }) {
               )}
             </div>
 
+            {/* Discount Type Selector */}
             <div className="mb-4">
-              <label className="block text-gray-700">Discount Percentage</label>
-              <input
-                className="w-full p-2 border rounded"
-                type="number"
-                {...register("discount_percentage", {
-                  required: "Discount Percentage rate is required",
-                  min: {
-                    value: 0,
-                    discount_percentage: "Rate must be at least 0",
-                  },
-                })}
-              />
-              {errors.discount_percentage && (
-                <p className="text-red-500 text-sm">
-                  {errors.discount_percentage.message}
-                </p>
-              )}
+              <label className="block text-gray-700">Discount Type</label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="is_discount_percentage"
+                    checked={discountType === "is_discount_percentage"}
+                    onChange={(e) => setDiscountType(e.target.value)}
+                    className="mr-2"
+                  />
+                  Percentage
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="is_discount_amount"
+                    checked={discountType === "is_discount_amount"}
+                    onChange={(e) => setDiscountType(e.target.value)}
+                    className="mr-2"
+                  />
+                  Price
+                </label>
+              </div>
             </div>
 
-            <div className="mb-4">
-              {/* Label */}
-              <label className="block text-gray-700">Message</label>
+            {discountType === "is_discount_percentage" ? (
+              <div className="mb-4">
+                <label className="block text-gray-700">
+                  Discount Percentage
+                </label>
+                <input
+                  className="w-full p-2 border rounded"
+                  type="number"
+                  {...register("discount_percentage", {
+                    required: "Discount Percentage rate is required",
+                    min: {
+                      value: 0,
+                      discount_percentage: "Rate must be at least 0",
+                    },
+                  })}
+                />
+                {errors.discount_percentage && (
+                  <p className="text-red-500 text-sm">
+                    {errors.discount_percentage.message}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="mb-4">
+                <label className="block text-gray-700">Discount Amount</label>
+                <input
+                  className="w-full p-2 border rounded"
+                  type="number"
+                  {...register("discount_amount", {
+                    required: "Discount Percentage rate is required",
+                    min: {
+                      value: 0,
+                      discount_amount: "Rate must be at least 0",
+                    },
+                  })}
+                />
+                {errors.discount_amount && (
+                  <p className="text-red-500 text-sm">
+                    {errors.discount_amount.message}
+                  </p>
+                )}
+              </div>
+            )}
 
-              {/* Text Area */}
-              <textarea
+            {/* <div className="mb-4"> */}
+            {/* Label */}
+            {/* <label className="block text-gray-700">Message</label> */}
+
+            {/* Text Area */}
+            {/* <textarea
                 className="w-full p-2 border rounded"
                 rows="4" // Optional: Adjust height
                 {...register("message", {
                   required: "Message is required", // Validation rule
                 })}
-              />
-
-              {/* Error Message */}
-              {errors.message && (
-                <p className="text-red-500 text-sm">
-                  {errors.message.message} {/* Display validation message */}
-                </p>
-              )}
-            </div>
+              /> */}
+            {/* </div> */}
           </form>
         </Modal>
       </div>

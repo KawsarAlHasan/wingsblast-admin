@@ -493,7 +493,7 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
           </Form.Item>
 
           {/* howManyChoiceFlavor */}
-          <Form.Item label="How Many Choice Flavor">
+          <Form.Item label="How Many Wings">
             <Controller
               name="howManyChoiceFlavor"
               control={control}

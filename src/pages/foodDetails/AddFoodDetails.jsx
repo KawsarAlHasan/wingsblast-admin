@@ -489,7 +489,7 @@ const AddFoodDetails = () => {
           </Form.Item>
 
           {/* howManyChoiceFlavor */}
-          <Form.Item label="How Many Choice Flavor">
+          <Form.Item label="How Many Wings">
             <Controller
               name="howManyChoiceFlavor"
               control={control}
@@ -498,7 +498,7 @@ const AddFoodDetails = () => {
                   {...field}
                   className="w-full"
                   min={0}
-                  placeholder="Enter How Many Choice Flavor"
+                  placeholder="Enter How Many Wings"
                 />
               )}
             />

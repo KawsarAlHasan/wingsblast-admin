@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { Button, Row, Col, Card, Statistic, DatePicker, Divider } from "antd";
+import { Button, Row, Col, Card, DatePicker, Divider, message } from "antd";
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   ReloadOutlined,
   ShareAltOutlined,
   EllipsisOutlined,
@@ -14,12 +12,14 @@ import MonthlyActiveUsersChart from "../components/MonthlyActiveUsersChart";
 import RevenueChart from "../components/RevenueChart.js";
 import OrdersByFoodChart from "../components/OrdersByFoodChart.jsx";
 import DashboardCard from "../components/DashboardCard.jsx";
+import { API } from "../api/api.jsx";
 
 const { RangePicker } = DatePicker;
 
 function Dashboard() {
   // State to hold selected date range
   const [dates, setDates] = useState(null);
+  const [timeNow, setTimeNow] = useState();
 
   // Handler for date change
   const onDateChange = (dates) => {

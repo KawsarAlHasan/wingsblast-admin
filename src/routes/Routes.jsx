@@ -38,6 +38,7 @@ import ScheduleOrder from "../pages/ScheduleOrder/ScheduleOrder";
 import BirthdayPromotion from "../pages/promotion/BirthdayPromotion";
 import Coupon from "../pages/coupons/Coupon";
 import SinglePromotion from "../pages/promotion/SinglePromotion";
+import OrderDetail from "../pages/order/OrderDetail";
 
 export const router = createBrowserRouter([
   {
@@ -144,9 +145,13 @@ export const router = createBrowserRouter([
         path: "/order/schedule",
         element: <ScheduleOrder />,
       },
+      // {
+      //   path: "/order/:orderID",
+      //   element: <OrderDetails />,
+      // },
       {
         path: "/order/:orderID",
-        element: <OrderDetails />,
+        element: <OrderDetail />,
       },
 
       {
