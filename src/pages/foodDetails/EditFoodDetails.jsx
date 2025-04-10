@@ -195,6 +195,8 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
         price: fdDetails.price || 0,
         howManyFlavor: fdDetails.howManyFlavor || 0,
         howManyChoiceFlavor: fdDetails.howManyChoiceFlavor || 0,
+        howManyDips: fdDetails.howManyDips || 0,
+        howManyChoiceDips: fdDetails.howManyChoiceDips || 0,
         category_id: fdDetails.category_id || undefined,
         food_menu_name: fdDetails.food_menu_name || "",
       });
@@ -216,6 +218,8 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
 
     formData.append("howManyFlavor", data.howManyFlavor || 0);
     formData.append("howManyChoiceFlavor", data.howManyChoiceFlavor || 0);
+    formData.append("howManyDips", data.howManyDips || 0);
+    formData.append("howManyChoiceDips", data.howManyChoiceDips || 0);
     formData.append("food_menu_id", fdDetails?.food_menu_id);
 
     formData.append("sides", JSON.stringify(selectedSides));
@@ -509,6 +513,48 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
             {errors.howManyChoiceFlavor && (
               <span className="text-red-500">
                 {errors.howManyChoiceFlavor.message}
+              </span>
+            )}
+          </Form.Item>
+
+          {/* howManyDips */}
+          <Form.Item label="How Many Dips">
+            <Controller
+              name="howManyDips"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  className="w-full"
+                  min={0}
+                  placeholder="Enter how many dips"
+                />
+              )}
+            />
+            {errors.howManyFlavor && (
+              <span className="text-red-500">
+                {errors.howManyFlavor.message}
+              </span>
+            )}
+          </Form.Item>
+
+          {/* howManyChoiceDips */}
+          <Form.Item label="How Many Choice Dips">
+            <Controller
+              name="howManyChoiceDips"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  className="w-full"
+                  min={0}
+                  placeholder="Enter How Many Choice Dips"
+                />
+              )}
+            />
+            {errors.howManyChoiceDips && (
+              <span className="text-red-500">
+                {errors.howManyChoiceDips.message}
               </span>
             )}
           </Form.Item>

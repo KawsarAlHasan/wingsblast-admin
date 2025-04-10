@@ -1,35 +1,23 @@
 import React, { useState } from "react";
+import { Table, Button, Image, Input, Spin, Modal, notification } from "antd";
 import {
-  Table,
-  Button,
-  Image,
-  Input,
-  Rate,
-  Spin,
-  Modal,
-  notification,
-} from "antd";
-import {
-  EyeOutlined,
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useFoodMenu } from "../../api/api";
-import ViewFoodModal from "./ViewFoodModal";
-import AddFood from "./AddFood";
-import { Link } from "react-router-dom";
-import EditFood from "./EditFood";
+import { API, useDrinkName } from "../../api/api";
+import EditDrinks from "./EditDrinks";
+import AddDrinks from "./AddDrinks";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
-const Food = () => {
-  const { foodMenu, isLoading, isError, error, refetch } = useFoodMenu();
+const Drinks = () => {
+  const { drinkname, isLoading, isError, error, refetch } = useDrinkName();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [isEditFoodMenusOpen, setIsEditFoodMenusOpen] = useState(false);
-  const [foodMenus, setFoodMenus] = useState(null);
+  const [isEditDrinksOpen, setIsDrinksOpen] = useState(false);
+  const [drinks, setDrinks] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -41,32 +29,32 @@ const Food = () => {
   };
 
   const handleEdit = (sandCustDetail) => {
-    setFoodMenus(sandCustDetail);
-    setIsEditFoodMenusOpen(true);
+    setDrinks(sandCustDetail);
+    setIsDrinksOpen(true);
   };
 
   const handleModalClose = () => {
-    setFoodMenus(null); // Reset the details
-    setIsEditFoodMenusOpen(false); // Close modal
+    setDrinks(null); // Reset the details
+    setIsDrinksOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     try {
-      await API.delete(`/foodMenu/delete/${id}`); // Adjust endpoint as needed
-      openNotification("success", "Success", "Food Menu deleted successfully");
+      await API.delete(`/drink-name/delete/${id}`);
+      openNotification("success", "Success", "Drink deleted successfully");
       setDeleteLoading(false);
       refetch();
     } catch (error) {
-      console.error("Error deleting food Menu:", error);
-      openNotification("error", "Error", "Failed to delete the food Menu");
+      console.error("Error deleting drink:", error);
+      openNotification("error", "Error", "Failed to delete the drink");
       setDeleteLoading(false);
     }
   };
 
   const showDeleteConfirm = (id) => {
     confirm({
-      title: "Are you sure you want to delete this food item?",
+      title: "Are you sure you want to delete this drink?",
       icon: <ExclamationCircleOutlined />,
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
@@ -74,6 +62,9 @@ const Food = () => {
       cancelText: "Cancel",
       onOk() {
         handleDelete(id);
+      },
+      onCancel() {
+        console.log("Delete canceled");
       },
     });
   };
@@ -86,7 +77,7 @@ const Food = () => {
       </div>
     );
 
-  const filteredData = foodMenu.filter((item) =>
+  const filteredData = drinkname.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -97,17 +88,11 @@ const Food = () => {
 
   const columns = [
     {
-      title: "SN",
-      dataIndex: "sn_number",
-      key: "sn_number",
-      render: (text, record, index) => index + 1,
-    },
-    {
       title: "Image",
       dataIndex: "image",
       key: "image",
       render: (image) => (
-        <Image src={image} alt="Food Item" width={50} height={50} />
+        <Image src={image} alt="Drink" width={50} height={50} />
       ),
     },
     {
@@ -115,17 +100,7 @@ const Food = () => {
       dataIndex: "name",
       key: "name",
     },
-    {
-      title: "View",
-      key: "view",
-      render: (_, record) => (
-        <Link to={`/sub-category/${record.id}`}>
-          <Button type="primary" size="small" icon={<EyeOutlined />}>
-            View
-          </Button>
-        </Link>
-      ),
-    },
+
     {
       title: "Edit",
       key: "edit",
@@ -159,16 +134,14 @@ const Food = () => {
 
   return (
     <div>
-      <h2 className="text-center text-2xl font-bold my-5">
-        Sub Category Food List
-      </h2>
+      <h2 className="text-center text-2xl font-bold my-5">Drink Brand List</h2>
       <div className="flex justify-between mb-4">
         <Search
-          placeholder="Search food items..."
+          placeholder="Search drinks..."
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddFood refetch={refetch} />
+        <AddDrinks refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>
@@ -180,9 +153,9 @@ const Food = () => {
         />
       )}
 
-      <EditFood
-        foodMenus={foodMenus}
-        isOpen={isEditFoodMenusOpen}
+      <EditDrinks
+        drinks={drinks}
+        isOpen={isEditDrinksOpen}
         onClose={handleModalClose}
         refetch={refetch}
       />
@@ -190,4 +163,4 @@ const Food = () => {
   );
 };
 
-export default Food;
+export default Drinks;

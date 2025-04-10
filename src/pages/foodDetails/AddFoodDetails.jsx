@@ -218,6 +218,8 @@ const AddFoodDetails = () => {
     formDataObj.append("description", data.description);
     formDataObj.append("howManyFlavor", data.howManyFlavor || 0);
     formDataObj.append("howManyChoiceFlavor", data.howManyChoiceFlavor || 0);
+    formDataObj.append("howManyDips", data.howManyDips || 0);
+    formDataObj.append("howManyChoiceDips", data.howManyChoiceDips || 0);
     formDataObj.append("food_menu_id", foodMenuID);
     formDataObj.append("food_menu_name", data.food_menu_name);
 
@@ -454,7 +456,7 @@ const AddFoodDetails = () => {
           </Form.Item>
 
           {/* Calories */}
-          <Form.Item label="Calories" required>
+          <Form.Item label="Calories">
             <Controller
               name="cal"
               control={control}
@@ -505,6 +507,46 @@ const AddFoodDetails = () => {
             {errors.howManyChoiceFlavor && (
               <span className="text-red-500">
                 {errors.howManyChoiceFlavor.message}
+              </span>
+            )}
+          </Form.Item>
+
+          {/* howManyDips */}
+          <Form.Item label="How Many Dips">
+            <Controller
+              name="howManyDips"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  className="w-full"
+                  min={0}
+                  placeholder="Enter How Many Dips"
+                />
+              )}
+            />
+            {errors.howManyDips && (
+              <span className="text-red-500">{errors.howManyDips.message}</span>
+            )}
+          </Form.Item>
+
+          {/* howManyChoiceDips */}
+          <Form.Item label="How Many Choice Dips">
+            <Controller
+              name="howManyChoiceDips"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  className="w-full"
+                  min={0}
+                  placeholder="Enter How Many Choice Dips"
+                />
+              )}
+            />
+            {errors.howManyChoiceDips && (
+              <span className="text-red-500">
+                {errors.howManyChoiceDips.message}
               </span>
             )}
           </Form.Item>

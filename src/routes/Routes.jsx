@@ -39,6 +39,7 @@ import BirthdayPromotion from "../pages/promotion/BirthdayPromotion";
 import Coupon from "../pages/coupons/Coupon";
 import SinglePromotion from "../pages/promotion/SinglePromotion";
 import OrderDetail from "../pages/order/OrderDetail";
+import Drinks from "../pages/drinks/Drinks";
 
 export const router = createBrowserRouter([
   {
@@ -70,8 +71,12 @@ export const router = createBrowserRouter([
         element: <Dip />,
       },
       {
-        path: "/drink",
+        path: "/drink-size",
         element: <Drink />,
+      },
+      {
+        path: "/drink-brand",
+        element: <Drinks />,
       },
       {
         path: "/beverage",

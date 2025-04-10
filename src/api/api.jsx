@@ -188,6 +188,27 @@ export const useDrink = () => {
   return { drink, isLoading, isError, error, refetch };
 };
 
+// get Drink
+export const useDrinkName = () => {
+  const getDrinkName = async () => {
+    const response = await API.get("/drink-name/all");
+    return response.data.data;
+  };
+
+  const {
+    data: drinkname = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["drinkname"],
+    queryFn: getDrinkName,
+  });
+
+  return { drinkname, isLoading, isError, error, refetch };
+};
+
 // get Beverage
 export const useBeverage = () => {
   const getBeverage = async () => {

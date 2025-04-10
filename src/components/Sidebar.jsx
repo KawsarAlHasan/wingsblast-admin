@@ -58,7 +58,11 @@ const Sidebar = ({ onClick }) => {
         },
         {
           key: "4-6",
-          label: <Link to="/drink">Drink</Link>,
+          label: <Link to="/drink-size">Drink Size</Link>,
+        },
+        {
+          key: "4-61",
+          label: <Link to="/drink-brand">Drink Brand</Link>,
         },
         {
           key: "4-7",

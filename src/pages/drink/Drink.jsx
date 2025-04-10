@@ -161,7 +161,7 @@ const Drink = () => {
 
   return (
     <div>
-      <h2 className="text-center text-2xl font-bold my-5">Drink List</h2>
+      <h2 className="text-center text-2xl font-bold my-5">Drink Size List</h2>
       <div className="flex justify-between mb-4">
         <Search
           placeholder="Search drinks..."
