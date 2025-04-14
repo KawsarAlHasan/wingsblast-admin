@@ -78,21 +78,21 @@ const Sidebar = ({ onClick }) => {
         },
       ],
     },
-    // {
-    //   key: "5",
-    //   icon: <ContainerOutlined />,
-    //   label: "Modify Products Feature",
-    //   children: [
-    //     {
-    //       key: "5-1",
-    //       label: <Link to="/feature">Feature</Link>,
-    //     },
-    //     ...(feature?.data || []).map((fData) => ({
-    //       key: `5-1-${fData.id}`,
-    //       label: <Link to={`/product-feature/${fData.id}`}>{fData.name}</Link>,
-    //     })),
-    //   ],
-    // },
+    {
+      key: "5",
+      icon: <ContainerOutlined />,
+      label: "Modify Products Feature",
+      children: [
+        {
+          key: "5-1",
+          label: <Link to="/feature">Feature</Link>,
+        },
+        ...(feature?.data || []).map((fData) => ({
+          key: `5-1-${fData.id}`,
+          label: <Link to={`/product-feature/${fData.id}`}>{fData.name}</Link>,
+        })),
+      ],
+    },
 
     {
       key: "6",

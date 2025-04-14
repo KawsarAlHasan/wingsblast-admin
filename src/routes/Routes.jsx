@@ -204,11 +204,11 @@ export const router = createBrowserRouter([
         path: "/birthday-voucher",
         element: <BirthdayPromotion />,
       },
-      {
-        path: "/test",
-        element: <Test />,
-      },
     ],
+  },
+  {
+    path: "/test",
+    element: <Test />,
   },
   {
     path: "*",

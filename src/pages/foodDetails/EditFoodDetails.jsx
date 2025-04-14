@@ -15,7 +15,6 @@ import { UploadOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
 
 import SideSelection from "./SideSelection";
-import DipSelection from "./DipSelection";
 import DrinkSelection from "./DrinkSelection";
 import BeverageSelect from "./BeverageSelect";
 import ToppingsSelect from "./ToppingsSelect";
@@ -75,26 +74,6 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
     setSelectedSides((prevSides) =>
       prevSides.map((side) =>
         side.side_id === id ? { ...side, isPaid: isChecked } : side
-      )
-    );
-  };
-
-  // Dip Selection Handling
-  const handleDipSelection = (id, isChecked) => {
-    setSelectedDips((prevDips) => {
-      if (isChecked) {
-        return [...prevDips, { dip_id: id, isPaid: false }];
-      } else {
-        return prevDips.filter((dip) => dip.dip_id !== id);
-      }
-    });
-  };
-
-  // Dip paid unpaid
-  const handleToggleDipPaid = (id, isChecked) => {
-    setSelectedDips((prevDips) =>
-      prevDips.map((dip) =>
-        dip.dip_id === id ? { ...dip, isPaid: isChecked } : dip
       )
     );
   };
@@ -272,21 +251,7 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
       ),
       style: panelStyle,
     },
-    {
-      key: "2",
-      label: <h2 className="font-semibold">Dips</h2>,
-      children: (
-        <Form.Item>
-          <DipSelection
-            dip={dip}
-            selectedDips={selectedDips}
-            handleDipSelection={handleDipSelection}
-            handleToggleDipPaid={handleToggleDipPaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
+
     {
       key: "3",
       label: <h2 className="font-semibold">Drinks</h2>,

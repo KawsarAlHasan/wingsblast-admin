@@ -7,29 +7,21 @@ import {
   InputNumber,
   Upload,
   Select,
-  Collapse,
   message,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import SideSelection from "./SideSelection";
-import DipSelection from "./DipSelection";
+
+import { DndContext } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
-  useCategory,
-  useSide,
-  useDip,
-  useDrink,
-  useBeverage,
-  API,
-  useFoodMenu,
-  useToppings,
-  useSandCust,
-} from "../../api/api";
-import DrinkSelection from "./DrinkSelection";
-import BeverageSelect from "./BeverageSelect";
-import ToppingsSelect from "./ToppingsSelect";
-import SandCustSelect from "./SandCustSelect";
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import AddonItem from "./AddonItem";
+
+import { UploadOutlined } from "@ant-design/icons";
+import { useCategory, API } from "../../api/api";
 import { useParams } from "react-router-dom";
-import RicePlatter from "./RicePlatter";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -37,20 +29,10 @@ const { Option } = Select;
 const AddFoodDetails = () => {
   const { foodMenuID } = useParams();
   const { category } = useCategory();
-  const { foodMenu } = useFoodMenu();
-  const { side } = useSide();
-  const { dip } = useDip();
-  const { drink } = useDrink();
-  const { beverage } = useBeverage();
-  const { toppings } = useToppings();
-  const { sandCust } = useSandCust();
-  const [selectedSides, setSelectedSides] = useState([]);
-  const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
-  const [selectedDips, setSelectedDips] = useState([]);
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
-  const [selectedToppings, setSelectedToppings] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
+  const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -59,149 +41,65 @@ const AddFoodDetails = () => {
     formState: { errors },
   } = useForm();
 
-  // side selection Handling
-  const handleSideSelection = (id, isChecked) => {
-    setSelectedSides((prevSides) => {
-      if (isChecked) {
-        return [...prevSides, { side_id: id, isPaid: false }];
-      } else {
-        return prevSides.filter((side) => side.side_id !== id);
-      }
-    });
+  const handleSelectedDrinksChange = (selectedDrinks) => {
+    setSelectedDrinks(selectedDrinks);
+  };
+  const handleSelectedBevarageChange = (selectedBeverages) => {
+    setSelectedBeverages(selectedBeverages);
+  };
+  const handleSelectedSandCustChange = (selectedSandCust) => {
+    setSelectedSandCust(selectedSandCust);
+  };
+  const handleSelectedRicePlatterChange = (selectedRicePlatter) => {
+    setSelectedRicePlatter(selectedRicePlatter);
   };
 
-  // side paid unpaid
-  const handleToggleSidePaid = (id, isChecked) => {
-    setSelectedSides((prevSides) =>
-      prevSides.map((side) =>
-        side.side_id === id ? { ...side, isPaid: isChecked } : side
-      )
-    );
-  };
-  // Rice Platter selection Handling
-  const handleRicePlatterSelection = (id, isChecked) => {
-    setSelectedRicePlatter((prevSides) => {
-      if (isChecked) {
-        return [...prevSides, { side_id: id, isPaid: false }];
-      } else {
-        return prevSides.filter((side) => side.side_id !== id);
-      }
-    });
-  };
+  const initialAddons = [
+    { type: "Flavor", sn_number: 1 },
+    { type: "Dip", sn_number: 2 },
+    { type: "Side", sn_number: 3 },
+    { type: "Bakery", sn_number: 4 },
+    { type: "Drink", sn_number: 5 },
+    { type: "Rice Platter", sn_number: 6 },
+    { type: "Sandwich Customize", sn_number: 7 },
+    { type: "Topping", sn_number: 8 },
+  ];
 
-  // Rice Platter paid unpaid
-  const handleToggleRicePlatterPaid = (id, isChecked) => {
-    setSelectedRicePlatter((prevSides) =>
-      prevSides.map((side) =>
-        side.side_id === id ? { ...side, isPaid: isChecked } : side
-      )
-    );
-  };
+  const [dataSource, setDataSource] = useState(
+    initialAddons.map((item) => ({
+      ...item,
+      how_many_select: item.how_many_select || 0,
+      how_many_choice: item.how_many_choice || 0,
+      is_extra_addon: item.is_extra_addon || 0,
+      is_required: item.is_required || 0,
+    }))
+  );
 
-  // Dip Selection Handling
-  const handleDipSelection = (id, isChecked) => {
-    setSelectedDips((prevDips) => {
-      if (isChecked) {
-        return [...prevDips, { dip_id: id, isPaid: false }];
-      } else {
-        return prevDips.filter((dip) => dip.dip_id !== id);
-      }
-    });
-  };
-
-  // Dip paid unpaid
-  const handleToggleDipPaid = (id, isChecked) => {
-    setSelectedDips((prevDips) =>
-      prevDips.map((dip) =>
-        dip.dip_id === id ? { ...dip, isPaid: isChecked } : dip
-      )
+  const handleAddonChange = (sn_number, updatedItem) => {
+    setDataSource((prev) =>
+      prev.map((item) => (item.sn_number === sn_number ? updatedItem : item))
     );
   };
 
-  // Drink Selection Handling
-  const handleDrinkSelection = (id, isChecked) => {
-    setSelectedDrinks((prevDrinks) => {
-      if (isChecked) {
-        return [...prevDrinks, { drink_id: id, isPaid: false }];
-      } else {
-        return prevDrinks.filter((drink) => drink.drink_id !== id);
-      }
-    });
-  };
+  const onDragEnd = ({ active, over }) => {
+    if (!over) return;
+    if (active.id !== over.id) {
+      setDataSource((prev) => {
+        const oldIndex = prev.findIndex((i) => i.sn_number === active.id);
+        const newIndex = prev.findIndex((i) => i.sn_number === over.id);
+        if (newIndex === -1) return prev;
 
-  // Drink paid unpaid
-  const handleToggleDrinkPaid = (id, isChecked) => {
-    setSelectedDrinks((prevDrinks) =>
-      prevDrinks.map((drink) =>
-        drink.drink_id === id ? { ...drink, isPaid: isChecked } : drink
-      )
-    );
-  };
+        const newData = arrayMove(prev, oldIndex, newIndex);
 
-  // Beverage Selection Handling
-  const handleBeverageSelection = (id, isChecked) => {
-    setSelectedBeverages((prevBeverages) => {
-      if (isChecked) {
-        return [...prevBeverages, { beverage_id: id, isPaid: false }];
-      } else {
-        return prevBeverages.filter((beverage) => beverage.beverage_id !== id);
-      }
-    });
-  };
+        // Update sn_number
+        const updatedWithSN = newData.map((item, index) => ({
+          ...item,
+          sn_number: index + 1,
+        }));
 
-  // Beverage paid unpaid
-  const handleToggleBeveragePaid = (id, isChecked) => {
-    setSelectedBeverages((prevBeverages) =>
-      prevBeverages.map((beverage) =>
-        beverage.beverage_id === id
-          ? { ...beverage, isPaid: isChecked }
-          : beverage
-      )
-    );
-  };
-
-  // Toppings Selection Handling
-  const handleToppingsSelection = (id, isChecked) => {
-    setSelectedToppings((prevToppings) => {
-      if (isChecked) {
-        return [...prevToppings, { toppings_id: id, isPaid: false }];
-      } else {
-        return prevToppings.filter((toppings) => toppings.toppings_id !== id);
-      }
-    });
-  };
-
-  // Toppings paid unpaid
-  const handleToggleToppingsPaid = (id, isChecked) => {
-    setSelectedToppings((prevToppings) =>
-      prevToppings.map((toppings) =>
-        toppings.toppings_id === id
-          ? { ...toppings, isPaid: isChecked }
-          : toppings
-      )
-    );
-  };
-
-  // sandCust Selection Handling
-  const handleSandCustSelection = (id, isChecked) => {
-    setSelectedSandCust((prevSandCust) => {
-      if (isChecked) {
-        return [...prevSandCust, { sandCust_id: id, isPaid: false }];
-      } else {
-        return prevSandCust.filter((sandCust) => sandCust.sandCust_id !== id);
-      }
-    });
-  };
-
-  // sandCust paid unpaid
-  const handleToggleSandCustPaid = (id, isChecked) => {
-    setSelectedSandCust((prevSandCust) =>
-      prevSandCust.map((sandCust) =>
-        sandCust.sandCust_id === id
-          ? { ...sandCust, isPaid: isChecked }
-          : sandCust
-      )
-    );
+        return updatedWithSN;
+      });
+    }
   };
 
   // submit button
@@ -216,20 +114,14 @@ const AddFoodDetails = () => {
     formDataObj.append("price", data.price);
     formDataObj.append("cal", data.cal);
     formDataObj.append("description", data.description);
-    formDataObj.append("howManyFlavor", data.howManyFlavor || 0);
-    formDataObj.append("howManyChoiceFlavor", data.howManyChoiceFlavor || 0);
-    formDataObj.append("howManyDips", data.howManyDips || 0);
-    formDataObj.append("howManyChoiceDips", data.howManyChoiceDips || 0);
     formDataObj.append("food_menu_id", foodMenuID);
     formDataObj.append("food_menu_name", data.food_menu_name);
 
-    formDataObj.append("sides", JSON.stringify(selectedSides));
-    formDataObj.append("ricePlatter", JSON.stringify(selectedRicePlatter));
-    formDataObj.append("dips", JSON.stringify(selectedDips));
+    formDataObj.append("addons", JSON.stringify(dataSource));
     formDataObj.append("drinks", JSON.stringify(selectedDrinks));
     formDataObj.append("beverages", JSON.stringify(selectedBeverages));
-    formDataObj.append("toppings", JSON.stringify(selectedToppings));
     formDataObj.append("sandCust", JSON.stringify(selectedSandCust));
+    formDataObj.append("ricePlatter", JSON.stringify(selectedRicePlatter));
 
     try {
       const response = await API.post("/food-details/create", formDataObj);
@@ -246,124 +138,10 @@ const AddFoodDetails = () => {
     }
   };
 
-  const panelStyle = {
-    marginBottom: 15,
-    background: "#e9f0fa",
-    borderRadius: 10,
-    border: "none",
-  };
-
-  const items = (panelStyle) => [
-    {
-      key: "1",
-      label: <h2 className="font-semibold">Sides</h2>,
-      children: (
-        <Form.Item>
-          <SideSelection
-            side={side}
-            selectedSides={selectedSides}
-            handleSideSelection={handleSideSelection}
-            handleToggleSidePaid={handleToggleSidePaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
-    {
-      key: "2",
-      label: <h2 className="font-semibold">Dips</h2>,
-      children: (
-        <Form.Item>
-          <DipSelection
-            dip={dip}
-            selectedDips={selectedDips}
-            handleDipSelection={handleDipSelection}
-            handleToggleDipPaid={handleToggleDipPaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
-    {
-      key: "3",
-      label: <h2 className="font-semibold">Drinks</h2>,
-      children: (
-        <Form.Item label="Drinks">
-          <DrinkSelection
-            drink={drink}
-            selectedDrinks={selectedDrinks}
-            handleDrinkSelection={handleDrinkSelection}
-            handleToggleDrinkPaid={handleToggleDrinkPaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
-    {
-      key: "4",
-      label: <h2 className="font-semibold">Beverages</h2>,
-      children: (
-        <Form.Item>
-          <BeverageSelect
-            beverage={beverage}
-            selectedBeverages={selectedBeverages}
-            handleBeverageSelection={handleBeverageSelection}
-            handleToggleBeveragePaid={handleToggleBeveragePaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
-    {
-      key: "5",
-      label: <h2 className="font-semibold">Toppings</h2>,
-      children: (
-        <Form.Item>
-          <ToppingsSelect
-            toppings={toppings}
-            selectedToppings={selectedToppings}
-            handleToppingsSelection={handleToppingsSelection}
-            handleToggleToppingsPaid={handleToggleToppingsPaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
-    {
-      key: "6",
-      label: <h2 className="font-semibold">Sandwich Customize</h2>,
-      children: (
-        <Form.Item>
-          <SandCustSelect
-            sandCust={sandCust}
-            selectedSandCust={selectedSandCust}
-            handleSandCustSelection={handleSandCustSelection}
-            handleToggleSandCustPaid={handleToggleSandCustPaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
-    {
-      key: "7",
-      label: <h2 className="font-semibold">Rice Platter</h2>,
-      children: (
-        <Form.Item>
-          <RicePlatter
-            side={side}
-            selectedRicePlatter={selectedRicePlatter}
-            handleRicePlatterSelection={handleRicePlatterSelection}
-            handleToggleRicePlatterPaid={handleToggleRicePlatterPaid}
-          />
-        </Form.Item>
-      ),
-      style: panelStyle,
-    },
-  ];
-
   return (
     <div className="p-10 bg-white rounded-md shadow-lg mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">Add Food Details</h2>
+      {/* <FoodAddons /> */}
 
       <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
         {/* File Upload */}
@@ -469,88 +247,6 @@ const AddFoodDetails = () => {
             )}
           </Form.Item>
 
-          {/* howManyFlavor */}
-          <Form.Item label="How Many Flavor">
-            <Controller
-              name="howManyFlavor"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Flavor"
-                />
-              )}
-            />
-            {errors.howManyFlavor && (
-              <span className="text-red-500">
-                {errors.howManyFlavor.message}
-              </span>
-            )}
-          </Form.Item>
-
-          {/* howManyChoiceFlavor */}
-          <Form.Item label="How Many Wings">
-            <Controller
-              name="howManyChoiceFlavor"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Wings"
-                />
-              )}
-            />
-            {errors.howManyChoiceFlavor && (
-              <span className="text-red-500">
-                {errors.howManyChoiceFlavor.message}
-              </span>
-            )}
-          </Form.Item>
-
-          {/* howManyDips */}
-          <Form.Item label="How Many Dips">
-            <Controller
-              name="howManyDips"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Dips"
-                />
-              )}
-            />
-            {errors.howManyDips && (
-              <span className="text-red-500">{errors.howManyDips.message}</span>
-            )}
-          </Form.Item>
-
-          {/* howManyChoiceDips */}
-          <Form.Item label="How Many Choice Dips">
-            <Controller
-              name="howManyChoiceDips"
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter How Many Choice Dips"
-                />
-              )}
-            />
-            {errors.howManyChoiceDips && (
-              <span className="text-red-500">
-                {errors.howManyChoiceDips.message}
-              </span>
-            )}
-          </Form.Item>
-
           {/* Food Menu ID Select */}
           {/* <Form.Item label="Food Menu ID">
             <Controller
@@ -591,11 +287,25 @@ const AddFoodDetails = () => {
           />
         </Form.Item>
 
-        <Collapse
-          items={items(panelStyle)}
-          bordered={false}
-          defaultActiveKey={["1"]}
-        />
+        {/* drag and dcollapse */}
+        <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+          <SortableContext
+            items={dataSource.map((i) => i.sn_number)}
+            strategy={verticalListSortingStrategy}
+          >
+            {dataSource.map((item) => (
+              <AddonItem
+                key={item.sn_number}
+                item={item}
+                onChange={handleAddonChange}
+                onSelectedDrinksChange={handleSelectedDrinksChange}
+                onSelectedBevarageChange={handleSelectedBevarageChange}
+                onSelectedSandCustChange={handleSelectedSandCustChange}
+                onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
 
         {/* Submit Button */}
         <Form.Item>
