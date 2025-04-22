@@ -4,10 +4,11 @@ import { CSS } from "@dnd-kit/utilities";
 import { HolderOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Collapse, InputNumber, Switch } from "antd";
 import DrinkSelection from "./DrinkSelection";
-import { useBeverage, useDrink, useSandCust, useSide } from "../../api/api";
+import { useBeverage, useDrink, useSandCust, useSide } from "../../../api/api";
 import BeverageSelect from "./BeverageSelect";
 import SandCustSelect from "./SandCustSelect";
 import RicePlatter from "./RicePlatter";
+import ComboSide from "./ComboSide";
 
 const { Panel } = Collapse;
 
@@ -33,6 +34,7 @@ const AddonItem = ({
   onSelectedDrinksChange,
   onSelectedBevarageChange,
   onSelectedSandCustChange,
+  onSelectedComboSiderChange,
   onSelectedRicePlatterChange,
 }) => {
   const { drink } = useDrink();
@@ -43,6 +45,7 @@ const AddonItem = ({
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
+  const [selectedComboSide, setSelectedComboSide] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
 
   const {
@@ -142,6 +145,35 @@ const AddonItem = ({
     // Send updated data to parent
     if (onSelectedSandCustChange) {
       onSelectedSandCustChange(updated);
+    }
+  };
+
+  // Combo Side selection Handling
+  const handleComboSideSelection = (id, isChecked) => {
+    setSelectedComboSide((prevSides) => {
+      const updated = isChecked
+        ? [...prevSides, { side_id: id, isPaid: false }]
+        : prevSides.filter((side) => side.side_id !== id);
+
+      if (onSelectedComboSiderChange) {
+        onSelectedComboSiderChange(updated);
+      }
+
+      return updated;
+    });
+  };
+
+  // Combo Side paid unpaid
+  const handleToggleComboSidePaid = (id, isChecked) => {
+    const updated = selectedComboSide.map((prevSides) =>
+      prevSides.side_id === id ? { ...prevSides, isPaid: isChecked } : prevSides
+    );
+
+    setSelectedComboSide(updated);
+
+    // Send updated data to parent
+    if (onSelectedComboSiderChange) {
+      onSelectedComboSiderChange(updated);
     }
   };
 
@@ -256,6 +288,71 @@ const AddonItem = ({
             />
           </div>
         );
+
+      case "Combo Side":
+        return (
+          <div>
+            <div className="flex items-center mb-5">
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  How many {item.type} to select:
+                </span>
+                <InputNumber
+                  className="mx-2"
+                  htmlType="number"
+                  value={item.how_many_select}
+                  onChange={(value) =>
+                    handleFieldChange("how_many_select", value)
+                  }
+                />
+              </div>
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  How many {item.type} to choices:
+                </span>
+                <InputNumber
+                  className="mx-2"
+                  htmlType="number"
+                  value={item.how_many_choice}
+                  onChange={(value) =>
+                    handleFieldChange("how_many_choice", value)
+                  }
+                />
+              </div>
+              {/* <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  {item.type} Required:
+                </span>
+                <Checkbox
+                  className="mx-2"
+                  value={item.is_required}
+                  onChange={(e) =>
+                    handleFieldChange("is_required", e.target.checked)
+                  }
+                />
+              </div> */}
+              <div className="gap-2">
+                <span className="font-semibold ml-2">Extra {item.type}:</span>
+                <Switch
+                  className="mx-2"
+                  checkedChildren="On"
+                  unCheckedChildren="Off"
+                  defaultChecked
+                  value={item.is_extra_addon}
+                  onChange={(value) =>
+                    handleFieldChange("is_extra_addon", value)
+                  }
+                />
+              </div>
+            </div>
+            <ComboSide
+              side={side}
+              selectedComboSide={selectedComboSide}
+              handleComboSideSelection={handleComboSideSelection}
+              handleToggleComboSidePaid={handleToggleComboSidePaid}
+            />
+          </div>
+        );
       case "Bakery":
         return (
           <div>
@@ -347,6 +444,26 @@ const AddonItem = ({
               handleRicePlatterSelection={handleRicePlatterSelection}
               handleToggleRicePlatterPaid={handleToggleRicePlatterPaid}
             />
+          </div>
+        );
+      case "Topping":
+        return (
+          <div>
+            <div className="flex items-center">
+              <div className="gap-2">
+                <span className="font-semibold ">Topping:</span>
+                <Checkbox
+                  className="mx-2"
+                  value={item.is_required}
+                  onChange={(e) =>
+                    handleFieldChange(
+                      "how_many_select",
+                      e.target.checked === true ? 1 : 0
+                    )
+                  }
+                />
+              </div>
+            </div>
           </div>
         );
       default:

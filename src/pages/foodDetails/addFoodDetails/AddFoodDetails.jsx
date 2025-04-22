@@ -20,7 +20,7 @@ import {
 import AddonItem from "./AddonItem";
 
 import { UploadOutlined } from "@ant-design/icons";
-import { useCategory, API } from "../../api/api";
+import { useCategory, API } from "../../../api/api";
 import { useParams } from "react-router-dom";
 
 const { TextArea } = Input;
@@ -32,6 +32,7 @@ const AddFoodDetails = () => {
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
+  const [selectedComboSide, setSelectedComboSide] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -50,6 +51,10 @@ const AddFoodDetails = () => {
   const handleSelectedSandCustChange = (selectedSandCust) => {
     setSelectedSandCust(selectedSandCust);
   };
+  const handleSelectedComboSideChange = (selectedComboSide) => {
+    setSelectedComboSide(selectedComboSide);
+  };
+
   const handleSelectedRicePlatterChange = (selectedRicePlatter) => {
     setSelectedRicePlatter(selectedRicePlatter);
   };
@@ -57,7 +62,7 @@ const AddFoodDetails = () => {
   const initialAddons = [
     { type: "Flavor", sn_number: 1 },
     { type: "Dip", sn_number: 2 },
-    { type: "Side", sn_number: 3 },
+    { type: "Combo Side", sn_number: 3 },
     { type: "Bakery", sn_number: 4 },
     { type: "Drink", sn_number: 5 },
     { type: "Rice Platter", sn_number: 6 },
@@ -121,6 +126,7 @@ const AddFoodDetails = () => {
     formDataObj.append("drinks", JSON.stringify(selectedDrinks));
     formDataObj.append("beverages", JSON.stringify(selectedBeverages));
     formDataObj.append("sandCust", JSON.stringify(selectedSandCust));
+    formDataObj.append("comboSide", JSON.stringify(selectedComboSide));
     formDataObj.append("ricePlatter", JSON.stringify(selectedRicePlatter));
 
     try {
@@ -301,6 +307,7 @@ const AddFoodDetails = () => {
                 onSelectedDrinksChange={handleSelectedDrinksChange}
                 onSelectedBevarageChange={handleSelectedBevarageChange}
                 onSelectedSandCustChange={handleSelectedSandCustChange}
+                onSelectedComboSiderChange={handleSelectedComboSideChange}
                 onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
               />
             ))}

@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { API, useAllFoodDetails } from "../../api/api";
 import { Link } from "react-router-dom";
-import EditFoodDetails from "../foodDetails/EditFoodDetails";
+// import EditFoodDetails from "../foodDetails/addAndEditFood/EditFoodDetails";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -235,12 +235,12 @@ function AllFoodDetails() {
         bordered
       />
 
-      <EditFoodDetails
+      {/* <EditFoodDetails
         fdDetails={fdDetails}
         isOpen={isEditFoodDetailsOpen}
         onClose={handleModalClose}
         refetch={refetch}
-      />
+      /> */}
     </div>
   );
 }

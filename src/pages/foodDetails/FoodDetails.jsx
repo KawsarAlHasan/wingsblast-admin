@@ -4,11 +4,9 @@ import {
   Button,
   Image,
   Input,
-  Rate,
   Spin,
   Modal,
   notification,
-  message,
   Row,
   Col,
   Typography,
@@ -24,7 +22,7 @@ import {
 } from "@ant-design/icons";
 import { API, useFoodDatails, useSingleFoodMenu } from "../../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import EditFoodDetails from "./EditFoodDetails";
+// import EditFoodDetails from "./addAndEditFood/EditFoodDetails";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -246,12 +244,12 @@ const FoodDetails = () => {
         />
       )}
 
-      <EditFoodDetails
+      {/* <EditFoodDetails
         fdDetails={fdDetails}
         isOpen={isEditFoodDetailsOpen}
         onClose={handleModalClose}
         refetch={refetch}
-      />
+      /> */}
     </div>
   );
 };

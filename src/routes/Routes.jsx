@@ -13,7 +13,6 @@ import Beverage from "../pages/beverage/Beverage";
 import Side from "../pages/side/Side";
 import FoodDetails from "../pages/foodDetails/FoodDetails";
 import FoodDetail from "../pages/foodDetails/FoodDetail";
-import AddFoodDetails from "../pages/foodDetails/AddFoodDetails";
 import Food from "../pages/food/Food";
 import Analytics from "../pages/analytics/Analytics";
 import Order from "../pages/order/Order";
@@ -40,6 +39,7 @@ import Coupon from "../pages/coupons/Coupon";
 import SinglePromotion from "../pages/promotion/SinglePromotion";
 import OrderDetail from "../pages/order/OrderDetail";
 import Drinks from "../pages/drinks/Drinks";
+import AddFoodDetails from "../pages/foodDetails/addFoodDetails/AddFoodDetails";
 
 export const router = createBrowserRouter([
   {
