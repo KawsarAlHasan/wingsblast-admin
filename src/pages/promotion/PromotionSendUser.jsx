@@ -1,18 +1,22 @@
 import { Button, message, Select, Spin, Table } from "antd";
 import React, { useState } from "react";
 import { API } from "../../api/api";
-import { usePromotionSendUser } from "../../api/settingsApi";
+import { useOffersSendUser } from "../../api/settingsApi";
 
 function PromotionSendUser({ singlepromotion }) {
   const [usedTime, setUsedTime] = useState("");
-  const { promotionSendUser, isLoading, isError, error, refetch } =
-    usePromotionSendUser({
+
+  const { offersSendUser, isLoading, isError, error, refetch } =
+    useOffersSendUser({
       used_time: usedTime,
-      promotion_id: singlepromotion.id,
+      offer_id: singlepromotion?.id,
     });
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const [singleLoading, setSingleLoading] = useState(false);
+
+  console.log("offersSendUser", offersSendUser);
 
   const handleChange = (value) => {
     setUsedTime(value);
@@ -21,20 +25,15 @@ function PromotionSendUser({ singlepromotion }) {
   const sendToUser = async (id) => {
     setSingleLoading(true);
     const value = [id];
+
     const submitData = {
       user_ids: value,
-      promotion_id: singlepromotion.id,
-      promotion_name: singlepromotion.name,
-      promotion_discount_percentage: singlepromotion.discount_percentage,
-      promotion_code: singlepromotion.code,
-      promotion_discount_price: singlepromotion.discount_price,
-      promotion_expiration_date: singlepromotion.expiration_date,
-      promotion_image: singlepromotion.image,
-      promotion_is_discount_percentage: singlepromotion.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "promotion",
     };
 
     try {
-      const response = await API.post(`/promotion`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
         message.success(`Send to user promotion successfully!`);
@@ -48,7 +47,7 @@ function PromotionSendUser({ singlepromotion }) {
     }
   };
 
-  const dataSource = promotionSendUser?.data?.map((item) => ({
+  const dataSource = offersSendUser?.data?.map((item) => ({
     ...item,
     key: item.user_id,
   }));
@@ -89,14 +88,25 @@ function PromotionSendUser({ singlepromotion }) {
       ),
     },
     {
-      title: "Used Time",
-      dataIndex: "used_time",
-      key: "used_time",
+      title: "Carry Out Used",
+      dataIndex: "carry_out_used_time",
+      key: "carry_out_used_time",
       render: (_, record) =>
-        record.used_time == 0 ? (
+        record.carry_out_used_time == 0 ? (
           <div>Not Used</div>
         ) : (
-          <div>{record.used_time}</div>
+          <div>{record.carry_out_used_time}</div>
+        ),
+    },
+    {
+      title: "Delivery Used",
+      dataIndex: "delivery_used_time",
+      key: "delivery_used_time",
+      render: (_, record) =>
+        record.delivery_used_time == 0 ? (
+          <div>Not Used</div>
+        ) : (
+          <div>{record.delivery_used_time}</div>
         ),
     },
     {
@@ -104,7 +114,7 @@ function PromotionSendUser({ singlepromotion }) {
       dataIndex: "used_at",
       key: "used_at",
       render: (_, record) =>
-        record.used_time == 0 ? (
+        record.delivery_used_time == 0 && record.delivery_used_time == 0 ? (
           <div>Not Used</div>
         ) : (
           <div>{new Date(record.used_at).toLocaleString()}</div>
@@ -140,18 +150,12 @@ function PromotionSendUser({ singlepromotion }) {
     setLoading(true);
     const submitData = {
       user_ids: value,
-      promotion_id: singlepromotion.id,
-      promotion_name: singlepromotion.name,
-      promotion_discount_percentage: singlepromotion.discount_percentage,
-      promotion_code: singlepromotion.code,
-      promotion_discount_price: singlepromotion.discount_price,
-      promotion_expiration_date: singlepromotion.expiration_date,
-      promotion_image: singlepromotion.image,
-      promotion_is_discount_percentage: singlepromotion.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "promotion",
     };
 
     try {
-      const response = await API.post(`/promotion`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
         message.success(`Send to user promotion successfully!`);

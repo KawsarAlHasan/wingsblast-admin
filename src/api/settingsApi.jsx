@@ -1,28 +1,72 @@
 import { API } from "./api";
 import { useQuery } from "@tanstack/react-query";
 
-// get Promotion
-export const usePromotions = () => {
-  const getPromotion = async () => {
-    const response = await API.get(`/promotion/all`);
+// get Offers
+export const useOffers = ({ type } = {}) => {
+  const getAllOffers = async () => {
+    const response = await API.get(`/offer/all`, {
+      params: { type },
+    });
     return response.data;
   };
 
   const {
-    data: promotion = [],
+    data: offers = [],
     isLoading,
     isError,
     error,
     refetch,
   } = useQuery({
-    queryKey: ["promotion"],
-    queryFn: getPromotion,
+    queryKey: ["offers", type],
+    queryFn: getAllOffers,
   });
 
-  return { promotion, isLoading, isError, error, refetch };
+  return { offers, isLoading, isError, error, refetch };
 };
 
-// get single coupon
+// get all user for offer
+export const useAllUserForOffer = () => {
+  const getAllUser = async () => {
+    const responsce = await API.get(`/offer/all-users`);
+    return responsce.data.data;
+  };
+
+  const {
+    data: allUserForOffer = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["allUserForOffer"],
+    queryFn: getAllUser,
+  });
+
+  return { allUserForOffer, isLoading, isError, error, refetch };
+};
+
+// get single Offer
+export const useSingleOffer = (id) => {
+  const getSingleOffer = async () => {
+    const response = await API.get(`/offer/single/${id}`);
+    return response.data;
+  };
+
+  const {
+    data: singleOffer = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["singleOffer", id],
+    queryFn: getSingleOffer,
+  });
+
+  return { singleOffer, isLoading, isError, error, refetch };
+};
+
+// get single Offer
 export const useSinglePromotion = (id) => {
   const getSinglePromotion = async () => {
     const response = await API.get(`/promotion/${id}`);
@@ -110,7 +154,7 @@ export const useUserVoucher = (is_used) => {
 export const useCoupons = () => {
   const getCoupons = async () => {
     const response = await API.get(`/coupons/`);
-    return response.data.data;
+    return response.data;
   };
 
   const {
@@ -176,31 +220,34 @@ export const useCouponSendUser = ({
   return { couponSendUser, isLoading, isError, error, refetch };
 };
 
-// get Promotion Send User
-export const usePromotionSendUser = ({
+// get Offers Send User
+export const useOffersSendUser = ({
   user_id,
-  promotion_id,
+  offer_id,
   used_time,
   sent_at,
 } = {}) => {
-  const getSendUserPromotion = async () => {
-    const response = await API.get(`/promotion/couponsSendUser`, {
-      params: { user_id, promotion_id, used_time, sent_at },
+  const getSendUserOffers = async () => {
+    const response = await API.get(`/offer/offer-send-user`, {
+      params: { user_id, offer_id, used_time, sent_at },
     });
-    console.log("response", response);
+
+    console.log("response", offer_id);
+    // console.log("response", response);
+
     return response.data;
   };
 
   const {
-    data: promotionSendUser = [],
+    data: offersSendUser = [],
     isLoading,
     isError,
     error,
     refetch,
   } = useQuery({
-    queryKey: ["promotionSendUser", user_id, promotion_id, used_time, sent_at],
-    queryFn: getSendUserPromotion,
+    queryKey: ["offersSendUser", user_id, offer_id, used_time, sent_at],
+    queryFn: getSendUserOffers,
   });
 
-  return { promotionSendUser, isLoading, isError, error, refetch };
+  return { offersSendUser, isLoading, isError, error, refetch };
 };

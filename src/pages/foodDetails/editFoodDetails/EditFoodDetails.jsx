@@ -9,6 +9,7 @@ import {
   message,
   Typography,
   InputNumber,
+  Spin,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
@@ -20,22 +21,37 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { API, useCategory } from "../../../api/api";
+import { API, useCategory, useFoodDetail } from "../../../api/api";
 import EditAddonItem from "./EditAddonItem";
+import UpgradeFoodDetails from "./UpgradeFoodDetails";
+import Discount from "./Discount";
 
 const { Title } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
-const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
+const EditFoodDetails = ({
+  fdDetailsInfo,
+  fdDetailsID,
+  isOpen,
+  onClose,
+  refetch,
+}) => {
   const { category } = useCategory();
+
+  const { foodDetail, isLoading } = useFoodDetail(fdDetailsID);
+
+  const fdDetails = fdDetailsID > 0 ? foodDetail : fdDetailsInfo;
 
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
   const [selectedComboSide, setSelectedComboSide] = useState([]);
+  const [upgradeFoodDetailsID, setUpgradeFoodDetailsID] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
-
+  const [discontData, setDiscontData] = useState({});
+  const [upgradeFoodDetail, setUpgradeFoodDetail] = useState([]);
+  const [price, setPrice] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -56,8 +72,17 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
         category_id: fdDetails.category_id || undefined,
         food_menu_name: fdDetails.food_menu_name || "",
       });
+      setPrice(fdDetails.price);
     }
   }, [fdDetails, category, reset]);
+
+  const handleDiscountData = (discountData) => {
+    setDiscontData(discountData);
+  };
+
+  const handleonUpgradeFood = (upgradeFood) => {
+    setUpgradeFoodDetail(upgradeFood);
+  };
 
   const handleSelectedDrinksChange = (selectedDrinks) => {
     setSelectedDrinks(selectedDrinks);
@@ -133,18 +158,9 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
       setSelectedSandCust(fdDetails?.sandwichCustomize?.selected_options || []);
       setSelectedComboSide(fdDetails?.comboSide?.selected_options || []);
       setSelectedRicePlatter(fdDetails?.ricePlatter?.selected_options || []);
+      setUpgradeFoodDetailsID(fdDetails?.upgrade_food_details || []);
     }
   }, [fdDetails]);
-
-  // const [dataSource, setDataSource] = useState(
-  //   initialAddons.map((item) => ({
-  //     ...item,
-  //     how_many_select: item.how_many_select || 0,
-  //     how_many_choice: item.how_many_choice || 0,
-  //     is_extra_addon: item.is_extra_addon || 0,
-  //     is_required: item.is_required || 0,
-  //   }))
-  // );
 
   const handleAddonChange = (sn_number, updatedItem) => {
     setDataSource((prev) =>
@@ -194,13 +210,23 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
     formData.append("comboSide", JSON.stringify(selectedComboSide));
     formData.append("ricePlatter", JSON.stringify(selectedRicePlatter));
 
+    formData.append("discount_percentage", discontData?.discount_percentage);
+    formData.append("discount_amount", discontData?.discount_amount);
+    formData.append(
+      "is_discount_percentage",
+      discontData?.is_discount_percentage
+    );
+    formData.append("is_discount_amount", discontData?.is_discount_amount);
+    formData.append("is_buy_one_get_one", discontData?.is_buy_one_get_one);
+    formData.append("buy_one_get_one_id", discontData?.buy_one_get_one_id);
+
+    formData.append("upgrade_food_details", JSON.stringify(upgradeFoodDetail));
+
     try {
       const response = await API.put(
         `/food-details/update/${fdDetails?.id}`,
         formData
       );
-
-      console.log("response", response);
 
       if (response.status === 200) {
         message.success("Food details updated successfully!");
@@ -225,173 +251,194 @@ const EditFoodDetails = ({ fdDetails, isOpen, onClose, refetch }) => {
       centered
       width={1000}
     >
-      <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-        {/* Image Upload */}
-        <Form.Item label="Upload Image">
-          <Controller
-            name="image"
-            control={control}
-            render={({ field: { onChange, value } }) => {
-              const initialFileList = fdDetails?.image
-                ? [
-                    {
-                      uid: "-1",
-                      name: "Current Image",
-                      status: "done",
-                      url: fdDetails.image,
-                    },
-                  ]
-                : [];
-              return (
-                <Upload
-                  listType="picture-card"
-                  beforeUpload={() => false}
-                  maxCount={1}
-                  accept="image/*"
-                  fileList={value || initialFileList}
-                  onChange={({ fileList }) => onChange(fileList)}
-                  onPreview={(file) => {
-                    const src =
-                      file.url || URL.createObjectURL(file.originFileObj);
-                    const imgWindow = window.open(src);
-                    imgWindow.document.write(
-                      `<img src="${src}" style="width: 100%;" />`
-                    );
-                  }}
-                >
-                  {value && value.length >= 1 ? null : (
-                    <div>
-                      <UploadOutlined />
-                      <div style={{ marginTop: 8 }}>Upload Image</div>
-                    </div>
-                  )}
-                </Upload>
-              );
-            }}
-          />
-        </Form.Item>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-4">
-          {/* Food Name */}
-          <Form.Item className="col-span-2" label="Food Name" required>
+      {fdDetailsID > 0 && isLoading ? (
+        <Spin></Spin>
+      ) : (
+        <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
+          {/* Image Upload */}
+          <Form.Item label="Upload Image">
             <Controller
-              name="name"
+              name="image"
               control={control}
-              rules={{ required: "Food Name is required" }}
-              render={({ field }) => (
-                <Input {...field} placeholder="Enter food name" />
-              )}
-            />
-            {errors.name && (
-              <span className="text-red-500">{errors.name.message}</span>
-            )}
-          </Form.Item>
-
-          {/* Category Select */}
-          <Form.Item label="Category" required>
-            <Controller
-              name="category_id"
-              control={control}
-              rules={{ required: "Category is required" }}
-              render={({ field }) => (
-                <Select {...field} placeholder="Select a category">
-                  {category?.map((cat) => (
-                    <Option key={cat.id} value={cat.id}>
-                      {cat.category_name}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            />
-            {errors.category_id && (
-              <span className="text-red-500">{errors.category_id.message}</span>
-            )}
-          </Form.Item>
-
-          {/* Price */}
-          <Form.Item label="Price" required>
-            <Controller
-              name="price"
-              control={control}
-              rules={{ required: "Price is required" }}
-              render={({ field }) => (
-                <InputNumber
-                  {...field}
-                  className="w-full"
-                  min={0}
-                  placeholder="Enter price"
-                />
-              )}
-            />
-            {errors.price && (
-              <span className="text-red-500">{errors.price.message}</span>
-            )}
-          </Form.Item>
-
-          {/* Calories */}
-          <Form.Item label="Calories">
-            <Controller
-              name="cal"
-              control={control}
-              render={({ field }) => (
-                <Input {...field} placeholder="Enter calories" />
-              )}
-            />
-            {errors.cal && (
-              <span className="text-red-500">{errors.cal.message}</span>
-            )}
-          </Form.Item>
-
-          {/* Food Menu Name */}
-          <Form.Item label="Food Menu Name">
-            <Controller
-              name="food_menu_name"
-              control={control}
-              render={({ field }) => (
-                <Input {...field} placeholder="Enter food menu name" />
-              )}
+              render={({ field: { onChange, value } }) => {
+                const initialFileList = fdDetails?.image
+                  ? [
+                      {
+                        uid: "-1",
+                        name: "Current Image",
+                        status: "done",
+                        url: fdDetails.image,
+                      },
+                    ]
+                  : [];
+                return (
+                  <Upload
+                    listType="picture-card"
+                    beforeUpload={() => false}
+                    maxCount={1}
+                    accept="image/*"
+                    fileList={value || initialFileList}
+                    onChange={({ fileList }) => onChange(fileList)}
+                    onPreview={(file) => {
+                      const src =
+                        file.url || URL.createObjectURL(file.originFileObj);
+                      const imgWindow = window.open(src);
+                      imgWindow.document.write(
+                        `<img src="${src}" style="width: 100%;" />`
+                      );
+                    }}
+                  >
+                    {value && value.length >= 1 ? null : (
+                      <div>
+                        <UploadOutlined />
+                        <div style={{ marginTop: 8 }}>Upload Image</div>
+                      </div>
+                    )}
+                  </Upload>
+                );
+              }}
             />
           </Form.Item>
-        </div>
 
-        {/* Description */}
-        <Form.Item label="Description">
-          <Controller
-            name="description"
-            control={control}
-            render={({ field }) => (
-              <TextArea {...field} rows={4} placeholder="Enter description" />
-            )}
-          />
-        </Form.Item>
-
-        {/* drag and dcollapse */}
-        <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
-          <SortableContext
-            items={dataSource.map((i) => i.sn_number)}
-            strategy={verticalListSortingStrategy}
-          >
-            {dataSource.map((item) => (
-              <EditAddonItem
-                key={item.sn_number}
-                item={item}
-                onChange={handleAddonChange}
-                onSelectedDrinksChange={handleSelectedDrinksChange}
-                onSelectedBevarageChange={handleSelectedBevarageChange}
-                onSelectedSandCustChange={handleSelectedSandCustChange}
-                onSelectedComboSiderChange={handleSelectedComboSideChange}
-                onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-4">
+            {/* Food Name */}
+            <Form.Item className="col-span-2" label="Food Name" required>
+              <Controller
+                name="name"
+                control={control}
+                rules={{ required: "Food Name is required" }}
+                render={({ field }) => (
+                  <Input {...field} placeholder="Enter food name" />
+                )}
               />
-            ))}
-          </SortableContext>
-        </DndContext>
+              {errors.name && (
+                <span className="text-red-500">{errors.name.message}</span>
+              )}
+            </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={loading} block>
-            Save Changes
-          </Button>
-        </Form.Item>
-      </Form>
+            {/* Category Select */}
+            <Form.Item label="Category" required>
+              <Controller
+                name="category_id"
+                control={control}
+                rules={{ required: "Category is required" }}
+                render={({ field }) => (
+                  <Select {...field} placeholder="Select a category">
+                    {category?.map((cat) => (
+                      <Option key={cat.id} value={cat.id}>
+                        {cat.category_name}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              />
+              {errors.category_id && (
+                <span className="text-red-500">
+                  {errors.category_id.message}
+                </span>
+              )}
+            </Form.Item>
+
+            {/* Price */}
+            <Form.Item label="Price" required>
+              <Controller
+                name="price"
+                control={control}
+                rules={{ required: "Price is required" }}
+                render={({ field }) => (
+                  <InputNumber
+                    {...field}
+                    className="w-full"
+                    min={0}
+                    placeholder="Enter price"
+                    value={price}
+                    onChange={(value) => {
+                      field.onChange(value);
+                      setPrice(value);
+                    }}
+                  />
+                )}
+              />
+              {errors.price && (
+                <span className="text-red-500">{errors.price.message}</span>
+              )}
+            </Form.Item>
+
+            {/* Calories */}
+            <Form.Item label="Calories">
+              <Controller
+                name="cal"
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} placeholder="Enter calories" />
+                )}
+              />
+              {errors.cal && (
+                <span className="text-red-500">{errors.cal.message}</span>
+              )}
+            </Form.Item>
+
+            {/* Food Menu Name */}
+            <Form.Item label="Food Menu Name">
+              <Controller
+                name="food_menu_name"
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} placeholder="Enter food menu name" />
+                )}
+              />
+            </Form.Item>
+          </div>
+
+          <Discount fdDetails={fdDetails} onDiscountData={handleDiscountData} />
+          <UpgradeFoodDetails
+            upgradeFoodDetailsID={upgradeFoodDetailsID}
+            price={price}
+            onSelectedUpgradeFood={handleonUpgradeFood}
+          />
+
+          {/* Description */}
+          <Form.Item label="Description">
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <TextArea {...field} rows={4} placeholder="Enter description" />
+              )}
+            />
+          </Form.Item>
+
+          {/* drag and dcollapse */}
+          <DndContext
+            modifiers={[restrictToVerticalAxis]}
+            onDragEnd={onDragEnd}
+          >
+            <SortableContext
+              items={dataSource.map((i) => i.sn_number)}
+              strategy={verticalListSortingStrategy}
+            >
+              {dataSource.map((item) => (
+                <EditAddonItem
+                  key={item.sn_number}
+                  item={item}
+                  onChange={handleAddonChange}
+                  onSelectedDrinksChange={handleSelectedDrinksChange}
+                  onSelectedBevarageChange={handleSelectedBevarageChange}
+                  onSelectedSandCustChange={handleSelectedSandCustChange}
+                  onSelectedComboSiderChange={handleSelectedComboSideChange}
+                  onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading} block>
+              Save Changes
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 };

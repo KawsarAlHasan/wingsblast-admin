@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://api.wingsblast.com/api/v1",
-  // baseURL: "http://localhost:6001/api/v1",
+  // baseURL: "https://api.wingsblast.com/api/v1",
+  baseURL: "http://localhost:6001/api/v1",
 });
 
 API.interceptors.request.use((config) => {
@@ -296,7 +296,7 @@ export const useSandCust = () => {
 // get Food Menu
 export const useFoodMenu = () => {
   const getFoodMenu = async () => {
-    const response = await API.get("/foodmenu/all");
+    const response = await API.get("/foodmenu/admin");
     return response.data.data;
   };
 
@@ -408,6 +408,38 @@ export const useAllFoodDetails = ({
   const { data: allFoodDetails = [], pagination = {} } = response;
 
   return { allFoodDetails, pagination, isLoading, isError, error, refetch };
+};
+
+// get all food details Admin Panel
+export const useAllFoodDetailsAdminPanel = ({ name, checkPrice } = {}) => {
+  const getAllFoodDetailsAdminPanel = async () => {
+    const response = await API.get("/food-details/admin-panel", {
+      params: { name, checkPrice },
+    });
+    return response.data;
+  };
+
+  const {
+    data: response = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["allFoodDetailsAdminPanel", name, checkPrice],
+    queryFn: getAllFoodDetailsAdminPanel,
+    keepPreviousData: true,
+  });
+
+  const { data: allFoodDetailsAdminPanel = [] } = response;
+
+  return {
+    allFoodDetailsAdminPanel,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  };
 };
 
 // get Users

@@ -4,6 +4,7 @@ import {
   Button,
   Input,
   message,
+  Image,
   Form,
   Spin,
   Modal,
@@ -15,7 +16,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { API } from "../../api/api";
-import { usePromotions } from "../../api/settingsApi";
+import { useOffers } from "../../api/settingsApi";
 import EditPromotion from "./EditPromotion";
 import AddPromotion from "./AddPromotion";
 import { Link } from "react-router-dom";
@@ -116,7 +117,9 @@ const EditableCell = ({
 };
 
 const Promotion = () => {
-  const { promotion, isLoading, isError, error, refetch } = usePromotions();
+  const { offers, isLoading, isError, error, refetch } = useOffers({
+    type: "promotion",
+  });
 
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -145,7 +148,7 @@ const Promotion = () => {
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     try {
-      await API.delete(`/promotion/delete/${id}`);
+      await API.delete(`/offer/delete/${id}`);
       openNotification("success", "Success", "Promotion deleted successfully");
       refetch();
     } catch (error) {
@@ -177,27 +180,32 @@ const Promotion = () => {
       </div>
     );
 
-  const filteredData = promotion.data.filter((item) =>
+  const filteredData = offers?.data?.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const data = filteredData.map((item, index) => ({
+  const data = filteredData?.map((item, index) => ({
     key: index,
     ...item,
   }));
 
   const defaultColumns = [
     {
-      title: "SN",
-      dataIndex: "sn_number",
-      key: "sn_number",
-      render: (text, record, index) => index + 1,
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      editable: true,
+      title: "Food Details",
+      dataIndex: "food_details_name",
+      key: "food_details_name",
+      render: (_, record) => (
+        <div className="flex">
+          <Image
+            src={record.food_details_image}
+            alt="side"
+            width={40}
+            height={40}
+          />
+
+          <h2>{record.food_details_name}</h2>
+        </div>
+      ),
     },
     {
       title: "Code",
@@ -206,13 +214,20 @@ const Promotion = () => {
       editable: true,
     },
     {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      editable: true,
+    },
+
+    {
       title: "Discount Amount",
       dataIndex: "discount_amount",
       key: "discount_amount",
       render: (_, record) => (
         <div>
           {record.is_discount_amount == 0 ? (
-            <p className="text-gray-500">No Discount Amount</p>
+            <p className="text-gray-500">No</p>
           ) : (
             <div>$ {record.discount_amount} </div>
           )}
@@ -226,42 +241,20 @@ const Promotion = () => {
       render: (_, record) => (
         <div>
           {record.is_discount_percentage == 0 ? (
-            <p className="text-gray-500">No Discount Percentage</p>
+            <p className="text-gray-500">No</p>
           ) : (
             <div>{record.discount_percentage} %</div>
           )}
         </div>
       ),
     },
+
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
+      title: "Used Time",
+      dataIndex: "used_time",
+      key: "used_time",
       render: (_, record) => (
-        <div>
-          {record.is_date == 0 ? (
-            <p className="text-gray-500">No Date</p>
-          ) : (
-            <div>{new Date(record.date).toLocaleDateString()}</div>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: "Duration Date",
-      dataIndex: "date",
-      key: "date",
-      render: (_, record) => (
-        <div>
-          {record.is_duration_date == 0 ? (
-            <p className="text-gray-500">No Duration Date</p>
-          ) : (
-            <div>
-              {new Date(record.start_date).toLocaleDateString()} -{" "}
-              {new Date(record.end_date).toLocaleDateString()}
-            </div>
-          )}
-        </div>
+        <div>{record.used_time === null ? "Not Send" : record.used_time}</div>
       ),
     },
 
@@ -271,7 +264,7 @@ const Promotion = () => {
       render: (_, record) => (
         <Link to={`/promotion/${record.id}`}>
           <Button type="primary" size="small" icon={<CustomSendIcon />}>
-            Send to User
+            Send
           </Button>
         </Link>
       ),
@@ -310,8 +303,9 @@ const Promotion = () => {
 
   const handleSave = async (row) => {
     const promotionID = row.id;
+
     try {
-      const response = await API.put(`/promotion/update/${promotionID}`, row);
+      const response = await API.put(`/offer/update/${promotionID}`, row);
 
       if (response.status == 200) {
         message.success(`${row?.name} Updated successfully!`);

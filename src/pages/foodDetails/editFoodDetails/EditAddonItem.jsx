@@ -66,8 +66,6 @@ const EditAddonItem = ({
       isPaid: d.isPaid === 1,
     }));
 
-    console.log("formattedData", item);
-
     switch (item.type) {
       case "Drink":
         const drinkData = formattedData.map((d) => ({
@@ -333,15 +331,33 @@ const EditAddonItem = ({
       case "Drink":
         return (
           <div>
-            <div className="gap-2 mb-5">
-              <span className="font-semibold ml-2">{item.type} Required:</span>
-              <Checkbox
-                className="mx-2"
-                checked={item.is_required === 1}
-                onChange={(e) =>
-                  handleFieldChange("is_required", e.target.checked ? 1 : 0)
-                }
-              />
+            <div className="flex gap-1">
+              <div className="gap-2 mb-5">
+                <span className="font-semibold ml-2">
+                  {item.type} Required:
+                </span>
+                <Checkbox
+                  className="mx-2"
+                  checked={item.is_required === 1}
+                  onChange={(e) =>
+                    handleFieldChange("is_required", e.target.checked ? 1 : 0)
+                  }
+                />
+              </div>
+
+              <div className="gap-2">
+                <span className="font-semibold ml-2">Extra {item.type}:</span>
+                <Switch
+                  className="mx-2"
+                  checkedChildren="On"
+                  unCheckedChildren="Off"
+                  defaultChecked
+                  value={item.is_extra_addon}
+                  onChange={(value) =>
+                    handleFieldChange("is_extra_addon", value)
+                  }
+                />
+              </div>
             </div>
 
             <DrinkSelection

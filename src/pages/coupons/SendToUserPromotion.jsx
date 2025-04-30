@@ -1,9 +1,11 @@
 import { Button, message, Spin, Table } from "antd";
 import React, { useState } from "react";
-import { API, useUsers } from "../../api/api";
+import { API } from "../../api/api";
+import { useAllUserForOffer } from "../../api/settingsApi";
 
-function SendToUserCoupon({ singlecoupon }) {
-  const { users, isLoading, isError, error, refetch } = useUsers();
+function SendToUserPromotion({ singlepromotion }) {
+  const { allUserForOffer, isLoading, isError, error, refetch } =
+    useAllUserForOffer();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const [singleLoading, setSingleLoading] = useState(false);
@@ -13,31 +15,25 @@ function SendToUserCoupon({ singlecoupon }) {
     const value = [id];
     const submitData = {
       user_ids: value,
-      coupon_id: singlecoupon.id,
-      coupon_name: singlecoupon.name,
-      coupon_discount_percentage: singlecoupon.discount_percentage,
-      coupon_code: singlecoupon.code,
-      coupon_discount_price: singlecoupon.discount_price,
-      coupon_expiration_date: singlecoupon.expiration_date,
-      coupon_image: singlecoupon.image,
-      coupon_is_discount_percentage: singlecoupon.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "coupons",
     };
 
     try {
-      const response = await API.post(`/coupons`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
-        message.success(`Send to user coupon successfully!`);
+        message.success(`Send to user coupons successfully!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user coupon. Try again.`);
+      message.error(`Failed to Send to user coupons. Try again.`);
       console.error("Error:", error);
     } finally {
       setSingleLoading(false);
     }
   };
 
-  const dataSource = users?.map((item) => ({
+  const dataSource = allUserForOffer?.map((item) => ({
     ...item,
     key: item.id,
   }));
@@ -93,24 +89,18 @@ function SendToUserCoupon({ singlecoupon }) {
     setLoading(true);
     const submitData = {
       user_ids: value,
-      coupon_id: singlecoupon.id,
-      coupon_name: singlecoupon.name,
-      coupon_discount_percentage: singlecoupon.discount_percentage,
-      coupon_code: singlecoupon.code,
-      coupon_discount_price: singlecoupon.discount_price,
-      coupon_expiration_date: singlecoupon.expiration_date,
-      coupon_image: singlecoupon.image,
-      coupon_is_discount_percentage: singlecoupon.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "coupons",
     };
 
     try {
-      const response = await API.post(`/coupons`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
-        message.success(`Send to user coupon successfully!`);
+        message.success(`Send to user coupons successfully!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user coupon. Try again.`);
+      message.error(`Failed to Send to user coupons. Try again.`);
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -150,4 +140,4 @@ function SendToUserCoupon({ singlecoupon }) {
   );
 }
 
-export default SendToUserCoupon;
+export default SendToUserPromotion;

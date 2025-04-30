@@ -85,7 +85,7 @@ const Sidebar = ({ onClick }) => {
       children: [
         {
           key: "5-1",
-          label: <Link to="/feature">Feature</Link>,
+          label: <Link to="/feature">Feature List</Link>,
         },
         ...(feature?.data || []).map((fData) => ({
           key: `5-1-${fData.id}`,

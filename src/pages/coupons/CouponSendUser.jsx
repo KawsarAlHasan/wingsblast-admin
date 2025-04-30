@@ -1,12 +1,17 @@
 import { Button, message, Select, Spin, Table } from "antd";
 import React, { useState } from "react";
 import { API } from "../../api/api";
-import { useCouponSendUser } from "../../api/settingsApi";
+import { useOffersSendUser } from "../../api/settingsApi";
 
-function CouponSendUser({ singlecoupon }) {
+function CouponSendUser({ singlepromotion }) {
   const [usedTime, setUsedTime] = useState("");
-  const { couponSendUser, isLoading, isError, error, refetch } =
-    useCouponSendUser({ used_time: usedTime, coupon_id: singlecoupon.id });
+
+  const { offersSendUser, isLoading, isError, error, refetch } =
+    useOffersSendUser({
+      used_time: usedTime,
+      offer_id: singlepromotion?.id,
+    });
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const [singleLoading, setSingleLoading] = useState(false);
@@ -18,26 +23,21 @@ function CouponSendUser({ singlecoupon }) {
   const sendToUser = async (id) => {
     setSingleLoading(true);
     const value = [id];
+
     const submitData = {
       user_ids: value,
-      coupon_id: singlecoupon.id,
-      coupon_name: singlecoupon.name,
-      coupon_discount_percentage: singlecoupon.discount_percentage,
-      coupon_code: singlecoupon.code,
-      coupon_discount_price: singlecoupon.discount_price,
-      coupon_expiration_date: singlecoupon.expiration_date,
-      coupon_image: singlecoupon.image,
-      coupon_is_discount_percentage: singlecoupon.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "coupons",
     };
 
     try {
-      const response = await API.post(`/coupons`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
-        message.success(`Send to user coupon successfully!`);
+        message.success(`Send to user Coupons successfully!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user coupon. Try again.`);
+      message.error(`Failed to Send to user Coupons. Try again.`);
       console.error("Error:", error);
     } finally {
       setSingleLoading(false);
@@ -45,9 +45,9 @@ function CouponSendUser({ singlecoupon }) {
     }
   };
 
-  const dataSource = couponSendUser?.data?.map((item) => ({
+  const dataSource = offersSendUser?.data?.map((item) => ({
     ...item,
-    key: item.user_id,
+    key: item.id,
   }));
 
   const columns = [
@@ -86,14 +86,25 @@ function CouponSendUser({ singlecoupon }) {
       ),
     },
     {
-      title: "Used Time",
-      dataIndex: "used_time",
-      key: "used_time",
+      title: "Carry Out Used",
+      dataIndex: "carry_out_used_time",
+      key: "carry_out_used_time",
       render: (_, record) =>
-        record.used_time == 0 ? (
+        record.carry_out_used_time == 0 ? (
           <div>Not Used</div>
         ) : (
-          <div>{record.used_time}</div>
+          <div>{record.carry_out_used_time}</div>
+        ),
+    },
+    {
+      title: "Delivery Used",
+      dataIndex: "delivery_used_time",
+      key: "delivery_used_time",
+      render: (_, record) =>
+        record.delivery_used_time == 0 ? (
+          <div>Not Used</div>
+        ) : (
+          <div>{record.delivery_used_time}</div>
         ),
     },
     {
@@ -101,7 +112,7 @@ function CouponSendUser({ singlecoupon }) {
       dataIndex: "used_at",
       key: "used_at",
       render: (_, record) =>
-        record.used_time == 0 ? (
+        record.delivery_used_time == 0 && record.delivery_used_time == 0 ? (
           <div>Not Used</div>
         ) : (
           <div>{new Date(record.used_at).toLocaleString()}</div>
@@ -137,24 +148,18 @@ function CouponSendUser({ singlecoupon }) {
     setLoading(true);
     const submitData = {
       user_ids: value,
-      coupon_id: singlecoupon.id,
-      coupon_name: singlecoupon.name,
-      coupon_discount_percentage: singlecoupon.discount_percentage,
-      coupon_code: singlecoupon.code,
-      coupon_discount_price: singlecoupon.discount_price,
-      coupon_expiration_date: singlecoupon.expiration_date,
-      coupon_image: singlecoupon.image,
-      coupon_is_discount_percentage: singlecoupon.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "coupons",
     };
 
     try {
-      const response = await API.post(`/coupons`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
-        message.success(`Send to user coupon successfully!`);
+        message.success(`Send to user coupons successfully!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user coupon. Try again.`);
+      message.error(`Failed to Send to user coupons. Try again.`);
       console.error("Error:", error);
     } finally {
       setLoading(false);

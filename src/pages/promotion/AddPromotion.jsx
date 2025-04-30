@@ -1,14 +1,27 @@
 import React, { useState } from "react";
-import { Button, Modal, Form, Input, Radio, DatePicker, message } from "antd";
+import {
+  Button,
+  Modal,
+  Form,
+  Input,
+  Radio,
+  DatePicker,
+  message,
+  Select,
+  Avatar,
+  InputNumber,
+} from "antd";
 import { useForm, Controller } from "react-hook-form";
-import { API } from "../../api/api";
+import { API, useAllFoodDetailsAdminPanel } from "../../api/api";
 
 const { RangePicker } = DatePicker;
 
 function AddPromotion({ refetch }) {
+  const { allFoodDetailsAdminPanel } = useAllFoodDetailsAdminPanel();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { control, register, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
+  const [foodDetailsID, setFoodDetailsID] = useState(0);
 
   // State for toggling visibility of fields
   const [dateType, setDateType] = useState("is_date"); // is_date or is_duration_date
@@ -39,12 +52,42 @@ function AddPromotion({ refetch }) {
     setDiscountType("is_discount_percentage"); // Reset discount type
   };
 
+  const foodOptions = [
+    ...(allFoodDetailsAdminPanel?.map((item) => ({
+      value: item.id,
+      label: (
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Avatar src={item.image} size="small" />
+          <div>
+            <strong>{item.name}</strong>
+            <div>
+              $ {item.price} | {item.cal}
+            </div>
+          </div>
+        </div>
+      ),
+      customLabel: (
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Avatar src={item.image} size="small" />
+          {item.name}
+        </span>
+      ),
+      searchName: item.name,
+    })) || []),
+  ];
+
+  const handleFoodIdChange = (value) => {
+    setFoodDetailsID(value);
+  };
+
   // Handle form submission
   const onSubmit = async (data) => {
     setLoading(true);
     const isDate = dateType == "is_date" ? 1 : 0;
+    const isDurationDate = dateType == "is_date" ? 0 : 1;
     const isDiscountPercentage =
       discountType == "is_discount_percentage" ? 1 : 0;
+    const isDiscountAmount = discountType == "is_discount_percentage" ? 0 : 1;
 
     const singleDate = dateType == "is_date" ? date : 0;
     const startDate = dateType == "is_date" ? 0 : dates[0];
@@ -55,20 +98,26 @@ function AddPromotion({ refetch }) {
       discountType == "is_discount_percentage" ? 0 : data.discount_amount;
 
     const submitData = {
-      bonus_type: "promotions",
-      name: data.name,
+      type: "promotion",
       code: data.code,
+      name: data.name,
+      carry_out_use_time: data.carry_out_use_time,
+      delivery_use_time: data.delivery_use_time,
       date: singleDate,
+      food_id: foodDetailsID,
       start_date: startDate,
       end_date: endDate,
       is_date: isDate,
       discount_percentage: discountPercentage,
       discount_amount: discountAmount,
+      is_duration_date: isDurationDate,
       is_discount_percentage: isDiscountPercentage,
+      is_discount_amount: isDiscountAmount,
     };
 
     try {
-      const response = await API.post("/bonus/create", submitData); // Updated endpoint
+      const response = await API.post("/offer/create", submitData); // Updated endpoint
+
       if (response.status == 200) {
         message.success(`${data?.name} added successfully!`);
         refetch();
@@ -78,6 +127,7 @@ function AddPromotion({ refetch }) {
         message.error(`Error: ${response.data?.message}`);
       }
     } catch (error) {
+      console.log("message", error);
       message.error(`Failed to Create ${data.name}. Try again.`);
     } finally {
       setLoading(false);
@@ -108,7 +158,7 @@ function AddPromotion({ refetch }) {
             />
           </Form.Item>
 
-          {/* Promotion code */}
+          {/* Promotion Code */}
           <Form.Item label={`Promotion Code`}>
             <Controller
               name="code"
@@ -116,6 +166,46 @@ function AddPromotion({ refetch }) {
               rules={{ required: "Code is required" }}
               render={({ field }) => (
                 <Input placeholder="Enter Code..." {...field} />
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item label="Select a Food Detail for Promotion">
+            <Select
+              showSearch
+              placeholder="Select a Food Item"
+              style={{ width: "100%" }}
+              onChange={handleFoodIdChange}
+              options={foodOptions}
+              optionLabelProp="customLabel"
+            />
+          </Form.Item>
+
+          <Form.Item label="Carryout use time">
+            <Controller
+              name="carry_out_use_time"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  min={1}
+                  className="w-full"
+                  placeholder="Enter number..."
+                  {...field}
+                />
+              )}
+            />
+          </Form.Item>
+          <Form.Item label="Delivery use time">
+            <Controller
+              name="delivery_use_time"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  min={0}
+                  className="w-full"
+                  placeholder="Enter number..."
+                  {...field}
+                />
               )}
             />
           </Form.Item>

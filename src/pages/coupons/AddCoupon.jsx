@@ -1,11 +1,22 @@
 import React, { useState } from "react";
-import { Button, Modal, Form, Input, Radio, DatePicker, message } from "antd";
+import {
+  Button,
+  Modal,
+  Form,
+  Input,
+  Radio,
+  DatePicker,
+  message,
+  Select,
+  Avatar,
+  InputNumber,
+} from "antd";
 import { useForm, Controller } from "react-hook-form";
 import { API } from "../../api/api";
 
 const { RangePicker } = DatePicker;
 
-function AddPromotion({ refetch }) {
+function AddCoupon({ refetch }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { control, register, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
@@ -43,42 +54,49 @@ function AddPromotion({ refetch }) {
   const onSubmit = async (data) => {
     setLoading(true);
     const isDate = dateType == "is_date" ? 1 : 0;
-    const isDurationDate = dateType == "is_duration_date" ? 1 : 0;
+    const isDurationDate = dateType == "is_date" ? 0 : 1;
     const isDiscountPercentage =
       discountType == "is_discount_percentage" ? 1 : 0;
-    const isDiscountAmount = discountType == "is_discount_amount" ? 1 : 0;
+    const isDiscountAmount = discountType == "is_discount_percentage" ? 0 : 1;
 
     const singleDate = dateType == "is_date" ? date : 0;
-    const startDate = dateType == "is_duration_date" ? dates[0] : 0;
-    const endDate = dateType == "is_duration_date" ? dates[1] : 0;
+    const startDate = dateType == "is_date" ? 0 : dates[0];
+    const endDate = dateType == "is_date" ? 0 : dates[1];
     const discountPercentage =
       discountType == "is_discount_percentage" ? data.discount_percentage : 0;
     const discountAmount =
-      discountType == "is_discount_amount" ? data.discount_amount : 0;
+      discountType == "is_discount_percentage" ? 0 : data.discount_amount;
 
     const submitData = {
-      name: data.name,
+      type: "coupons",
       code: data.code,
+      name: data.name,
+      carry_out_use_time: data.carry_out_use_time,
+      delivery_use_time: data.delivery_use_time,
       date: singleDate,
       start_date: startDate,
       end_date: endDate,
       is_date: isDate,
-      is_duration_date: isDurationDate,
       discount_percentage: discountPercentage,
       discount_amount: discountAmount,
+      is_duration_date: isDurationDate,
       is_discount_percentage: isDiscountPercentage,
       is_discount_amount: isDiscountAmount,
     };
 
     try {
-      const response = await API.post("/promotion/create", submitData); // Updated endpoint
+      const response = await API.post("/offer/create", submitData); // Updated endpoint
 
       if (response.status == 200) {
         message.success(`${data?.name} added successfully!`);
         refetch();
         handleCancel(); // Close modal on success
       }
+      if (response.status == 201) {
+        message.error(`Error: ${response.data?.message}`);
+      }
     } catch (error) {
+      console.log("message", error);
       message.error(`Failed to Create ${data.name}. Try again.`);
     } finally {
       setLoading(false);
@@ -88,17 +106,17 @@ function AddPromotion({ refetch }) {
   return (
     <div>
       <Button type="primary" onClick={showModal}>
-        Create Promotion
+        Create Coupon
       </Button>
       <Modal
-        title={`Create Promotion`}
+        title={`Create Coupon`}
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null} // Custom footer to use form submit
       >
         <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-          {/* Promotion Name */}
-          <Form.Item label={`Promotion Name`}>
+          {/* Coupon Name */}
+          <Form.Item label={`Coupon Name`}>
             <Controller
               name="name"
               control={control}
@@ -109,14 +127,43 @@ function AddPromotion({ refetch }) {
             />
           </Form.Item>
 
-          {/* Promotion code */}
-          <Form.Item label={`Promotion Code`}>
+          {/* Coupon Code */}
+          <Form.Item label={`Coupon Code`}>
             <Controller
               name="code"
               control={control}
               rules={{ required: "Code is required" }}
               render={({ field }) => (
                 <Input placeholder="Enter Code..." {...field} />
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item label="Carryout use time">
+            <Controller
+              name="carry_out_use_time"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  min={1}
+                  className="w-full"
+                  placeholder="Enter number..."
+                  {...field}
+                />
+              )}
+            />
+          </Form.Item>
+          <Form.Item label="Delivery use time">
+            <Controller
+              name="delivery_use_time"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  min={0}
+                  className="w-full"
+                  placeholder="Enter number..."
+                  {...field}
+                />
               )}
             />
           </Form.Item>
@@ -200,4 +247,4 @@ function AddPromotion({ refetch }) {
   );
 }
 
-export default AddPromotion;
+export default AddCoupon;

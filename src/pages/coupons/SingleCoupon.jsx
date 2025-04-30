@@ -4,13 +4,13 @@ import { useSingleOffer } from "../../api/settingsApi";
 
 import { Spin, Select } from "antd";
 import SendToUserPromotion from "./SendToUserPromotion";
-import PromotionSendUser from "./PromotionSendUser";
-import PromotionDetails from "./PromotionDetails";
+import CouponSendUser from "./CouponSendUser";
+import CouponDetails from "./CouponDetails";
 
-function SinglePromotion() {
-  const { promotionID } = useParams();
+function SingleCoupon() {
+  const { couponsID } = useParams();
   const { singleOffer, isLoading, isError, error, refetch } =
-    useSingleOffer(promotionID);
+    useSingleOffer(couponsID);
   const [selected, setSelected] = useState("alluser");
 
   const handleChange = (value) => {
@@ -29,7 +29,7 @@ function SinglePromotion() {
 
   return (
     <div>
-      <PromotionDetails promotion={singleOffer?.data} />
+      <CouponDetails promotion={singleOffer?.data} />
 
       <div className="my-5">
         <Select
@@ -45,7 +45,7 @@ function SinglePromotion() {
             },
             {
               value: "promotionsenduser",
-              label: "Promotion Send User",
+              label: "Coupon Send User",
             },
           ]}
         />
@@ -54,10 +54,10 @@ function SinglePromotion() {
       {selected == "alluser" ? (
         <SendToUserPromotion singlepromotion={data} />
       ) : (
-        <PromotionSendUser singlepromotion={data} />
+        <CouponSendUser singlepromotion={data} />
       )}
     </div>
   );
 }
 
-export default SinglePromotion;
+export default SingleCoupon;

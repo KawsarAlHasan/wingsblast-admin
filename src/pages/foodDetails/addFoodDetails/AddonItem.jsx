@@ -270,16 +270,35 @@ const AddonItem = ({
       case "Drink":
         return (
           <div>
-            <div className="gap-2 mb-5">
-              <span className="font-semibold ml-2">{item.type} Required:</span>
-              <Checkbox
-                className="mx-2"
-                value={item.is_required}
-                onChange={(e) =>
-                  handleFieldChange("is_required", e.target.checked)
-                }
-              />
+            <div className="flex gap-2">
+              <div className="gap-2 mb-5">
+                <span className="font-semibold ml-2">
+                  {item.type} Required:
+                </span>
+                <Checkbox
+                  className="mx-2"
+                  value={item.is_required}
+                  onChange={(e) =>
+                    handleFieldChange("is_required", e.target.checked)
+                  }
+                />
+              </div>
+
+              <div className="gap-2">
+                <span className="font-semibold ml-2">Extra {item.type}:</span>
+                <Switch
+                  className="mx-2"
+                  checkedChildren="On"
+                  unCheckedChildren="Off"
+                  defaultChecked
+                  value={item.is_extra_addon}
+                  onChange={(value) =>
+                    handleFieldChange("is_extra_addon", value)
+                  }
+                />
+              </div>
             </div>
+
             <DrinkSelection
               drink={drink}
               selectedDrinks={selectedDrinks}
@@ -425,6 +444,7 @@ const AddonItem = ({
                   }
                 />
               </div>
+
               <div className="gap-2">
                 <span className="font-semibold ml-2">
                   {item.type} Required:

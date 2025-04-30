@@ -12,6 +12,7 @@ import {
   Alert,
   Modal,
   DatePicker,
+  Avatar,
 } from "antd";
 
 import { EditOutlined } from "@ant-design/icons";
@@ -114,6 +115,8 @@ function FoodDetail() {
     .filter(Boolean)
     .sort((a, b) => a.sn_number - b.sn_number);
 
+  console.log("foodDetail", foodDetail);
+
   return (
     <div className="">
       <div className="flex justify-between p-4">
@@ -157,9 +160,72 @@ function FoodDetail() {
             <p>
               <strong>Calories:</strong> {foodDetail.cal}
             </p>
-            <p>
+            <p className="mb-2">
               <strong>Food Menu Name:</strong> {foodDetail.food_menu_name}
             </p>
+            {foodDetail.is_discount_percentage == 1 && (
+              <p>
+                <strong>Discount Percentage: </strong>
+                {foodDetail.discount_percentage}%
+              </p>
+            )}
+            {foodDetail.is_discount_amount == 1 && (
+              <p>
+                <strong>Discount Percentage: </strong>$
+                {foodDetail.discount_amount}
+              </p>
+            )}
+            {foodDetail.is_buy_one_get_one == 1 && (
+              <p>
+                <strong>Buy One Get One Food Detail: </strong>
+                <div
+                  className="border border-gray-300 rounded-lg bg-gray-100"
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
+                  <Avatar
+                    src={foodDetail.buy_one_get_one_food.image}
+                    size="small"
+                  />
+                  <div>
+                    <h2 className="font-semibold">
+                      {foodDetail.buy_one_get_one_food.name}
+                    </h2>
+                    <div>
+                      $ {foodDetail.buy_one_get_one_food.price} |{" "}
+                      {foodDetail.buy_one_get_one_food.cal}
+                    </div>
+                  </div>
+                </div>
+              </p>
+            )}
+
+            {foodDetail.upgrade_food_details.length > 0 && (
+              <div className="mt-2">
+                <strong>Upgrade Food Details: </strong>
+                {foodDetail.upgrade_food_details.map((uFD, index) => (
+                  <div key={index}>
+                    <div
+                      className="border border-gray-300 rounded-lg mt-1 bg-gray-100"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      <Avatar src={uFD.image} size="small" />
+                      <div>
+                        <h2 className="font-semibold">
+                          {uFD.food_details_name}
+                        </h2>
+                        <div>
+                          Extra Price: $ {uFD.extra_price} | {uFD.cal}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Display Status Information */}
             <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-100">
@@ -487,7 +553,7 @@ function FoodDetail() {
       </Modal>
 
       <EditFoodDetails
-        fdDetails={foodDetail}
+        fdDetailsInfo={foodDetail}
         isOpen={isEditFoodDetailsOpen}
         onClose={handleModalClose}
         refetch={refetch}

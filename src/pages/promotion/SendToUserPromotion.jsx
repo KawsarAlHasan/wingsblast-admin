@@ -1,9 +1,11 @@
 import { Button, message, Spin, Table } from "antd";
 import React, { useState } from "react";
-import { API, useUsers } from "../../api/api";
+import { API } from "../../api/api";
+import { useAllUserForOffer } from "../../api/settingsApi";
 
 function SendToUserPromotion({ singlepromotion }) {
-  const { users, isLoading, isError, error, refetch } = useUsers();
+  const { allUserForOffer, isLoading, isError, error, refetch } =
+    useAllUserForOffer();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const [singleLoading, setSingleLoading] = useState(false);
@@ -13,18 +15,12 @@ function SendToUserPromotion({ singlepromotion }) {
     const value = [id];
     const submitData = {
       user_ids: value,
-      promotion_id: singlepromotion.id,
-      promotion_name: singlepromotion.name,
-      promotion_discount_percentage: singlepromotion.discount_percentage,
-      promotion_code: singlepromotion.code,
-      promotion_discount_price: singlepromotion.discount_amount,
-      promotion_expiration_date: singlepromotion.expiration_date,
-      promotion_image: singlepromotion.image,
-      promotion_is_discount_percentage: singlepromotion.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "promotion",
     };
 
     try {
-      const response = await API.post(`/promotion`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
         message.success(`Send to user promotion successfully!`);
@@ -37,7 +33,7 @@ function SendToUserPromotion({ singlepromotion }) {
     }
   };
 
-  const dataSource = users?.map((item) => ({
+  const dataSource = allUserForOffer?.map((item) => ({
     ...item,
     key: item.id,
   }));
@@ -93,18 +89,12 @@ function SendToUserPromotion({ singlepromotion }) {
     setLoading(true);
     const submitData = {
       user_ids: value,
-      promotion_id: singlepromotion.id,
-      promotion_name: singlepromotion.name,
-      promotion_discount_percentage: singlepromotion.discount_percentage,
-      promotion_code: singlepromotion.code,
-      promotion_discount_price: singlepromotion.discount_price,
-      promotion_expiration_date: singlepromotion.expiration_date,
-      promotion_image: singlepromotion.image,
-      promotion_is_discount_percentage: singlepromotion.is_discount_percentage,
+      type_id: singlepromotion.id,
+      type: "promotion",
     };
 
     try {
-      const response = await API.post(`/promotion`, submitData);
+      const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
         message.success(`Send to user promotion successfully!`);

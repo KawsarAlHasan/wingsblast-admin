@@ -22,7 +22,7 @@ import {
 } from "@ant-design/icons";
 import { API, useFoodDatails, useSingleFoodMenu } from "../../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
-// import EditFoodDetails from "./addAndEditFood/EditFoodDetails";
+import EditFoodDetails from "./editFoodDetails/EditFoodDetails";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -178,7 +178,7 @@ const FoodDetails = () => {
           type="primary"
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
+          onClick={() => handleEdit(record.id)}
         >
           Edit
         </Button>
@@ -244,12 +244,12 @@ const FoodDetails = () => {
         />
       )}
 
-      {/* <EditFoodDetails
-        fdDetails={fdDetails}
+      <EditFoodDetails
+        fdDetailsID={fdDetails}
         isOpen={isEditFoodDetailsOpen}
         onClose={handleModalClose}
         refetch={refetch}
-      /> */}
+      />
     </div>
   );
 };

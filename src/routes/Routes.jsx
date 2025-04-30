@@ -26,7 +26,6 @@ import TaxAndDeliveryFee from "../pages/tax&Delivery/TaxAndDeliveryFee";
 import Banner from "../pages/Banner";
 import AboutUs from "../pages/AboutUs";
 import AllFoodDetails from "../pages/allFoodDetails/AllFoodDetails";
-import Coupons from "../pages/coupons/Coupons";
 import ProductFeature from "../pages/productFeature/ProductFeature";
 import Test from "../pages/Test";
 import Feature from "../pages/feature/Feature";
@@ -35,11 +34,12 @@ import OpeningScheduleTable from "../pages/opening/OpeningSchedule";
 import RegularOrder from "../pages/regularOrder/RegularOrder";
 import ScheduleOrder from "../pages/ScheduleOrder/ScheduleOrder";
 import BirthdayPromotion from "../pages/promotion/BirthdayPromotion";
-import Coupon from "../pages/coupons/Coupon";
 import SinglePromotion from "../pages/promotion/SinglePromotion";
 import OrderDetail from "../pages/order/OrderDetail";
 import Drinks from "../pages/drinks/Drinks";
 import AddFoodDetails from "../pages/foodDetails/addFoodDetails/AddFoodDetails";
+import Coupons from "../pages/coupons/Coupons";
+import SingleCoupon from "../pages/coupons/SingleCoupon";
 
 export const router = createBrowserRouter([
   {
@@ -181,14 +181,6 @@ export const router = createBrowserRouter([
         element: <AboutUs />,
       },
       {
-        path: "/coupons",
-        element: <Coupons />,
-      },
-      {
-        path: "/coupons/:couponsID",
-        element: <Coupon />,
-      },
-      {
         path: "/opening",
         element: <OpeningScheduleTable />,
       },
@@ -200,6 +192,16 @@ export const router = createBrowserRouter([
         path: "/promotion/:promotionID",
         element: <SinglePromotion />,
       },
+
+      {
+        path: "/coupons",
+        element: <Coupons />,
+      },
+      {
+        path: "/coupons/:couponsID",
+        element: <SingleCoupon />,
+      },
+
       {
         path: "/birthday-voucher",
         element: <BirthdayPromotion />,

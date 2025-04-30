@@ -22,6 +22,8 @@ import AddonItem from "./AddonItem";
 import { UploadOutlined } from "@ant-design/icons";
 import { useCategory, API } from "../../../api/api";
 import { useParams } from "react-router-dom";
+import Discount from "./Discount";
+import UpgradeFoodDetails from "./UpgradeFoodDetails";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -29,6 +31,8 @@ const { Option } = Select;
 const AddFoodDetails = () => {
   const { foodMenuID } = useParams();
   const { category } = useCategory();
+  const [discontData, setDiscontData] = useState({});
+  const [upgradeFoodDetail, setUpgradeFoodDetail] = useState([]);
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
@@ -36,11 +40,21 @@ const AddFoodDetails = () => {
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [price, setPrice] = useState(0);
+
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm();
+
+  const handleDiscountData = (discountData) => {
+    setDiscontData(discountData);
+  };
+
+  const handleonUpgradeFood = (upgradeFood) => {
+    setUpgradeFoodDetail(upgradeFood);
+  };
 
   const handleSelectedDrinksChange = (selectedDrinks) => {
     setSelectedDrinks(selectedDrinks);
@@ -121,6 +135,15 @@ const AddFoodDetails = () => {
     formDataObj.append("description", data.description);
     formDataObj.append("food_menu_id", foodMenuID);
     formDataObj.append("food_menu_name", data.food_menu_name);
+    formDataObj.append("discount_percentage", discontData?.discount_percentage);
+    formDataObj.append("discount_amount", discontData?.discount_amount);
+    formDataObj.append(
+      "is_discount_percentage",
+      discontData?.is_discount_percentage
+    );
+    formDataObj.append("is_discount_amount", discontData?.is_discount_amount);
+    formDataObj.append("is_buy_one_get_one", discontData?.is_buy_one_get_one);
+    formDataObj.append("buy_one_get_one_id", discontData?.buy_one_get_one_id);
 
     formDataObj.append("addons", JSON.stringify(dataSource));
     formDataObj.append("drinks", JSON.stringify(selectedDrinks));
@@ -128,15 +151,21 @@ const AddFoodDetails = () => {
     formDataObj.append("sandCust", JSON.stringify(selectedSandCust));
     formDataObj.append("comboSide", JSON.stringify(selectedComboSide));
     formDataObj.append("ricePlatter", JSON.stringify(selectedRicePlatter));
+    formDataObj.append(
+      "upgrade_food_details",
+      JSON.stringify(upgradeFoodDetail)
+    );
 
     try {
       const response = await API.post("/food-details/create", formDataObj);
+      console.log("response", response);
       if (response.data.success) {
         message.success("Food details added successfully!");
       } else {
         message.error(response.data.message);
       }
     } catch (error) {
+      console.log("error", error);
       message.error("Failed to add food details. Please try again.");
     } finally {
       setLoading(false);
@@ -231,6 +260,11 @@ const AddFoodDetails = () => {
                   className="w-full"
                   min={0}
                   placeholder="Enter price"
+                  value={price}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setPrice(value);
+                  }}
                 />
               )}
             />
@@ -281,6 +315,12 @@ const AddFoodDetails = () => {
             />
           </Form.Item>
         </div>
+
+        <Discount onDiscountData={handleDiscountData} />
+        <UpgradeFoodDetails
+          price={price}
+          onSelectedUpgradeFood={handleonUpgradeFood}
+        />
 
         {/* Description */}
         <Form.Item label="Description">
