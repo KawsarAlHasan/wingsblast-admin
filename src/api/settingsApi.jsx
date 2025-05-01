@@ -251,3 +251,24 @@ export const useOffersSendUser = ({
 
   return { offersSendUser, isLoading, isError, error, refetch };
 };
+
+// banner
+export const useBanner = () => {
+  const getBanner = async () => {
+    const response = await API.get(`/banner`);
+    return response.data;
+  };
+
+  const {
+    data: banner = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["banner"],
+    queryFn: getBanner,
+  });
+
+  return { banner, isLoading, isError, error, refetch };
+};

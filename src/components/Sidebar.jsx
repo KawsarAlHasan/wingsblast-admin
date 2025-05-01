@@ -168,6 +168,10 @@ const Sidebar = ({ onClick }) => {
             },
           ],
         },
+        {
+          key: "8-5",
+          label: <Link to="/banner">Banner</Link>,
+        },
       ],
     },
   ];

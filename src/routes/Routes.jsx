@@ -23,7 +23,6 @@ import SandCust from "../pages/sandCust/SandCust";
 import Terms from "../pages/Terms";
 import Privacy from "../pages/Privacy";
 import TaxAndDeliveryFee from "../pages/tax&Delivery/TaxAndDeliveryFee";
-import Banner from "../pages/Banner";
 import AboutUs from "../pages/AboutUs";
 import AllFoodDetails from "../pages/allFoodDetails/AllFoodDetails";
 import ProductFeature from "../pages/productFeature/ProductFeature";
@@ -40,6 +39,7 @@ import Drinks from "../pages/drinks/Drinks";
 import AddFoodDetails from "../pages/foodDetails/addFoodDetails/AddFoodDetails";
 import Coupons from "../pages/coupons/Coupons";
 import SingleCoupon from "../pages/coupons/SingleCoupon";
+import Banner from "../pages/banner/Banner";
 
 export const router = createBrowserRouter([
   {

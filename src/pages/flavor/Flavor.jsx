@@ -176,8 +176,6 @@ const Flavor = () => {
     },
   ];
 
-  console.log(flavor, "flavor");
-
   return (
     <div>
       <h2 className="text-center text-2xl font-bold my-5">Flavor List</h2>

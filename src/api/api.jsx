@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  // baseURL: "https://api.wingsblast.com/api/v1",
-  baseURL: "http://localhost:6001/api/v1",
+  baseURL: "https://api.wingsblast.com/api/v1",
+  // baseURL: "http://localhost:6001/api/v1",
 });
 
 API.interceptors.request.use((config) => {
@@ -634,27 +634,6 @@ export const useTax = () => {
   });
 
   return { tax, isLoading, isError, error, refetch };
-};
-
-// get banner
-export const useBanner = () => {
-  const getBanner = async () => {
-    const response = await API.get("/settings/banner");
-    return response.data.data;
-  };
-
-  const {
-    data: banner = [],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["banner"],
-    queryFn: getBanner,
-  });
-
-  return { banner, isLoading, isError, error, refetch };
 };
 
 // get Fees
