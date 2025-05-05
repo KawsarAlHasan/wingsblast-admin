@@ -102,7 +102,7 @@ function OrderDetail() {
       });
   };
 
-  console.log(orderDetails, "orderDetails");
+  // console.log(orderDetails, "orderDetails");
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -225,12 +225,8 @@ function OrderDetail() {
                         <tr>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10">
-                                <img
-                                  className="h-10 w-10 rounded-full object-cover"
-                                  src={item.image}
-                                  alt={item.name}
-                                />
+                              <div className="flex-shrink-0 ">
+                                ID: {item?.id}
                               </div>
                               <div className="ml-4">
                                 <div className="text-sm font-medium text-gray-900">
@@ -239,6 +235,9 @@ function OrderDetail() {
                                 <div className="text-sm text-gray-500">
                                   {item.description}
                                 </div>
+                                <p className="text-xs text-gray-500">
+                                  Notes: {item?.note}
+                                </p>
                               </div>
                             </div>
                           </td>
@@ -273,6 +272,9 @@ function OrderDetail() {
                                       >
                                         <span className="text-sm text-gray-600">
                                           {addon.name}
+                                          {addon?.child_item_name
+                                            ? ` (${addon?.child_item_name})`
+                                            : ""}
                                           {addon?.quantity > 1
                                             ? `(x${addon?.quantity})`
                                             : ""}

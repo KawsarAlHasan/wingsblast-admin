@@ -16,7 +16,6 @@ import FoodDetail from "../pages/foodDetails/FoodDetail";
 import Food from "../pages/food/Food";
 import Analytics from "../pages/analytics/Analytics";
 import Order from "../pages/order/Order";
-import OrderDetails from "../pages/order/OrderDetails";
 import User from "../pages/users/User";
 import Toppings from "../pages/tippings/Toppings";
 import SandCust from "../pages/sandCust/SandCust";
@@ -150,10 +149,7 @@ export const router = createBrowserRouter([
         path: "/order/schedule",
         element: <ScheduleOrder />,
       },
-      // {
-      //   path: "/order/:orderID",
-      //   element: <OrderDetails />,
-      // },
+
       {
         path: "/order/:orderID",
         element: <OrderDetail />,
