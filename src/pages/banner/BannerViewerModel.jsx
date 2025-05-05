@@ -60,6 +60,11 @@ function BannerViewerModel({ banner, isOpen, onClose }) {
         <p className="my-2">
           <strong>Serial Status:</strong> <span>{banner.status}</span>
         </p>
+
+        <p className="my-2">
+          <strong>Link Type:</strong> <span>{banner.link_type}</span>
+        </p>
+
         <p>
           <strong>Aditional Link:</strong>{" "}
           <a href={banner.link_url} target="_blank">

@@ -152,8 +152,12 @@ const Sidebar = ({ onClick }) => {
         },
         {
           key: "8-4",
-          label: "Terms, Privacy & About Us",
+          label: "Terms, Banner & About Us",
           children: [
+            {
+              key: "8-5",
+              label: <Link to="/banner">Banner</Link>,
+            },
             {
               key: "8-4-1",
               label: <Link to="/terms">Terms</Link>,
@@ -167,10 +171,6 @@ const Sidebar = ({ onClick }) => {
               label: <Link to="/about-us">About us</Link>,
             },
           ],
-        },
-        {
-          key: "8-5",
-          label: <Link to="/banner">Banner</Link>,
         },
       ],
     },

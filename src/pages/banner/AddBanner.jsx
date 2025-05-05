@@ -8,21 +8,31 @@ import {
   message,
   Select,
   InputNumber,
+  Avatar,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
-import { API } from "../../api/api";
+import { API, useAllFoodDetailsAdminPanel, useCategory } from "../../api/api";
 
 function AddBanner({ refetch }) {
+  const { allFoodDetailsAdminPanel } = useAllFoodDetailsAdminPanel();
+  const { category } = useCategory();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { control, register, handleSubmit, reset } = useForm();
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [selectedType, setSelectedType] = useState("video");
+  const [selectedLinkType, setSelectedLinkType] = useState("foodDetails");
+  const [foodDetailsID, setFoodDetailsID] = useState(0);
+  const [categoryName, setCategoryName] = useState("");
 
   const handleChange = (value) => {
     setFileList([]);
     setSelectedType(value);
+  };
+
+  const handleLinkTypeChange = (value) => {
+    setSelectedLinkType(value);
   };
 
   // Open Modal
@@ -59,6 +69,59 @@ function AddBanner({ refetch }) {
     setFileList(newFileList);
   };
 
+  const foodOptions = [
+    ...(allFoodDetailsAdminPanel?.map((item) => ({
+      value: item.id,
+      label: (
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Avatar src={item.image} size="small" />
+          <div>
+            <strong>{item.name}</strong>
+            <div>
+              $ {item.price} | {item.cal}
+            </div>
+          </div>
+        </div>
+      ),
+      customLabel: (
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Avatar src={item.image} size="small" />
+          {item.name}
+        </span>
+      ),
+      searchName: item.name,
+    })) || []),
+  ];
+
+  const handleFoodIdChange = (value) => {
+    setFoodDetailsID(value);
+  };
+
+  const categoryOptions = [
+    ...(category?.map((item) => ({
+      value: item.category_name,
+      label: (
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Avatar src={item.category_image} size="small" />
+          <div>
+            <strong>{item.category_name}</strong>
+          </div>
+        </div>
+      ),
+      customLabel: (
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Avatar src={item.category_image} size="small" />
+          {item.category_name}
+        </span>
+      ),
+      searchName: item.category_name,
+    })) || []),
+  ];
+
+  const handleCategoryChange = (value) => {
+    setCategoryName(value);
+  };
+
   // Handle form submission
   const onSubmit = async (data) => {
     if (fileList.length === 0) {
@@ -70,12 +133,20 @@ function AddBanner({ refetch }) {
     const formData = new FormData(); // For handling image uploads
 
     formData.append("title", data.title);
-    formData.append("link_url", data.link_url);
     formData.append("type", selectedType);
+    formData.append("link_type", selectedLinkType);
     formData.append("sn_number", data.sn_number || 100);
 
     if (fileList[0]) {
       formData.append("file", fileList[0].originFileObj);
+    }
+
+    if (selectedLinkType == "foodDetails") {
+      formData.append("link_url", foodDetailsID);
+    } else if (selectedLinkType == "category") {
+      formData.append("link_url", categoryName);
+    } else if (selectedLinkType == "others") {
+      formData.append("link_url", data.third_party_url);
     }
 
     try {
@@ -141,16 +212,56 @@ function AddBanner({ refetch }) {
             />
           </Form.Item>
 
-          {/* additional link */}
-          <Form.Item label="Aditional Link">
-            <Controller
-              name="link_url"
-              control={control}
-              render={({ field }) => (
-                <Input placeholder="Aditional Link..." {...field} />
-              )}
+          <Form.Item label="Link Type">
+            <Select
+              defaultValue="link_type"
+              style={{ width: 120 }}
+              onChange={handleLinkTypeChange}
+              options={[
+                { value: "foodDetails", label: "Food Details" },
+                { value: "category", label: "Category" },
+                { value: "others", label: "Others" },
+              ]}
             />
           </Form.Item>
+
+          {selectedLinkType == "foodDetails" && (
+            <Form.Item label="Select a Food Detail for Promotion">
+              <Select
+                showSearch
+                placeholder="Select a Food Item"
+                style={{ width: "100%" }}
+                onChange={handleFoodIdChange}
+                options={foodOptions}
+                optionLabelProp="customLabel"
+              />
+            </Form.Item>
+          )}
+
+          {selectedLinkType == "category" && (
+            <Form.Item label="Select a Category for Promotion">
+              <Select
+                showSearch
+                placeholder="Select a Category"
+                style={{ width: "100%" }}
+                onChange={handleCategoryChange}
+                options={categoryOptions}
+                optionLabelProp="customLabel"
+              />
+            </Form.Item>
+          )}
+
+          {selectedLinkType == "others" && (
+            <Form.Item label="Third Party URL">
+              <Controller
+                name="third_party_url"
+                control={control}
+                render={({ field }) => (
+                  <Input placeholder="Third Party URL..." {...field} />
+                )}
+              />
+            </Form.Item>
+          )}
 
           {/* serial Number */}
           <Form.Item label="Serial Number (Optional)">
