@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -20,6 +20,8 @@ import { API, useToppings } from "../../api/api";
 import AddToppings from "./AddToppings";
 import EditToppings from "./EditToppings";
 
+import { ModalContext } from "../../contexts/ModalContext";
+
 const { Search } = Input;
 const { confirm } = Modal;
 
@@ -29,6 +31,21 @@ const Toppings = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditToppingsOpen, setIsEditToppingsOpen] = useState(false);
   const [toppingsDetails, setToppingsDetails] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Toppings status updated successfully!",
+      table: "toppings",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Toppings Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -132,6 +149,26 @@ const Toppings = () => {
       title: "Size",
       dataIndex: "size",
       key: "size",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
     },
     {
       title: "Edit",

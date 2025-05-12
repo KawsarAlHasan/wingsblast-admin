@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Table, Button, Image, Input, Spin, Modal, notification } from "antd";
 import {
   EditOutlined,
@@ -8,6 +8,7 @@ import {
 import { API, useDrinkName } from "../../api/api";
 import EditDrinks from "./EditDrinks";
 import AddDrinks from "./AddDrinks";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -18,6 +19,21 @@ const Drinks = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditDrinksOpen, setIsDrinksOpen] = useState(false);
   const [drinks, setDrinks] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Drink Name status updated successfully!",
+      table: "drink_name",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Drink Name Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -99,6 +115,27 @@ const Drinks = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
+    },
+
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
     },
 
     {

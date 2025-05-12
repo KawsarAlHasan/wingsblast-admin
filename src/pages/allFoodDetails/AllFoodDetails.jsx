@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Table, Image, Modal, notification, Button, Spin, Input } from "antd";
 import {
   EyeOutlined,
@@ -8,6 +8,8 @@ import {
 } from "@ant-design/icons";
 import { API, useAllFoodDetails } from "../../api/api";
 import { Link } from "react-router-dom";
+import { ModalContext } from "../../contexts/ModalContext";
+
 // import EditFoodDetails from "../foodDetails/addAndEditFood/EditFoodDetails";
 
 const { Search } = Input;
@@ -28,6 +30,21 @@ function AllFoodDetails() {
 
   const [isEditFoodDetailsOpen, setIsEditFoodDetailsOpen] = useState(false);
   const [fdDetails, setFdDetails] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Food Details status updated successfully!",
+      table: "food_details",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Food Details Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -147,31 +164,23 @@ function AllFoodDetails() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      filters: [
-        { text: "Active", value: "active" },
-        { text: "Deactivate", value: "deactivate" },
-      ],
-      render: (status) =>
-        status === "active" ? (
-          <span className="text-green-600">Active</span>
-        ) : (
-          <span className="text-red-600">Deactivated</span>
-        ),
-    },
-    {
-      title: "Edit",
-      key: "edit",
       render: (_, record) => (
-        <Button
-          type="primary"
-          size="small"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(record)}
-        >
-          Edit
-        </Button>
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
       ),
     },
+
     {
       title: "Details",
       key: "details",

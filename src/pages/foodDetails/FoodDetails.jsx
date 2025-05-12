@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -23,6 +23,7 @@ import {
 import { API, useFoodDatails, useSingleFoodMenu } from "../../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import EditFoodDetails from "./editFoodDetails/EditFoodDetails";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -39,6 +40,21 @@ const FoodDetails = () => {
   const [fdDetails, setFdDetails] = useState(null);
 
   const navigate = useNavigate();
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Food Details status updated successfully!",
+      table: "food_details",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Food Details Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -141,21 +157,7 @@ const FoodDetails = () => {
       key: "price",
       render: (price) => <span>$ {price}</span>,
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      filters: [
-        { text: "Active", value: "active" },
-        { text: "Deactivate", value: "deactivate" },
-      ],
-      render: (status) =>
-        status === "active" ? (
-          <span className="text-green-600">Active</span>
-        ) : (
-          <span className="text-red-600">Deactivated</span>
-        ),
-    },
+
     {
       title: "View",
       key: "view",
@@ -168,6 +170,30 @@ const FoodDetails = () => {
         >
           View
         </Button>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      filters: [
+        { text: "Active", value: "Active" },
+        { text: "Deactivate", value: "deactivate" },
+      ],
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
       ),
     },
     {

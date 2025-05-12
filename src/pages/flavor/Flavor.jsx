@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -20,6 +20,7 @@ import { API, useFlavor } from "../../api/api";
 import AddFlavor from "./AddFlavor";
 import ViewFlavorModal from "./ViewFlavorModal";
 import EditFlavor from "./EditFlavor";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -33,6 +34,21 @@ const Flavor = () => {
 
   const [isEditFlavorOpen, setIsEditFlavorOpen] = useState(false);
   const [flavorDetails, setFlavorDetails] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Flavor status updated successfully!",
+      table: "flavor",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Flavor Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -143,6 +159,26 @@ const Flavor = () => {
         >
           View
         </Button>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
       ),
     },
     {

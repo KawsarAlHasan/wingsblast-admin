@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Space,
   Table,
@@ -17,17 +17,34 @@ import {
 import { useCategory, API } from "../../api/api"; // Assuming this hook fetches category data
 import AddCategory from "./AddCategory";
 import EditCategory from "./EditCategory";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
 const Category = () => {
-  const { category, isLoading, isError, error, refetch } = useCategory();
+  const status = "All";
+  const { category, isLoading, isError, error, refetch } = useCategory(status);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
 
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
   const [categoryDetails, setCategoryDetails] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Categories status updated successfully!",
+      table: "categories",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Categories Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -119,6 +136,26 @@ const Category = () => {
       title: "Name",
       dataIndex: "category_name",
       key: "category_name",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
     },
     {
       title: "Edit",

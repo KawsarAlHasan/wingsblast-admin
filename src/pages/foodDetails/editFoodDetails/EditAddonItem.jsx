@@ -3,12 +3,19 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { HolderOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Collapse, InputNumber, Switch } from "antd";
-import { useBeverage, useDrink, useSandCust, useSide } from "../../../api/api";
+import {
+  useBeverage,
+  useDrink,
+  useSandCust,
+  useSauce,
+  useSide,
+} from "../../../api/api";
 import DrinkSelection from "./DrinkSelection";
 import BeverageSelect from "./BeverageSelect";
 import SandCustSelect from "./SandCustSelect";
 import RicePlatter from "./RicePlatter";
 import ComboSide from "./ComboSide";
+import SauceSelect from "./SauceSelect";
 
 const { Panel } = Collapse;
 
@@ -36,15 +43,18 @@ const EditAddonItem = ({
   onSelectedSandCustChange,
   onSelectedComboSiderChange,
   onSelectedRicePlatterChange,
+  onSelectedSauceChange,
 }) => {
   const { drink } = useDrink();
   const { beverage } = useBeverage();
   const { sandCust } = useSandCust();
   const { side } = useSide();
+  const { sauces } = useSauce();
 
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
+  const [selectedSauce, setSelectedSauce] = useState([]);
   const [selectedComboSide, setSelectedComboSide] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
 
@@ -103,6 +113,16 @@ const EditAddonItem = ({
 
         setSelectedSandCust(sandwichCustomize);
         onSelectedSandCustChange?.(sandwichCustomize);
+        break;
+
+      case "Sauce":
+        const sauceData = formattedData.map((d) => ({
+          sauce_id: d.id,
+          isPaid: d.isPaid,
+        }));
+
+        setSelectedSauce(sauceData);
+        onSelectedSauceChange?.(sauceData);
         break;
 
       case "Combo Side":
@@ -204,6 +224,35 @@ const EditAddonItem = ({
     // Send updated data to parent
     if (onSelectedSandCustChange) {
       onSelectedSandCustChange(updated);
+    }
+  };
+
+  // Sauce Selection Handling
+  const handleSauceSelection = (id, isChecked) => {
+    setSelectedSauce((prevSauce) => {
+      const updated = isChecked
+        ? [...prevSauce, { sauce_id: id, isPaid: false }]
+        : prevSauce.filter((sauce) => sauce.sauce_id !== id);
+
+      if (onSelectedSauceChange) {
+        onSelectedSauceChange(updated);
+      }
+
+      return updated;
+    });
+  };
+
+  // sauce paid unpaid
+  const handleToggleSaucePaid = (id, isChecked) => {
+    const updated = selectedSauce.map((sauce) =>
+      sauce.sauce_id === id ? { ...sauce, isPaid: isChecked } : sauce
+    );
+
+    setSelectedSauce(updated);
+
+    // Send updated data to parent
+    if (onSelectedSauceChange) {
+      onSelectedSauceChange(updated);
     }
   };
 
@@ -460,7 +509,29 @@ const EditAddonItem = ({
               sandCust={sandCust}
               selectedSandCust={selectedSandCust}
               handleSandCustSelection={handleSandCustSelection}
-              handleToggleSandCustPaid={handleToggleSandCustPaid}
+              handleToggleSandCuuce={handleToggleSandCustPaid}
+            />
+          </div>
+        );
+
+      case "Sauce":
+        return (
+          <div>
+            <div className="gap-2 mb-5">
+              <span className="font-semibold ml-2">{item.type} Required:</span>
+              <Checkbox
+                className="mx-2"
+                checked={item.is_required === 1}
+                onChange={(e) =>
+                  handleFieldChange("is_required", e.target.checked ? 1 : 0)
+                }
+              />
+            </div>
+            <SauceSelect
+              sauces={sauces}
+              selectedSauce={selectedSauce}
+              handleSauceSelection={handleSauceSelection}
+              handleSaucePaid={handleToggleSaucePaid}
             />
           </div>
         );

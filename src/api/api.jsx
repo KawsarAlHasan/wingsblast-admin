@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://api.wingsblast.com/api/v1",
-  // baseURL: "http://localhost:6001/api/v1",
+  // baseURL: "https://api.wingsblast.com/api/v1",
+  baseURL: "http://localhost:6001/api/v1",
 });
 
 API.interceptors.request.use((config) => {
@@ -63,9 +63,11 @@ export const signOutAdmin = () => {
 };
 
 // get Category
-export const useCategory = () => {
+export const useCategory = (status) => {
   const getCategory = async () => {
-    const response = await API.get("/category/all");
+    const response = await API.get("/category/all", {
+      params: { status },
+    });
     return response.data.data;
   };
 
@@ -76,7 +78,7 @@ export const useCategory = () => {
     error,
     refetch,
   } = useQuery({
-    queryKey: ["category"],
+    queryKey: ["category", status],
     queryFn: getCategory,
   });
 
@@ -270,6 +272,27 @@ export const useToppings = () => {
   });
 
   return { toppings, isLoading, isError, error, refetch };
+};
+
+// get Sauce
+export const useSauce = () => {
+  const getSauce = async () => {
+    const response = await API.get("/sauce/all");
+    return response.data.data;
+  };
+
+  const {
+    data: sauces = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["sauces"],
+    queryFn: getSauce,
+  });
+
+  return { sauces, isLoading, isError, error, refetch };
 };
 
 // get sand-cust

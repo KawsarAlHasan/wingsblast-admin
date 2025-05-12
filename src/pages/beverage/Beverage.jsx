@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -19,11 +19,13 @@ import {
 import { API, useBeverage } from "../../api/api";
 import AddBeverage from "./AddBeverage";
 import EditBeverage from "./EditBeverage";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
 const Beverage = () => {
+  const { showModal } = useContext(ModalContext);
   const { beverage, isLoading, isError, error, refetch } = useBeverage();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -89,6 +91,19 @@ const Beverage = () => {
       </div>
     );
 
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Bakery status updated successfully!",
+      table: "beverage",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Bakery Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
+
   const filteredData = beverage.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -130,6 +145,26 @@ const Beverage = () => {
       render: (price) => <span>$ {price}</span>,
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
+    },
+    {
       title: "Edit",
       key: "edit",
       render: (_, record) => (
@@ -162,10 +197,10 @@ const Beverage = () => {
 
   return (
     <div>
-      <h2 className="text-center text-2xl font-bold my-5">Beverage List</h2>
+      <h2 className="text-center text-2xl font-bold my-5">Bakery List</h2>
       <div className="flex justify-between mb-4">
         <Search
-          placeholder="Search Beverages..."
+          placeholder="Search Bakerys..."
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />

@@ -19,6 +19,7 @@ const FoodAddons = () => {
     { type: "Rice Platter", sn_number: 6 },
     { type: "Sandwich Customize", sn_number: 7 },
     { type: "Topping", sn_number: 8 },
+    { type: "Sauce", sn_number: 9 },
   ];
 
   const [dataSource, setDataSource] = useState(

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -20,6 +20,7 @@ import ViewFoodModal from "./ViewFoodModal";
 import AddFood from "./AddFood";
 import { Link } from "react-router-dom";
 import EditFood from "./EditFood";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -30,6 +31,21 @@ const Food = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditFoodMenusOpen, setIsEditFoodMenusOpen] = useState(false);
   const [foodMenus, setFoodMenus] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Food Menu status updated successfully!",
+      table: "food_menu",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Food Menu Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -126,6 +142,27 @@ const Food = () => {
         </Link>
       ),
     },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
+    },
+
     {
       title: "Edit",
       key: "edit",

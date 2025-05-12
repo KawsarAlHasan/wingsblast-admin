@@ -76,23 +76,27 @@ const Sidebar = ({ onClick }) => {
           key: "4-9",
           label: <Link to="/sandwich-customize">Sandwich Customize</Link>,
         },
-      ],
-    },
-    {
-      key: "5",
-      icon: <ContainerOutlined />,
-      label: "Modify Products Feature",
-      children: [
         {
-          key: "5-1",
-          label: <Link to="/feature">Feature List</Link>,
+          key: "4-10",
+          label: <Link to="/sauce">Sauce</Link>,
         },
-        ...(feature?.data || []).map((fData) => ({
-          key: `5-1-${fData.id}`,
-          label: <Link to={`/product-feature/${fData.id}`}>{fData.name}</Link>,
-        })),
       ],
     },
+    // {
+    //   key: "5",
+    //   icon: <ContainerOutlined />,
+    //   label: "Modify Products Feature",
+    //   children: [
+    //     {
+    //       key: "5-1",
+    //       label: <Link to="/feature">Feature List</Link>,
+    //     },
+    //     ...(feature?.data || []).map((fData) => ({
+    //       key: `5-1-${fData.id}`,
+    //       label: <Link to={`/product-feature/${fData.id}`}>{fData.name}</Link>,
+    //     })),
+    //   ],
+    // },
 
     {
       key: "6",

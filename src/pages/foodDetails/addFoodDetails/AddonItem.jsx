@@ -4,11 +4,18 @@ import { CSS } from "@dnd-kit/utilities";
 import { HolderOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Collapse, InputNumber, Switch } from "antd";
 import DrinkSelection from "./DrinkSelection";
-import { useBeverage, useDrink, useSandCust, useSide } from "../../../api/api";
+import {
+  useBeverage,
+  useDrink,
+  useSandCust,
+  useSide,
+  useSauce,
+} from "../../../api/api";
 import BeverageSelect from "./BeverageSelect";
 import SandCustSelect from "./SandCustSelect";
 import RicePlatter from "./RicePlatter";
 import ComboSide from "./ComboSide";
+import SauceSelect from "./SauceSelect";
 
 const { Panel } = Collapse;
 
@@ -36,15 +43,18 @@ const AddonItem = ({
   onSelectedSandCustChange,
   onSelectedComboSiderChange,
   onSelectedRicePlatterChange,
+  onSelectedSauceChange,
 }) => {
   const { drink } = useDrink();
   const { beverage } = useBeverage();
   const { sandCust } = useSandCust();
   const { side } = useSide();
+  const { sauces } = useSauce();
 
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
+  const [selectedSauce, setSelectedSauce] = useState([]);
   const [selectedComboSide, setSelectedComboSide] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
 
@@ -145,6 +155,35 @@ const AddonItem = ({
     // Send updated data to parent
     if (onSelectedSandCustChange) {
       onSelectedSandCustChange(updated);
+    }
+  };
+
+  // sandCust Selection Handling
+  const handleSauceSelection = (id, isChecked) => {
+    setSelectedSauce((prevSauce) => {
+      const updated = isChecked
+        ? [...prevSauce, { sauce_id: id, isPaid: false }]
+        : prevSauce.filter((sauce) => sauce.sauce_id !== id);
+
+      if (onSelectedSauceChange) {
+        onSelectedSauceChange(updated);
+      }
+
+      return updated;
+    });
+  };
+
+  // sandCust paid unpaid
+  const handleSaucePaid = (id, isChecked) => {
+    const updated = selectedSauce.map((sauce) =>
+      sauce.sauce_id === id ? { ...sauce, isPaid: isChecked } : sauce
+    );
+
+    setSelectedSauce(updated);
+
+    // Send updated data to parent
+    if (onSelectedSauceChange) {
+      onSelectedSauceChange(updated);
     }
   };
 
@@ -486,6 +525,29 @@ const AddonItem = ({
             </div>
           </div>
         );
+
+      case "Sauce":
+        return (
+          <div>
+            <div className="gap-2 mb-5">
+              <span className="font-semibold ml-2">{item.type} Required:</span>
+              <Checkbox
+                className="mx-2"
+                value={item.is_required}
+                onChange={(e) =>
+                  handleFieldChange("is_required", e.target.checked)
+                }
+              />
+            </div>
+            <SauceSelect
+              sauces={sauces}
+              selectedSauce={selectedSauce}
+              handleSauceSelection={handleSauceSelection}
+              handleSaucePaid={handleSaucePaid}
+            />
+          </div>
+        );
+
       default:
         return (
           <div className="flex items-center">

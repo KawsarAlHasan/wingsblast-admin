@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -19,6 +19,7 @@ import {
 import { API, useSandCust } from "../../api/api";
 import AddSandCust from "./AddSandCust";
 import EditSandCust from "./EditSandCust";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -29,6 +30,21 @@ const SandCust = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditSandCustOpen, setIsEditSandCustOpen] = useState(false);
   const [sandCustDetails, setSandCustDetails] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Sandwich Customize status updated successfully!",
+      table: "sandwich_customize",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Sandwich Customize Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -140,6 +156,26 @@ const SandCust = () => {
       title: "Size",
       dataIndex: "size",
       key: "size",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
     },
     {
       title: "Edit",

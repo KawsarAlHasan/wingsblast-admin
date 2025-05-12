@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -20,6 +20,8 @@ import { API, useSide } from "../../api/api";
 import AddSide from "./AddSide";
 import EditSide from "./EditSide";
 
+import { ModalContext } from "../../contexts/ModalContext";
+
 const { Search } = Input;
 const { confirm } = Modal;
 
@@ -29,6 +31,7 @@ const Side = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditSideOpen, setIsEditSideOpen] = useState(false);
   const [sideDetails, setSideDetails] = useState(null);
+  const { showModal } = useContext(ModalContext);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -77,6 +80,19 @@ const Side = () => {
       onCancel() {
         console.log("Delete canceled");
       },
+    });
+  };
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Side status updated successfully!",
+      table: "side",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Side Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
     });
   };
 
@@ -132,6 +148,26 @@ const Side = () => {
       title: "Size",
       dataIndex: "size",
       key: "size",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
     },
     {
       title: "Edit",

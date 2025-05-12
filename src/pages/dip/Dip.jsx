@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Table,
   Button,
@@ -18,11 +18,14 @@ import {
 import { API, useDip } from "../../api/api";
 import AddDip from "./AddDip";
 import EditDip from "./EditDip";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
 const Dip = () => {
+  const { showModal } = useContext(ModalContext);
+
   const { dip, isLoading, isError, error, refetch } = useDip();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -87,6 +90,19 @@ const Dip = () => {
       </div>
     );
 
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Dip status updated successfully!",
+      table: "dip",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Dip Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
+
   const filteredData = dip.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -125,6 +141,27 @@ const Dip = () => {
       key: "price",
       render: (price) => <span>$ {price}</span>,
     },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
+    },
+
     {
       title: "Edit",
       key: "edit",

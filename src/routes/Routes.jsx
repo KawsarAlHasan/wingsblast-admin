@@ -39,6 +39,7 @@ import AddFoodDetails from "../pages/foodDetails/addFoodDetails/AddFoodDetails";
 import Coupons from "../pages/coupons/Coupons";
 import SingleCoupon from "../pages/coupons/SingleCoupon";
 import Banner from "../pages/banner/Banner";
+import Sauce from "../pages/sauce/Sauce";
 
 export const router = createBrowserRouter([
   {
@@ -96,6 +97,10 @@ export const router = createBrowserRouter([
       {
         path: "/toppings",
         element: <Toppings />,
+      },
+      {
+        path: "/sauce",
+        element: <Sauce />,
       },
       {
         path: "/sandwich-customize",

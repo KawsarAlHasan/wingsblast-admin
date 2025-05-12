@@ -5,6 +5,8 @@ import Sidebar from "../components/Sidebar";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SocketNotifications from "../components/SocketNotifications";
 import NotiSount from "../assets/notification.wav";
+import { ModalProvider } from "../contexts/ModalContext";
+import GlobalModal from "../components/GlobalModal";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -79,89 +81,93 @@ const Main = () => {
   };
 
   return (
-    <Layout>
-      {/* audio element */}
-      <audio ref={audioRef} src={NotiSount} loop />
-
-      {/* Header */}
-      <Header className="bg-white sticky top-0 z-10 w-full flex items-center">
-        <Navbar showDrawer={showDrawer} />
-      </Header>
-
+    <ModalProvider>
       <Layout>
-        {isLargeScreen && (
-          <Sider
-            className="hidden lg:block h-screen fixed left-0 top-16"
-            width={320}
-            style={{
-              backgroundColor: "#fff",
-              overflow: "auto",
-              height: "90vh",
-              position: "fixed",
-              insetInlineStart: 0,
-              bottom: 64,
-              scrollbarWidth: "thin",
-              scrollbarGutter: "stable",
+        {/* audio element */}
+        <audio ref={audioRef} src={NotiSount} loop />
+
+        {/* Header */}
+        <Header className="bg-white sticky top-0 z-10 w-full flex items-center">
+          <Navbar showDrawer={showDrawer} />
+        </Header>
+
+        <Layout>
+          {isLargeScreen && (
+            <Sider
+              className="hidden lg:block h-screen fixed left-0 top-16"
+              width={320}
+              style={{
+                backgroundColor: "#fff",
+                overflow: "auto",
+                height: "90vh",
+                position: "fixed",
+                insetInlineStart: 0,
+                bottom: 64,
+                scrollbarWidth: "thin",
+                scrollbarGutter: "stable",
+              }}
+            >
+              <Sidebar />
+            </Sider>
+          )}
+
+          <Drawer
+            title="Navigation"
+            placement="left"
+            onClose={closeDrawer}
+            open={drawerVisible}
+            styles={{
+              body: { padding: 0 },
             }}
           >
-            <Sidebar />
-          </Sider>
-        )}
+            <Sidebar onClick={closeDrawer} />
+          </Drawer>
 
-        <Drawer
-          title="Navigation"
-          placement="left"
-          onClose={closeDrawer}
-          open={drawerVisible}
-          styles={{
-            body: { padding: 0 },
-          }}
-        >
-          <Sidebar onClick={closeDrawer} />
-        </Drawer>
+          <Layout
+            style={{
+              marginLeft: isLargeScreen ? 320 : 0,
+            }}
+          >
+            <Content className="px-6">
+              <div className="flex justify-between">
+                <Breadcrumb className="my-4">
+                  {generateBreadcrumbItems().map((item, index) => (
+                    <Breadcrumb.Item key={index}>
+                      <Link to={item.href}>{item.title}</Link>
+                    </Breadcrumb.Item>
+                  ))}
+                </Breadcrumb>
 
-        <Layout
-          style={{
-            marginLeft: isLargeScreen ? 320 : 0,
-          }}
-        >
-          <Content className="px-6">
-            <div className="flex justify-between">
-              <Breadcrumb className="my-4">
-                {generateBreadcrumbItems().map((item, index) => (
-                  <Breadcrumb.Item key={index}>
-                    <Link to={item.href}>{item.title}</Link>
-                  </Breadcrumb.Item>
-                ))}
-              </Breadcrumb>
+                {!isAudioAllowed && (
+                  <div style={{ padding: "10px", textAlign: "center" }}>
+                    <Button onClick={enableAudio} type="primary">
+                      Enable Notifications
+                    </Button>
+                  </div>
+                )}
+              </div>
 
-              {!isAudioAllowed && (
-                <div style={{ padding: "10px", textAlign: "center" }}>
-                  <Button onClick={enableAudio} type="primary">
-                    Enable Notifications
-                  </Button>
-                </div>
-              )}
-            </div>
+              <div
+                className="p-6 min-h-[380px]"
+                style={{ background: "#fff", borderRadius: "8px" }}
+              >
+                {/* SocketNotifications */}
+                <SocketNotifications sendAlerm={sendAlerm} />
 
-            <div
-              className="p-6 min-h-[380px]"
-              style={{ background: "#fff", borderRadius: "8px" }}
-            >
-              {/* SocketNotifications */}
-              <SocketNotifications sendAlerm={sendAlerm} />
+                {/* Placeholder for dynamic content */}
+                <Outlet />
+              </div>
+            </Content>
 
-              {/* Placeholder for dynamic content */}
-              <Outlet />
-            </div>
-          </Content>
-
-          <Footer className="text-center">
-            Wingsblast ©{new Date().getFullYear()} Created by ABS
-          </Footer>
+            <Footer className="text-center">
+              Wingsblast ©{new Date().getFullYear()} Created by ABS
+            </Footer>
+          </Layout>
         </Layout>
       </Layout>
-    </Layout>
+
+      <GlobalModal />
+    </ModalProvider>
   );
 };
 

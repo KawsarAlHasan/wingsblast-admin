@@ -109,13 +109,14 @@ function FoodDetail() {
     foodDetail?.ricePlatter,
     foodDetail?.sandwichCustomize,
     foodDetail?.topping,
+    foodDetail?.sauce,
   ];
 
   const sortedOptions = groupedOptions
     .filter(Boolean)
     .sort((a, b) => a.sn_number - b.sn_number);
 
-  console.log("foodDetail", foodDetail);
+  console.log("foodDetail hello", foodDetail);
 
   return (
     <div className="">
@@ -137,7 +138,7 @@ function FoodDetail() {
               onChange={handleStatusChange}
               style={{ width: 120 }}
               options={[
-                { value: "active", label: "Active" },
+                { value: "Active", label: "Active" },
                 { value: "deactivate", label: "Deactivate" },
               ]}
             />
@@ -234,10 +235,10 @@ function FoodDetail() {
                 <strong>Current Status:</strong>{" "}
                 <span
                   className={`${
-                    status === "active" ? "text-green-600" : "text-red-600"
+                    status === "Active" ? "text-green-600" : "text-red-600"
                   } font-semibold`}
                 >
-                  {status === "active" ? "Active" : "Deactivated"}
+                  {status === "Active" ? "Active" : "Deactivated"}
                 </span>
               </p>
 
@@ -388,6 +389,41 @@ function FoodDetail() {
                         <p>Unpaid</p>
                       ) : (
                         <p>Price: ${sandCt.price}</p>
+                      )}
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            );
+
+          case "Sauce":
+            return (
+              <div key={option.id}>
+                <Divider>{option.type}</Divider>
+                <div className="p-4 bg-gray-100 rounded">
+                  <p>
+                    Extra {option.type}:{" "}
+                    {option.is_extra_addon === 1 ? "Yes" : "No"}
+                  </p>
+                  <p>
+                    {option.type} Required:{" "}
+                    {option.is_required === 1 ? "Yes" : "No"}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {option?.data?.map((sc) => (
+                    <Card key={sc.id} title={sc.name} bordered={false}>
+                      <Image
+                        src={sc.image}
+                        alt={sc.name}
+                        className="h-24 object-cover"
+                      />
+                      <p>Calories: {sc.cal}</p>
+                      {sc.isPaid == 0 ? (
+                        <p>Unpaid</p>
+                      ) : (
+                        <p>Price: ${sc.price}</p>
                       )}
                     </Card>
                   ))}

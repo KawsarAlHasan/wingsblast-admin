@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Table, Button, Image, Input, Spin, Modal, notification } from "antd";
 import {
   EyeOutlined,
@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { API, useUsers } from "../../api/api";
 import { Link } from "react-router-dom";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -15,6 +16,27 @@ const { confirm } = Modal;
 const Users = () => {
   const { users, isLoading, isError, error, refetch } = useUsers();
   const [searchText, setSearchText] = useState("");
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "User status updated successfully!",
+      table: "users",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "User Status Update Modal",
+      statusName: [
+        "Active",
+        "Blocked",
+        "Deactivated",
+        "Pending Verification",
+        "Suspended",
+      ],
+      refetch: refetch,
+    });
+  };
 
   if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
   if (isError)
@@ -50,6 +72,7 @@ const Users = () => {
       dataIndex: "email",
       key: "email",
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -77,7 +100,23 @@ const Users = () => {
         },
       ],
       onFilter: (value, record) => record.status === value,
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span>{record.status}</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
     },
+
     {
       title: "Details",
       dataIndex: "Details",

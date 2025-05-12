@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useBanner } from "../../api/settingsApi";
 import { Modal, notification, Button, Image, Spin, Table } from "antd";
 
@@ -13,6 +13,7 @@ import BannerViewerModel from "./BannerViewerModel";
 import AddBanner from "./AddBanner";
 import { API } from "../../api/api";
 import EditBanner from "./EditBanner";
+import { ModalContext } from "../../contexts/ModalContext";
 
 const { confirm } = Modal;
 
@@ -24,6 +25,21 @@ function Banner() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditBannerOpen, setIsEditBannerOpen] = useState(false);
   const [bannerDetails, setBannerDetails] = useState(null);
+
+  const { showModal } = useContext(ModalContext);
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Banner status updated successfully!",
+      table: "banner",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Banner Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -133,6 +149,21 @@ function Banner() {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          {record.status === "Active" ? (
+            <span className="text-green-600">Active</span>
+          ) : (
+            <span className="text-red-600">Deactivated</span>
+          )}
+
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => triggerModal(record)}
+          ></Button>
+        </div>
+      ),
     },
     {
       title: "View",

@@ -16,21 +16,20 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useDrink } from "../../api/api";
-import AddDrink from "./AddDrink";
-import EditDrink from "./EditDrink";
+import { API, useSauce } from "../../api/api";
+import EditSauce from "./EditSauce";
+import AddSauce from "./AddSauce";
 import { ModalContext } from "../../contexts/ModalContext";
-
 const { Search } = Input;
 const { confirm } = Modal;
 
-const Drink = () => {
-  const { showModal } = useContext(ModalContext);
-  const { drink, isLoading, isError, error, refetch } = useDrink();
+const Sauce = () => {
+  const { sauces, isLoading, isError, error, refetch } = useSauce();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [isEditDrinksOpen, setIsDrinksOpen] = useState(false);
-  const [drinks, setDrinks] = useState(null);
+  const [isEditSauceOpen, setIsEditSauceOpen] = useState(false);
+  const [sauceDetails, setSauceDetails] = useState(null);
+  const { showModal } = useContext(ModalContext);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -41,46 +40,33 @@ const Drink = () => {
     });
   };
 
-  const triggerModal = (value) => {
-    showModal({
-      status: "success",
-      message: "Drink status updated successfully!",
-      table: "drink",
-      id: value.id,
-      defaultStatus: value.status,
-      modelTitle: "Drink Status Update Modal",
-      statusName: ["Active", "Deactivated"],
-      refetch: refetch,
-    });
-  };
-
   const handleEdit = (sandCustDetail) => {
-    setDrinks(sandCustDetail);
-    setIsDrinksOpen(true);
+    setSauceDetails(sandCustDetail);
+    setIsEditSauceOpen(true);
   };
 
   const handleModalClose = () => {
-    setDrinks(null); // Reset the details
-    setIsDrinksOpen(false); // Close modal
+    setSauceDetails(null); // Reset the details
+    setIsEditSauceOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     try {
-      await API.delete(`/drink/delete/${id}`);
-      openNotification("success", "Success", "Drink deleted successfully");
+      await API.delete(`/sauce/delete/${id}`);
+      openNotification("success", "Success", "Sauce deleted successfully");
       setDeleteLoading(false);
       refetch();
     } catch (error) {
-      console.error("Error deleting drink:", error);
-      openNotification("error", "Error", "Failed to delete the drink");
+      console.error("Error deleting Sauce:", error);
+      openNotification("error", "Error", "Failed to delete the Sauce");
       setDeleteLoading(false);
     }
   };
 
   const showDeleteConfirm = (id) => {
     confirm({
-      title: "Are you sure you want to delete this drink?",
+      title: "Are you sure you want to delete this Sauce?",
       icon: <ExclamationCircleOutlined />,
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
@@ -95,6 +81,19 @@ const Drink = () => {
     });
   };
 
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Sauce status updated successfully!",
+      table: "sauce",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Sauce Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
+
   if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
   if (isError)
     return (
@@ -103,7 +102,7 @@ const Drink = () => {
       </div>
     );
 
-  const filteredData = drink.filter((item) =>
+  const filteredData = sauces.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -124,7 +123,7 @@ const Drink = () => {
       dataIndex: "image",
       key: "image",
       render: (image) => (
-        <Image src={image} alt="Drink" width={50} height={50} />
+        <Image src={image} alt="Sauce" width={50} height={50} />
       ),
     },
     {
@@ -142,6 +141,11 @@ const Drink = () => {
       dataIndex: "price",
       key: "price",
       render: (price) => <span>$ {price}</span>,
+    },
+    {
+      title: "Size",
+      dataIndex: "size",
+      key: "size",
     },
     {
       title: "Status",
@@ -196,14 +200,14 @@ const Drink = () => {
 
   return (
     <div>
-      <h2 className="text-center text-2xl font-bold my-5">Drink Size List</h2>
+      <h2 className="text-center text-2xl font-bold my-5">Sauce List</h2>
       <div className="flex justify-between mb-4">
         <Search
-          placeholder="Search drinks..."
+          placeholder="Search Sauce..."
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddDrink refetch={refetch} />
+        <AddSauce refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>
@@ -211,13 +215,13 @@ const Drink = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 20 }}
+          pagination={{ pageSize: 10 }}
         />
       )}
 
-      <EditDrink
-        drinks={drinks}
-        isOpen={isEditDrinksOpen}
+      <EditSauce
+        sauceDetails={sauceDetails}
+        isOpen={isEditSauceOpen}
         onClose={handleModalClose}
         refetch={refetch}
       />
@@ -225,4 +229,4 @@ const Drink = () => {
   );
 };
 
-export default Drink;
+export default Sauce;

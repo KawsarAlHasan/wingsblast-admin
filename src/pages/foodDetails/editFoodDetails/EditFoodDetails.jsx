@@ -49,6 +49,7 @@ const EditFoodDetails = ({
   const [selectedComboSide, setSelectedComboSide] = useState([]);
   const [upgradeFoodDetailsID, setUpgradeFoodDetailsID] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
+  const [selectedSauces, setSelectedSauces] = useState([]);
   const [discontData, setDiscontData] = useState({});
   const [upgradeFoodDetail, setUpgradeFoodDetail] = useState([]);
   const [price, setPrice] = useState(0);
@@ -93,6 +94,11 @@ const EditFoodDetails = ({
   const handleSelectedSandCustChange = (selectedSandCust) => {
     setSelectedSandCust(selectedSandCust);
   };
+
+  const handleSelectedSauceChange = (sauce) => {
+    setSelectedSauces(sauce);
+  };
+
   const handleSelectedComboSideChange = (selectedComboSide) => {
     setSelectedComboSide(selectedComboSide);
   };
@@ -110,6 +116,7 @@ const EditFoodDetails = ({
     fdDetails?.ricePlatter,
     fdDetails?.sandwichCustomize,
     fdDetails?.topping,
+    fdDetails?.sauce,
   ];
 
   const sortedOptions = groupedOptions
@@ -207,6 +214,7 @@ const EditFoodDetails = ({
     formData.append("drinks", JSON.stringify(selectedDrinks));
     formData.append("beverages", JSON.stringify(selectedBeverages));
     formData.append("sandCust", JSON.stringify(selectedSandCust));
+    formData.append("sauces", JSON.stringify(selectedSauces));
     formData.append("comboSide", JSON.stringify(selectedComboSide));
     formData.append("ricePlatter", JSON.stringify(selectedRicePlatter));
 
@@ -427,6 +435,7 @@ const EditFoodDetails = ({
                   onSelectedSandCustChange={handleSelectedSandCustChange}
                   onSelectedComboSiderChange={handleSelectedComboSideChange}
                   onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
+                  onSelectedSauceChange={handleSelectedSauceChange}
                 />
               ))}
             </SortableContext>

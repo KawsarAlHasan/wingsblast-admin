@@ -36,6 +36,7 @@ const AddFoodDetails = () => {
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
+  const [selectedSauces, setSelectedSauces] = useState([]);
   const [selectedComboSide, setSelectedComboSide] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -65,6 +66,9 @@ const AddFoodDetails = () => {
   const handleSelectedSandCustChange = (selectedSandCust) => {
     setSelectedSandCust(selectedSandCust);
   };
+  const handleSelectedSauceChange = (sauce) => {
+    setSelectedSauces(sauce);
+  };
   const handleSelectedComboSideChange = (selectedComboSide) => {
     setSelectedComboSide(selectedComboSide);
   };
@@ -82,6 +86,7 @@ const AddFoodDetails = () => {
     { type: "Rice Platter", sn_number: 6 },
     { type: "Sandwich Customize", sn_number: 7 },
     { type: "Topping", sn_number: 8 },
+    { type: "Sauce", sn_number: 9 },
   ];
 
   const [dataSource, setDataSource] = useState(
@@ -149,6 +154,7 @@ const AddFoodDetails = () => {
     formDataObj.append("drinks", JSON.stringify(selectedDrinks));
     formDataObj.append("beverages", JSON.stringify(selectedBeverages));
     formDataObj.append("sandCust", JSON.stringify(selectedSandCust));
+    formDataObj.append("sauces", JSON.stringify(selectedSauces));
     formDataObj.append("comboSide", JSON.stringify(selectedComboSide));
     formDataObj.append("ricePlatter", JSON.stringify(selectedRicePlatter));
     formDataObj.append(
@@ -349,6 +355,7 @@ const AddFoodDetails = () => {
                 onSelectedSandCustChange={handleSelectedSandCustChange}
                 onSelectedComboSiderChange={handleSelectedComboSideChange}
                 onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
+                onSelectedSauceChange={handleSelectedSauceChange}
               />
             ))}
           </SortableContext>
