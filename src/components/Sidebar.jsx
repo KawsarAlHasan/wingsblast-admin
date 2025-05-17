@@ -16,6 +16,49 @@ const { SubMenu } = Menu;
 const Sidebar = ({ onClick }) => {
   const { feature } = useFeature();
 
+  const modifyFeature = [
+    {
+      name: "Flavor",
+      link: "/flavor",
+    },
+    {
+      name: "Dip",
+      link: "/dip",
+    },
+    {
+      name: "Side",
+      link: "/side",
+    },
+    {
+      name: "Drink Size",
+      link: "/drink-size",
+    },
+    {
+      name: "Drink Brand",
+      link: "/drink-brand",
+    },
+    {
+      name: "Bakery",
+      link: "/beverage",
+    },
+    {
+      name: "Toppings",
+      link: "/toppings",
+    },
+    {
+      name: "Sandwich Customize",
+      link: "/sandwich-customize",
+    },
+    {
+      name: "Sauce",
+      link: "/sauce",
+    },
+    {
+      name: "Fish Choice",
+      link: "/fish-choice",
+    },
+  ];
+
   const sidebarItems = [
     {
       key: "1",
@@ -44,42 +87,22 @@ const Sidebar = ({ onClick }) => {
           key: "4-2-1",
           label: <Link to="/allfood-details">All Foods Details</Link>,
         },
-        {
-          key: "4-3",
-          label: <Link to="/flavor">Flavor</Link>,
-        },
-        {
-          key: "4-4",
-          label: <Link to="/dip">Dip</Link>,
-        },
-        {
-          key: "4-5",
-          label: <Link to="/side">Side</Link>,
-        },
-        {
-          key: "4-6",
-          label: <Link to="/drink-size">Drink Size</Link>,
-        },
-        {
-          key: "4-61",
-          label: <Link to="/drink-brand">Drink Brand</Link>,
-        },
-        {
-          key: "4-7",
-          label: <Link to="/beverage">Bakery</Link>,
-        },
-        {
-          key: "4-8",
-          label: <Link to="/toppings">Toppings</Link>,
-        },
-        {
-          key: "4-9",
-          label: <Link to="/sandwich-customize">Sandwich Customize</Link>,
-        },
-        {
-          key: "4-10",
-          label: <Link to="/sauce">Sauce</Link>,
-        },
+      ],
+    },
+
+    {
+      key: "5",
+      icon: <ContainerOutlined />,
+      label: "Modify Products Feature",
+      children: [
+        // {
+        //   key: "5-1",
+        //   label: <Link to="/feature">Feature List</Link>,
+        // },
+        ...(modifyFeature || []).map((fData) => ({
+          key: `5-1-${fData.name}`,
+          label: <Link to={fData.link}>{fData.name}</Link>,
+        })),
       ],
     },
     // {

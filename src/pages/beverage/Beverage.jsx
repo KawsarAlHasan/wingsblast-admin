@@ -16,7 +16,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useBeverage } from "../../api/api";
+import { API, useGlobalData } from "../../api/api";
 import AddBeverage from "./AddBeverage";
 import EditBeverage from "./EditBeverage";
 import { ModalContext } from "../../contexts/ModalContext";
@@ -25,8 +25,17 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Beverage = () => {
+  const [page, setPage] = useState(1);
+  const table = "beverage";
+  const limit = 500;
+
+  const { globalData, pagination, isLoading, isError, error, refetch } =
+    useGlobalData(table, {
+      // status: "active",
+      page,
+      limit,
+    });
   const { showModal } = useContext(ModalContext);
-  const { beverage, isLoading, isError, error, refetch } = useBeverage();
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -104,7 +113,7 @@ const Beverage = () => {
     });
   };
 
-  const filteredData = beverage.filter((item) =>
+  const filteredData = globalData.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -212,7 +221,7 @@ const Beverage = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 20 }}
         />
       )}
 

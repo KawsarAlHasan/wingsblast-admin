@@ -16,7 +16,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useSide } from "../../api/api";
+import { API, useGlobalData } from "../../api/api";
 import AddSide from "./AddSide";
 import EditSide from "./EditSide";
 
@@ -26,7 +26,17 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Side = () => {
-  const { side, isLoading, isError, error, refetch } = useSide();
+  const [page, setPage] = useState(1);
+  const table = "side";
+  const limit = 500;
+
+  const { globalData, pagination, isLoading, isError, error, refetch } =
+    useGlobalData(table, {
+      // status: "active",
+      page,
+      limit,
+    });
+
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditSideOpen, setIsEditSideOpen] = useState(false);
@@ -104,7 +114,7 @@ const Side = () => {
       </div>
     );
 
-  const filteredData = side.filter((item) =>
+  const filteredData = globalData.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 

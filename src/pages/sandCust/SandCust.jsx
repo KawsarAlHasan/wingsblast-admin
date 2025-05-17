@@ -16,7 +16,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useSandCust } from "../../api/api";
+import { API, useGlobalData } from "../../api/api";
 import AddSandCust from "./AddSandCust";
 import EditSandCust from "./EditSandCust";
 import { ModalContext } from "../../contexts/ModalContext";
@@ -25,7 +25,17 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const SandCust = () => {
-  const { sandCust, isLoading, isError, error, refetch } = useSandCust();
+  const [page, setPage] = useState(1);
+  const table = "sandwich_customize";
+  const limit = 500;
+
+  const { globalData, pagination, isLoading, isError, error, refetch } =
+    useGlobalData(table, {
+      // status: "active",
+      page,
+      limit,
+    });
+
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditSandCustOpen, setIsEditSandCustOpen] = useState(false);
@@ -112,7 +122,7 @@ const SandCust = () => {
       </div>
     );
 
-  const filteredData = sandCust.filter((item) =>
+  const filteredData = globalData.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -227,7 +237,7 @@ const SandCust = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 20 }}
         />
       )}
 

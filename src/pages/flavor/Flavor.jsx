@@ -16,7 +16,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useFlavor } from "../../api/api";
+import { API, useGlobalData } from "../../api/api";
 import AddFlavor from "./AddFlavor";
 import ViewFlavorModal from "./ViewFlavorModal";
 import EditFlavor from "./EditFlavor";
@@ -26,7 +26,17 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Flavor = () => {
-  const { flavor, isLoading, isError, error, refetch } = useFlavor();
+  const [page, setPage] = useState(1);
+  const table = "flavor";
+  const limit = 500;
+
+  const { globalData, pagination, isLoading, isError, error, refetch } =
+    useGlobalData(table, {
+      // status: "active",
+      page,
+      limit,
+    });
+
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedFlavor, setSelectedFlavor] = useState(null);
@@ -112,7 +122,7 @@ const Flavor = () => {
       </div>
     );
 
-  const filteredData = flavor.filter((flvr) =>
+  const filteredData = globalData.filter((flvr) =>
     flvr?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 

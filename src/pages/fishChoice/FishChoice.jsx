@@ -8,7 +8,6 @@ import {
   Spin,
   Modal,
   notification,
-  message,
 } from "antd";
 import {
   EyeOutlined,
@@ -17,15 +16,18 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { API, useGlobalData } from "../../api/api";
-import EditSauce from "./EditSauce";
-import AddSauce from "./AddSauce";
 import { ModalContext } from "../../contexts/ModalContext";
+import AddFishChoice from "./AddFishChoice";
+import EditFishChoice from "./EditFishChoice";
+
 const { Search } = Input;
 const { confirm } = Modal;
 
-const Sauce = () => {
+const FishChoice = () => {
+  const { showModal } = useContext(ModalContext);
+
   const [page, setPage] = useState(1);
-  const table = "sauce";
+  const table = "fish_choice";
   const limit = 500;
 
   const { globalData, pagination, isLoading, isError, error, refetch } =
@@ -37,9 +39,8 @@ const Sauce = () => {
 
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [isEditSauceOpen, setIsEditSauceOpen] = useState(false);
-  const [sauceDetails, setSauceDetails] = useState(null);
-  const { showModal } = useContext(ModalContext);
+  const [isEditDipOpen, setIsEditDipOpen] = useState(false);
+  const [fishDetails, setFishDetails] = useState(null);
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -51,32 +52,36 @@ const Sauce = () => {
   };
 
   const handleEdit = (sandCustDetail) => {
-    setSauceDetails(sandCustDetail);
-    setIsEditSauceOpen(true);
+    setFishDetails(sandCustDetail);
+    setIsEditDipOpen(true);
   };
 
   const handleModalClose = () => {
-    setSauceDetails(null); // Reset the details
-    setIsEditSauceOpen(false); // Close modal
+    setFishDetails(null); // Reset the details
+    setIsEditDipOpen(false); // Close modal
   };
 
   const handleDelete = async (id) => {
     setDeleteLoading(true);
     try {
-      await API.delete(`/sauce/delete/${id}`);
-      openNotification("success", "Success", "Sauce deleted successfully");
+      await API.delete(`/fish-choice/delete/${id}`);
+      openNotification(
+        "success",
+        "Success",
+        "Fish Choice deleted successfully"
+      );
       setDeleteLoading(false);
       refetch();
     } catch (error) {
-      console.error("Error deleting Sauce:", error);
-      openNotification("error", "Error", "Failed to delete the Sauce");
+      console.error("Error deleting Fish Choice:", error);
+      openNotification("error", "Error", "Failed to delete the Fish Choice");
       setDeleteLoading(false);
     }
   };
 
   const showDeleteConfirm = (id) => {
     confirm({
-      title: "Are you sure you want to delete this Sauce?",
+      title: "Are you sure you want to delete this Fish Choice?",
       icon: <ExclamationCircleOutlined />,
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
@@ -91,19 +96,6 @@ const Sauce = () => {
     });
   };
 
-  const triggerModal = (value) => {
-    showModal({
-      status: "success",
-      message: "Sauce status updated successfully!",
-      table: "sauce",
-      id: value.id,
-      defaultStatus: value.status,
-      modelTitle: "Sauce Status Update Modal",
-      statusName: ["Active", "Deactivated"],
-      refetch: refetch,
-    });
-  };
-
   if (isLoading) return <Spin size="large" className="block mx-auto my-10" />;
   if (isError)
     return (
@@ -111,6 +103,19 @@ const Sauce = () => {
         {error.message || "Something went wrong"}
       </div>
     );
+
+  const triggerModal = (value) => {
+    showModal({
+      status: "success",
+      message: "Fish Choice status updated successfully!",
+      table: "fish_choice",
+      id: value.id,
+      defaultStatus: value.status,
+      modelTitle: "Fish Choice Status Update Modal",
+      statusName: ["Active", "Deactivated"],
+      refetch: refetch,
+    });
+  };
 
   const filteredData = globalData.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
@@ -133,7 +138,7 @@ const Sauce = () => {
       dataIndex: "image",
       key: "image",
       render: (image) => (
-        <Image src={image} alt="Sauce" width={50} height={50} />
+        <Image src={image} alt="Fish" width={50} height={50} />
       ),
     },
     {
@@ -151,11 +156,6 @@ const Sauce = () => {
       dataIndex: "price",
       key: "price",
       render: (price) => <span>$ {price}</span>,
-    },
-    {
-      title: "Size",
-      dataIndex: "size",
-      key: "size",
     },
     {
       title: "Status",
@@ -177,6 +177,7 @@ const Sauce = () => {
         </div>
       ),
     },
+
     {
       title: "Edit",
       key: "edit",
@@ -210,14 +211,14 @@ const Sauce = () => {
 
   return (
     <div>
-      <h2 className="text-center text-2xl font-bold my-5">Sauce List</h2>
+      <h2 className="text-center text-2xl font-bold my-5">Fish Choice List</h2>
       <div className="flex justify-between mb-4">
         <Search
-          placeholder="Search Sauce..."
+          placeholder="Search Fish Choices..."
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <AddSauce refetch={refetch} />
+        <AddFishChoice refetch={refetch} />
       </div>
       {data.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>
@@ -225,13 +226,13 @@ const Sauce = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 20 }}
         />
       )}
 
-      <EditSauce
-        sauceDetails={sauceDetails}
-        isOpen={isEditSauceOpen}
+      <EditFishChoice
+        fishDetails={fishDetails}
+        isOpen={isEditDipOpen}
         onClose={handleModalClose}
         refetch={refetch}
       />
@@ -239,4 +240,4 @@ const Sauce = () => {
   );
 };
 
-export default Sauce;
+export default FishChoice;

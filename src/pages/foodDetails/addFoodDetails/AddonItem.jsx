@@ -10,12 +10,14 @@ import {
   useSandCust,
   useSide,
   useSauce,
+  useFishChoice,
 } from "../../../api/api";
 import BeverageSelect from "./BeverageSelect";
 import SandCustSelect from "./SandCustSelect";
 import RicePlatter from "./RicePlatter";
 import ComboSide from "./ComboSide";
 import SauceSelect from "./SauceSelect";
+import FishChoice from "./FishChoice";
 
 const { Panel } = Collapse;
 
@@ -44,18 +46,21 @@ const AddonItem = ({
   onSelectedComboSiderChange,
   onSelectedRicePlatterChange,
   onSelectedSauceChange,
+  onSelectedFishChoiceChange,
 }) => {
   const { drink } = useDrink();
   const { beverage } = useBeverage();
   const { sandCust } = useSandCust();
   const { side } = useSide();
   const { sauces } = useSauce();
+  const { fishChoice } = useFishChoice();
 
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
   const [selectedSauce, setSelectedSauce] = useState([]);
   const [selectedComboSide, setSelectedComboSide] = useState([]);
+  const [selectedFishChoice, setSelectedFishChoice] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
 
   const {
@@ -213,6 +218,37 @@ const AddonItem = ({
     // Send updated data to parent
     if (onSelectedComboSiderChange) {
       onSelectedComboSiderChange(updated);
+    }
+  };
+
+  // Fish Choice selection Handling
+  const handleFishChoiceSelection = (id, isChecked) => {
+    setSelectedFishChoice((prevFishChoice) => {
+      const updated = isChecked
+        ? [...prevFishChoice, { fish_id: id, isPaid: false }]
+        : prevFishChoice.filter((fish) => fish.fish_id !== id);
+
+      if (onSelectedFishChoiceChange) {
+        onSelectedFishChoiceChange(updated);
+      }
+
+      return updated;
+    });
+  };
+
+  // Fish Choice paid unpaid
+  const handleToggleFishChoicePaid = (id, isChecked) => {
+    const updated = selectedFishChoice.map((prevFishChoice) =>
+      prevFishChoice.fish_id === id
+        ? { ...prevFishChoice, isPaid: isChecked }
+        : prevFishChoice
+    );
+
+    setSelectedFishChoice(updated);
+
+    // Send updated data to parent
+    if (onSelectedFishChoiceChange) {
+      onSelectedFishChoiceChange(updated);
     }
   };
 
@@ -411,6 +447,59 @@ const AddonItem = ({
             />
           </div>
         );
+
+      case "Fish Choice":
+        return (
+          <div>
+            <div className="flex items-center mb-5">
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  How many {item.type} to select:
+                </span>
+                <InputNumber
+                  className="mx-2"
+                  htmlType="number"
+                  value={item.how_many_select}
+                  onChange={(value) =>
+                    handleFieldChange("how_many_select", value)
+                  }
+                />
+              </div>
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  How many {item.type} to choices:
+                </span>
+                <InputNumber
+                  className="mx-2"
+                  htmlType="number"
+                  value={item.how_many_choice}
+                  onChange={(value) =>
+                    handleFieldChange("how_many_choice", value)
+                  }
+                />
+              </div>
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  {item.type} Required:
+                </span>
+                <Checkbox
+                  className="mx-2"
+                  value={item.is_required}
+                  onChange={(e) =>
+                    handleFieldChange("is_required", e.target.checked)
+                  }
+                />
+              </div>
+            </div>
+            <FishChoice
+              fishChoice={fishChoice}
+              selectedFishChoice={selectedFishChoice}
+              handleFishChoiceSelection={handleFishChoiceSelection}
+              handleToggleFishChoicePaid={handleToggleFishChoicePaid}
+            />
+          </div>
+        );
+
       case "Bakery":
         return (
           <div>

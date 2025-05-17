@@ -5,7 +5,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useDrinkName } from "../../api/api";
+import { API, useGlobalData } from "../../api/api";
 import EditDrinks from "./EditDrinks";
 import AddDrinks from "./AddDrinks";
 import { ModalContext } from "../../contexts/ModalContext";
@@ -14,7 +14,16 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Drinks = () => {
-  const { drinkname, isLoading, isError, error, refetch } = useDrinkName();
+  const [page, setPage] = useState(1);
+  const table = "drink_name";
+  const limit = 500;
+
+  const { globalData, pagination, isLoading, isError, error, refetch } =
+    useGlobalData(table, {
+      // status: "active",
+      page,
+      limit,
+    });
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditDrinksOpen, setIsDrinksOpen] = useState(false);
@@ -93,7 +102,7 @@ const Drinks = () => {
       </div>
     );
 
-  const filteredData = drinkname.filter((item) =>
+  const filteredData = globalData.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 

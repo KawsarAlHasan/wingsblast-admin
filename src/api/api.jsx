@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  // baseURL: "https://api.wingsblast.com/api/v1",
-  baseURL: "http://localhost:6001/api/v1",
+  baseURL: "https://api.wingsblast.com/api/v1",
+  // baseURL: "http://localhost:6001/api/v1",
 });
 
 API.interceptors.request.use((config) => {
@@ -33,6 +33,42 @@ export const useAdminProfile = () => {
   });
 
   return { admin, isLoading, isError, error, refetch };
+};
+
+export const useGlobalData = (table, { status, page = 1, limit = 10 }) => {
+  const fetchGlobalData = async () => {
+    const queryParams = new URLSearchParams({
+      page,
+      limit,
+      ...(status && { status }),
+    });
+
+    const res = await API.get(`/global/${table}`, {
+      params: { page, limit, status },
+    });
+    return res.data;
+  };
+
+  const {
+    data = {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["globalData", table, status, page, limit],
+    queryFn: fetchGlobalData,
+    keepPreviousData: true,
+  });
+
+  return {
+    globalData: data.data || [],
+    pagination: data.pagination || {},
+    isLoading,
+    isError,
+    error,
+    refetch,
+  };
 };
 
 // get notification
@@ -293,6 +329,27 @@ export const useSauce = () => {
   });
 
   return { sauces, isLoading, isError, error, refetch };
+};
+
+// get Fish choice
+export const useFishChoice = () => {
+  const getFishChoice = async () => {
+    const response = await API.get("/fish-choice/all");
+    return response.data.data;
+  };
+
+  const {
+    data: fishChoice = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["fishChoice"],
+    queryFn: getFishChoice,
+  });
+
+  return { fishChoice, isLoading, isError, error, refetch };
 };
 
 // get sand-cust

@@ -40,6 +40,7 @@ import Coupons from "../pages/coupons/Coupons";
 import SingleCoupon from "../pages/coupons/SingleCoupon";
 import Banner from "../pages/banner/Banner";
 import Sauce from "../pages/sauce/Sauce";
+import FishChoice from "../pages/fishChoice/FishChoice";
 
 export const router = createBrowserRouter([
   {
@@ -85,6 +86,10 @@ export const router = createBrowserRouter([
       {
         path: "/feature",
         element: <Feature />,
+      },
+      {
+        path: "/fish-choice",
+        element: <FishChoice />,
       },
       {
         path: "/product-feature/:featuteID",

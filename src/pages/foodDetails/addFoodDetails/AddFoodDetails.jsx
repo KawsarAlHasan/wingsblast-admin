@@ -38,6 +38,7 @@ const AddFoodDetails = () => {
   const [selectedSandCust, setSelectedSandCust] = useState([]);
   const [selectedSauces, setSelectedSauces] = useState([]);
   const [selectedComboSide, setSelectedComboSide] = useState([]);
+  const [selectedFishChoice, setSelectedFishChoice] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -73,6 +74,10 @@ const AddFoodDetails = () => {
     setSelectedComboSide(selectedComboSide);
   };
 
+  const handleSelectedFishChoiceChange = (selectedFishChoice) => {
+    setSelectedFishChoice(selectedFishChoice);
+  };
+
   const handleSelectedRicePlatterChange = (selectedRicePlatter) => {
     setSelectedRicePlatter(selectedRicePlatter);
   };
@@ -87,6 +92,7 @@ const AddFoodDetails = () => {
     { type: "Sandwich Customize", sn_number: 7 },
     { type: "Topping", sn_number: 8 },
     { type: "Sauce", sn_number: 9 },
+    { type: "Fish Choice", sn_number: 10 },
   ];
 
   const [dataSource, setDataSource] = useState(
@@ -157,6 +163,7 @@ const AddFoodDetails = () => {
     formDataObj.append("sauces", JSON.stringify(selectedSauces));
     formDataObj.append("comboSide", JSON.stringify(selectedComboSide));
     formDataObj.append("ricePlatter", JSON.stringify(selectedRicePlatter));
+    formDataObj.append("fishChoice", JSON.stringify(selectedFishChoice));
     formDataObj.append(
       "upgrade_food_details",
       JSON.stringify(upgradeFoodDetail)
@@ -356,6 +363,7 @@ const AddFoodDetails = () => {
                 onSelectedComboSiderChange={handleSelectedComboSideChange}
                 onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
                 onSelectedSauceChange={handleSelectedSauceChange}
+                onSelectedFishChoiceChange={handleSelectedFishChoiceChange}
               />
             ))}
           </SortableContext>

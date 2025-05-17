@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Card, Avatar, Typography, Spin, Button, Select, message } from "antd";
 import { API, useuserDetails } from "../../api/api";
 import { ReloadOutlined } from "@ant-design/icons";
+import UserOrders from "./UserOrders";
 
 const { Title, Text } = Typography;
 
@@ -11,13 +12,16 @@ function User() {
   const { userDetails, isLoading, isError, error, refetch } =
     useuserDetails(userID);
 
-  const [status, setStatus] = useState(userDetails?.status);
+  const user = userDetails?.data?.user;
+  const orders = userDetails?.data?.orders;
+
+  const [status, setStatus] = useState(user?.status);
 
   useEffect(() => {
-    if (userDetails) {
-      setStatus(userDetails.status);
+    if (user) {
+      setStatus(user.status);
     }
-  }, [userDetails]);
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -83,56 +87,59 @@ function User() {
             <div className="flex justify-center pt-4">
               <Avatar
                 size={100}
-                src={userDetails.profile_pic}
-                alt={`${userDetails.first_name} ${userDetails.last_name}`}
+                src={user?.profile_pic}
+                alt={`${user?.first_name} ${user?.last_name}`}
               />
             </div>
           }
         >
           <div className="text-center mb-4">
             <Title level={3}>
-              {userDetails.first_name} {userDetails.last_name}
+              {user?.first_name} {user?.last_name}
             </Title>
-            <Text type="secondary">{userDetails.email}</Text>
+            <Text type="secondary">{user?.email}</Text>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Text strong>Phone:</Text>{" "}
-              <Text>{userDetails.phone || "N/A"}</Text>
+              <Text strong>Phone:</Text> <Text>{user?.phone || "N/A"}</Text>
             </div>
             <div>
-              <Text strong>Status:</Text>{" "}
-              <Text>{userDetails.status || "N/A"}</Text>
+              <Text strong>Status:</Text> <Text>{user?.status || "N/A"}</Text>
             </div>
             <div>
-              <Text strong>City:</Text> <Text>{userDetails.city || "N/A"}</Text>
+              <Text strong>City:</Text> <Text>{user?.city || "N/A"}</Text>
             </div>
             <div>
-              <Text strong>Country:</Text>{" "}
-              <Text>{userDetails.country || "N/A"}</Text>
+              <Text strong>Country:</Text> <Text>{user?.country || "N/A"}</Text>
             </div>
             <div>
               <Text strong>Address:</Text>
-              <Text>{`${userDetails.street_address || ""}, ${
-                userDetails.state_or_region || ""
-              }, ${userDetails.postal_or_zip_code || ""}`}</Text>
+              <Text>{`${user?.street_address || ""}, ${
+                user?.state_or_region || ""
+              }, ${user?.postal_or_zip_code || ""}`}</Text>
             </div>
             <div>
               <Text strong>Birthday:</Text>{" "}
-              <Text>{userDetails.birth_day || "N/A"}</Text>
+              <Text>{user?.birth_day || "N/A"}</Text>
             </div>
             <div>
               <Text strong>Account Created:</Text>{" "}
-              <Text>{userDetails.create_at || "N/A"}</Text>
+              <Text>{user?.create_at || "N/A"}</Text>
             </div>
             <div>
               <Text strong>Last Updated:</Text>{" "}
-              <Text>{userDetails.update_at || "N/A"}</Text>
+              <Text>{user?.update_at || "N/A"}</Text>
             </div>
           </div>
         </Card>
         <div className="p-4">Others Information Upcomming</div>
       </div>
+
+      {orders.length > 0 && (
+        <div className="mt-4">
+          <UserOrders orders={orders} />
+        </div>
+      )}
     </div>
   );
 }

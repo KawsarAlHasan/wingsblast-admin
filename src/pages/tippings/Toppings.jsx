@@ -16,7 +16,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useToppings } from "../../api/api";
+import { API, useGlobalData } from "../../api/api";
 import AddToppings from "./AddToppings";
 import EditToppings from "./EditToppings";
 
@@ -26,7 +26,17 @@ const { Search } = Input;
 const { confirm } = Modal;
 
 const Toppings = () => {
-  const { toppings, isLoading, isError, error, refetch } = useToppings();
+  const [page, setPage] = useState(1);
+  const table = "toppings";
+  const limit = 500;
+
+  const { globalData, pagination, isLoading, isError, error, refetch } =
+    useGlobalData(table, {
+      // status: "active",
+      page,
+      limit,
+    });
+
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditToppingsOpen, setIsEditToppingsOpen] = useState(false);
@@ -105,7 +115,7 @@ const Toppings = () => {
       </div>
     );
 
-  const filteredData = toppings.filter((item) =>
+  const filteredData = globalData.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -218,7 +228,7 @@ const Toppings = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 20 }}
         />
       )}
 

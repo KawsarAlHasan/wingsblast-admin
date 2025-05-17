@@ -15,7 +15,7 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import { API, useDip } from "../../api/api";
+import { API, useGlobalData } from "../../api/api";
 import AddDip from "./AddDip";
 import EditDip from "./EditDip";
 import { ModalContext } from "../../contexts/ModalContext";
@@ -26,7 +26,17 @@ const { confirm } = Modal;
 const Dip = () => {
   const { showModal } = useContext(ModalContext);
 
-  const { dip, isLoading, isError, error, refetch } = useDip();
+  const [page, setPage] = useState(1);
+  const table = "dip";
+  const limit = 500;
+
+  const { globalData, pagination, isLoading, isError, error, refetch } =
+    useGlobalData(table, {
+      // status: "active",
+      page,
+      limit,
+    });
+
   const [searchText, setSearchText] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [isEditDipOpen, setIsEditDipOpen] = useState(false);
@@ -103,7 +113,7 @@ const Dip = () => {
     });
   };
 
-  const filteredData = dip.filter((item) =>
+  const filteredData = globalData.filter((item) =>
     item?.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -210,7 +220,7 @@ const Dip = () => {
         <Table
           columns={columns}
           dataSource={data}
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 20 }}
         />
       )}
 
