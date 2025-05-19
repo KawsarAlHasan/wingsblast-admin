@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://api.wingsblast.com/api/v1",
-  // baseURL: "http://localhost:6001/api/v1",
+  // baseURL: "https://api.wingsblast.com/api/v1",
+  baseURL: "http://localhost:6001/api/v1",
 });
 
 API.interceptors.request.use((config) => {

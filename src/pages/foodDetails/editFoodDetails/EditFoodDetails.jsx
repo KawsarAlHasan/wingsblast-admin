@@ -50,6 +50,7 @@ const EditFoodDetails = ({
   const [upgradeFoodDetailsID, setUpgradeFoodDetailsID] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
   const [selectedSauces, setSelectedSauces] = useState([]);
+  const [selectedFishChoice, setSelectedFishChoice] = useState([]);
   const [discontData, setDiscontData] = useState({});
   const [upgradeFoodDetail, setUpgradeFoodDetail] = useState([]);
   const [price, setPrice] = useState(0);
@@ -99,6 +100,10 @@ const EditFoodDetails = ({
     setSelectedSauces(sauce);
   };
 
+  const handleSelectedFishChoiceChange = (value) => {
+    setSelectedFishChoice(value);
+  };
+
   const handleSelectedComboSideChange = (selectedComboSide) => {
     setSelectedComboSide(selectedComboSide);
   };
@@ -117,6 +122,7 @@ const EditFoodDetails = ({
     fdDetails?.sandwichCustomize,
     fdDetails?.topping,
     fdDetails?.sauce,
+    fdDetails?.fishChoice,
   ];
 
   const sortedOptions = groupedOptions
@@ -132,6 +138,8 @@ const EditFoodDetails = ({
     { type: "Rice Platter", sn_number: 6 },
     { type: "Sandwich Customize", sn_number: 7 },
     { type: "Topping", sn_number: 8 },
+    { type: "Sauce", sn_number: 9 },
+    { type: "Fish Choice", sn_number: 10 },
   ];
 
   // Merge default addons with existing data
@@ -217,6 +225,7 @@ const EditFoodDetails = ({
     formData.append("sauces", JSON.stringify(selectedSauces));
     formData.append("comboSide", JSON.stringify(selectedComboSide));
     formData.append("ricePlatter", JSON.stringify(selectedRicePlatter));
+    formData.append("fishChoice", JSON.stringify(selectedFishChoice));
 
     formData.append("discount_percentage", discontData?.discount_percentage);
     formData.append("discount_amount", discontData?.discount_amount);
@@ -436,6 +445,7 @@ const EditFoodDetails = ({
                   onSelectedComboSiderChange={handleSelectedComboSideChange}
                   onSelectedRicePlatterChange={handleSelectedRicePlatterChange}
                   onSelectedSauceChange={handleSelectedSauceChange}
+                  onSelectedFishChoiceChange={handleSelectedFishChoiceChange}
                 />
               ))}
             </SortableContext>

@@ -6,6 +6,7 @@ import { Button, Checkbox, Collapse, InputNumber, Switch } from "antd";
 import {
   useBeverage,
   useDrink,
+  useFishChoice,
   useSandCust,
   useSauce,
   useSide,
@@ -16,6 +17,7 @@ import SandCustSelect from "./SandCustSelect";
 import RicePlatter from "./RicePlatter";
 import ComboSide from "./ComboSide";
 import SauceSelect from "./SauceSelect";
+import FishChoice from "./FishChoice";
 
 const { Panel } = Collapse;
 
@@ -44,18 +46,21 @@ const EditAddonItem = ({
   onSelectedComboSiderChange,
   onSelectedRicePlatterChange,
   onSelectedSauceChange,
+  onSelectedFishChoiceChange,
 }) => {
   const { drink } = useDrink();
   const { beverage } = useBeverage();
   const { sandCust } = useSandCust();
   const { side } = useSide();
   const { sauces } = useSauce();
+  const { fishChoice } = useFishChoice();
 
   const [selectedDrinks, setSelectedDrinks] = useState([]);
   const [selectedBeverages, setSelectedBeverages] = useState([]);
   const [selectedSandCust, setSelectedSandCust] = useState([]);
   const [selectedSauce, setSelectedSauce] = useState([]);
   const [selectedComboSide, setSelectedComboSide] = useState([]);
+  const [selectedFishChoice, setSelectedFishChoice] = useState([]);
   const [selectedRicePlatter, setSelectedRicePlatter] = useState([]);
 
   const {
@@ -123,6 +128,16 @@ const EditAddonItem = ({
 
         setSelectedSauce(sauceData);
         onSelectedSauceChange?.(sauceData);
+        break;
+
+      case "Fish Choice":
+        const fishChoiceData = formattedData.map((d) => ({
+          fish_id: d.id,
+          isPaid: d.isPaid,
+        }));
+
+        setSelectedFishChoice(fishChoiceData);
+        onSelectedFishChoiceChange?.(fishChoiceData);
         break;
 
       case "Combo Side":
@@ -314,6 +329,35 @@ const EditAddonItem = ({
     }
   };
 
+  // Fish Choice selection Handling
+  const handleFishChoiceSelection = (id, isChecked) => {
+    setSelectedFishChoice((preFish) => {
+      const updated = isChecked
+        ? [...preFish, { fish_id: id, isPaid: false }]
+        : preFish.filter((fish) => fish.fish_id !== id);
+
+      if (onSelectedFishChoiceChange) {
+        onSelectedFishChoiceChange(updated);
+      }
+
+      return updated;
+    });
+  };
+
+  // Fish Choice paid unpaid
+  const handleToggleFishChoicePaid = (id, isChecked) => {
+    const updated = selectedRicePlatter.map((preFish) =>
+      preFish.fish_id === id ? { ...preFish, isPaid: isChecked } : preFish
+    );
+
+    setSelectedFishChoice(updated);
+
+    // Send updated data to parent
+    if (onSelectedFishChoiceChange) {
+      onSelectedFishChoiceChange(updated);
+    }
+  };
+
   const handleFieldChange = (field, value) => {
     const sanitizedValue = value === undefined || value === null ? 0 : value;
     // const sanitizedValue = field === "is_required" ? (value ? 1 : 0) : value;
@@ -471,6 +515,60 @@ const EditAddonItem = ({
             />
           </div>
         );
+
+      case "Fish Choice":
+        return (
+          <div>
+            <div className="flex items-center mb-5">
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  How many {item.type} to select:
+                </span>
+                <InputNumber
+                  className="mx-2"
+                  htmlType="number"
+                  value={item.how_many_select}
+                  onChange={(value) =>
+                    handleFieldChange("how_many_select", value)
+                  }
+                />
+              </div>
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  How many {item.type} to choices:
+                </span>
+                <InputNumber
+                  className="mx-2"
+                  htmlType="number"
+                  value={item.how_many_choice}
+                  onChange={(value) =>
+                    handleFieldChange("how_many_choice", value)
+                  }
+                />
+              </div>
+
+              <div className="gap-2">
+                <span className="font-semibold ml-2">
+                  {item.type} Required:
+                </span>
+                <Checkbox
+                  className="mx-2"
+                  checked={item.is_required === 1}
+                  onChange={(e) =>
+                    handleFieldChange("is_required", e.target.checked ? 1 : 0)
+                  }
+                />
+              </div>
+            </div>
+            <FishChoice
+              fishChoice={fishChoice}
+              selectedFishChoice={selectedFishChoice}
+              handleFishChoiceSelection={handleFishChoiceSelection}
+              handleToggleFishChoicePaid={handleToggleFishChoicePaid}
+            />
+          </div>
+        );
+
       case "Bakery":
         return (
           <div>

@@ -110,13 +110,12 @@ function FoodDetail() {
     foodDetail?.sandwichCustomize,
     foodDetail?.topping,
     foodDetail?.sauce,
+    foodDetail?.fishChoice,
   ];
 
   const sortedOptions = groupedOptions
     .filter(Boolean)
     .sort((a, b) => a.sn_number - b.sn_number);
-
-  console.log("foodDetail hello", foodDetail);
 
   return (
     <div className="">
@@ -147,8 +146,8 @@ function FoodDetail() {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <Image
-          alt={foodDetail.name}
-          src={foodDetail.image}
+          alt={foodDetail?.name}
+          src={foodDetail?.image}
           className="h-64 object-cover"
         />
         <div>
@@ -184,16 +183,16 @@ function FoodDetail() {
                   style={{ display: "flex", alignItems: "center", gap: "10px" }}
                 >
                   <Avatar
-                    src={foodDetail.buy_one_get_one_food.image}
+                    src={foodDetail.buy_one_get_one_food?.image}
                     size="small"
                   />
                   <div>
                     <h2 className="font-semibold">
-                      {foodDetail.buy_one_get_one_food.name}
+                      {foodDetail.buy_one_get_one_food?.name}
                     </h2>
                     <div>
-                      $ {foodDetail.buy_one_get_one_food.price} |{" "}
-                      {foodDetail.buy_one_get_one_food.cal}
+                      $ {foodDetail.buy_one_get_one_food?.price} |{" "}
+                      {foodDetail.buy_one_get_one_food?.cal}
                     </div>
                   </div>
                 </div>
@@ -308,17 +307,17 @@ function FoodDetail() {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 ">
                   {option?.data?.map((drink) => (
-                    <Card key={drink.id} title={drink.name} bordered={false}>
+                    <Card key={drink?.id} title={drink?.name} bordered={false}>
                       <Image
-                        src={drink.image}
-                        alt={drink.name}
+                        src={drink?.image}
+                        alt={drink?.name}
                         className="h-24 object-cover"
                       />
-                      <p>Calories: {drink.cal}</p>
-                      {drink.isPaid == 0 ? (
+                      <p>Calories: {drink?.cal}</p>
+                      {drink?.isPaid == 0 ? (
                         <p>Unpaid</p>
                       ) : (
-                        <p>Price: ${drink.price}</p>
+                        <p>Price: ${drink?.price}</p>
                       )}
                     </Card>
                   ))}
@@ -343,17 +342,17 @@ function FoodDetail() {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {option?.data?.map((bkr) => (
-                    <Card key={bkr.id} title={bkr.name} bordered={false}>
+                    <Card key={bkr?.id} title={bkr?.name} bordered={false}>
                       <Image
-                        src={bkr.image}
-                        alt={bkr.name}
+                        src={bkr?.image}
+                        alt={bkr?.name}
                         className="h-24 object-cover"
                       />
-                      <p>Calories: {bkr.cal}</p>
-                      {bkr.isPaid == 0 ? (
+                      <p>Calories: {bkr?.cal}</p>
+                      {bkr?.isPaid == 0 ? (
                         <p>Unpaid</p>
                       ) : (
-                        <p>Price: ${bkr.price}</p>
+                        <p>Price: ${bkr?.price}</p>
                       )}
                     </Card>
                   ))}
@@ -378,17 +377,21 @@ function FoodDetail() {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {option?.data?.map((sandCt) => (
-                    <Card key={sandCt.id} title={sandCt.name} bordered={false}>
+                    <Card
+                      key={sandCt?.id}
+                      title={sandCt?.name}
+                      bordered={false}
+                    >
                       <Image
-                        src={sandCt.image}
-                        alt={sandCt.name}
+                        src={sandCt?.image}
+                        alt={sandCt?.name}
                         className="h-24 object-cover"
                       />
-                      <p>Calories: {sandCt.cal}</p>
-                      {sandCt.isPaid == 0 ? (
+                      <p>Calories: {sandCt?.cal}</p>
+                      {sandCt?.isPaid == 0 ? (
                         <p>Unpaid</p>
                       ) : (
-                        <p>Price: ${sandCt.price}</p>
+                        <p>Price: ${sandCt?.price}</p>
                       )}
                     </Card>
                   ))}
@@ -413,17 +416,17 @@ function FoodDetail() {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {option?.data?.map((sc) => (
-                    <Card key={sc.id} title={sc.name} bordered={false}>
+                    <Card key={sc?.id} title={sc?.name} bordered={false}>
                       <Image
-                        src={sc.image}
-                        alt={sc.name}
+                        src={sc?.image}
+                        alt={sc?.name}
                         className="h-24 object-cover"
                       />
-                      <p>Calories: {sc.cal}</p>
-                      {sc.isPaid == 0 ? (
+                      <p>Calories: {sc?.cal}</p>
+                      {sc?.isPaid == 0 ? (
                         <p>Unpaid</p>
                       ) : (
-                        <p>Price: ${sc.price}</p>
+                        <p>Price: ${sc?.price}</p>
                       )}
                     </Card>
                   ))}
@@ -456,20 +459,20 @@ function FoodDetail() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {option?.data?.map((comSide) => (
                     <Card
-                      key={comSide.id}
-                      title={comSide.name}
+                      key={comSide?.id}
+                      title={comSide?.name}
                       bordered={false}
                     >
                       <Image
-                        src={comSide.image}
-                        alt={comSide.name}
+                        src={comSide?.image}
+                        alt={comSide?.name}
                         className="h-24 object-cover"
                       />
-                      <p>Calories: {comSide.cal}</p>
-                      {comSide.isPaid == 0 ? (
+                      <p>Calories: {comSide?.cal}</p>
+                      {comSide?.isPaid == 0 ? (
                         <p>Unpaid</p>
                       ) : (
-                        <p>Price: ${comSide.price}</p>
+                        <p>Price: ${comSide?.price}</p>
                       )}
                     </Card>
                   ))}
@@ -502,20 +505,20 @@ function FoodDetail() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {option?.data?.map((ricePltr) => (
                     <Card
-                      key={ricePltr.id}
-                      title={ricePltr.name}
+                      key={ricePltr?.id}
+                      title={ricePltr?.name}
                       bordered={false}
                     >
                       <Image
-                        src={ricePltr.image}
-                        alt={ricePltr.name}
+                        src={ricePltr?.image}
+                        alt={ricePltr?.name}
                         className="h-24 object-cover"
                       />
-                      <p>Calories: {ricePltr.cal}</p>
-                      {ricePltr.isPaid == 0 ? (
+                      <p>Calories: {ricePltr?.cal}</p>
+                      {ricePltr?.isPaid == 0 ? (
                         <p>Unpaid</p>
                       ) : (
-                        <p>Price: ${ricePltr.price}</p>
+                        <p>Price: ${ricePltr?.price}</p>
                       )}
                     </Card>
                   ))}
