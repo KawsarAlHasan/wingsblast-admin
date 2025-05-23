@@ -110,7 +110,7 @@ function FoodDetail() {
     foodDetail?.sandwichCustomize,
     foodDetail?.topping,
     foodDetail?.sauce,
-    foodDetail?.fishChoice,
+    foodDetail?.fish_choice,
   ];
 
   const sortedOptions = groupedOptions

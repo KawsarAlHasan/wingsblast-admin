@@ -40,10 +40,9 @@ function SendToUserPromotion({ singlepromotion }) {
 
   const columns = [
     {
-      title: "SN",
-      dataIndex: "sn_number",
-      key: "sn_number",
-      render: (text, record, index) => index + 1,
+      title: "User Id",
+      dataIndex: "id",
+      key: "id",
     },
     {
       title: "Name",
@@ -59,6 +58,11 @@ function SendToUserPromotion({ singlepromotion }) {
       title: "Email",
       dataIndex: "email",
       key: "email",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Send Button",

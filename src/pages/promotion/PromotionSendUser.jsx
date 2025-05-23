@@ -5,6 +5,14 @@ import { useOffersSendUser } from "../../api/settingsApi";
 
 function PromotionSendUser({ singlepromotion }) {
   const [usedTime, setUsedTime] = useState("");
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  // Track window resize
+  React.useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { offersSendUser, isLoading, isError, error, refetch } =
     useOffersSendUser({
@@ -15,8 +23,6 @@ function PromotionSendUser({ singlepromotion }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const [singleLoading, setSingleLoading] = useState(false);
-
-  console.log("offersSendUser", offersSendUser);
 
   const handleChange = (value) => {
     setUsedTime(value);
@@ -34,12 +40,11 @@ function PromotionSendUser({ singlepromotion }) {
 
     try {
       const response = await API.post(`/offer`, submitData);
-
       if (response.status === 200) {
-        message.success(`Send to user promotion successfully!`);
+        message.success(`Promotion sent!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user promotion. Try again.`);
+      message.error(`Sending failed. Try again.`);
       console.error("Error:", error);
     } finally {
       setSingleLoading(false);
@@ -52,98 +57,128 @@ function PromotionSendUser({ singlepromotion }) {
     key: item.user_id,
   }));
 
-  const columns = [
-    {
-      title: "SN",
-      dataIndex: "sn_number",
-      key: "sn_number",
-      render: (text, record, index) => index + 1,
-    },
-    {
-      title: "Name",
-      dataIndex: "first_name",
-      key: "first_name",
-      render: (_, record) => (
-        <div>
-          {record.first_name} {record.last_name}
-        </div>
-      ),
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Send Time",
-      dataIndex: "sent_time",
-      key: "sent_time",
-    },
-    {
-      title: "Last Time Send",
-      dataIndex: "sent_at",
-      key: "sent_at",
-      render: (_, record) => (
-        <div>{new Date(record.sent_at).toLocaleString()}</div>
-      ),
-    },
-    {
-      title: "Carry Out Used",
-      dataIndex: "carry_out_used_time",
-      key: "carry_out_used_time",
-      render: (_, record) =>
-        record.carry_out_used_time == 0 ? (
-          <div>Not Used</div>
-        ) : (
-          <div>{record.carry_out_used_time}</div>
+  // Responsive columns configuration
+  const getColumns = () => {
+    const baseColumns = [
+      {
+        title: "ID",
+        dataIndex: "user_id",
+        key: "user_id",
+        width: 65,
+        fixed: screenWidth < 768 ? "left" : false,
+      },
+      {
+        title: "Name",
+        dataIndex: "first_name",
+        key: "first_name",
+        width: 180,
+        render: (_, record) => (
+          <div className="whitespace-nowrap">
+            {record.first_name} {record.last_name}
+          </div>
         ),
-    },
-    {
-      title: "Delivery Used",
-      dataIndex: "delivery_used_time",
-      key: "delivery_used_time",
-      render: (_, record) =>
-        record.delivery_used_time == 0 ? (
-          <div>Not Used</div>
-        ) : (
-          <div>{record.delivery_used_time}</div>
+      },
+      {
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
+        width: 230,
+        render: (text) => (
+          <span className="text-ellipsis overflow-hidden whitespace-nowrap block max-w-[220px]">
+            {text}
+          </span>
         ),
-    },
-    {
-      title: "Last Time Used",
-      dataIndex: "used_at",
-      key: "used_at",
-      render: (_, record) =>
-        record.delivery_used_time == 0 && record.delivery_used_time == 0 ? (
-          <div>Not Used</div>
-        ) : (
-          <div>{new Date(record.used_at).toLocaleString()}</div>
-        ),
-    },
+      },
+    ];
 
-    {
-      title: "Send Button",
+    const additionalColumns = [
+      {
+        title: "Phone",
+        dataIndex: "phone",
+        key: "phone",
+        width: 120,
+      },
+      {
+        title: "Sent",
+        dataIndex: "sent_time",
+        key: "sent_time",
+        width: 50,
+      },
+      {
+        title: "Last Sent",
+        dataIndex: "sent_at",
+        key: "sent_at",
+        width: 100,
+        render: (_, record) => (
+          <div className="whitespace-nowrap">
+            {new Date(record.sent_at).toLocaleDateString()}
+          </div>
+        ),
+      },
+      {
+        title: "Carry Out",
+        dataIndex: "carry_out_used_time",
+        key: "carry_out_used_time",
+        width: 100,
+        render: (_, record) =>
+          record.carry_out_used_time == 0
+            ? "Not Used"
+            : record.carry_out_used_time,
+      },
+      {
+        title: "Delivery",
+        dataIndex: "delivery_used_time",
+        key: "delivery_used_time",
+        width: 100,
+        render: (_, record) =>
+          record.delivery_used_time == 0
+            ? "Not Used"
+            : record.delivery_used_time,
+      },
+      {
+        title: "Last Used",
+        dataIndex: "used_at",
+        key: "used_at",
+        width: 100,
+        render: (_, record) =>
+          record.delivery_used_time == 0 && record.delivery_used_time == 0
+            ? "Not Used"
+            : new Date(record.used_at).toLocaleDateString(),
+      },
+    ];
+
+    const actionColumn = {
+      title: "Action",
       dataIndex: "send_button",
+      fixed: "right",
+      width: 100,
       render: (_, record) => (
         <Button
           loading={singleLoading}
           onClick={() => sendToUser(record.user_id)}
           type="primary"
           size="small"
+          className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
         >
-          Send to User
+          {screenWidth < 500 ? "Send" : "Send Promotion"}
         </Button>
       ),
-    },
-  ];
+    };
+
+    return screenWidth < 768
+      ? [...baseColumns, actionColumn]
+      : [...baseColumns, ...additionalColumns, actionColumn];
+  };
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
+
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+
   const hasSelected = selectedRowKeys.length > 0;
 
   const onSelectedData = async (value) => {
@@ -156,12 +191,11 @@ function PromotionSendUser({ singlepromotion }) {
 
     try {
       const response = await API.post(`/offer`, submitData);
-
       if (response.status === 200) {
-        message.success(`Send to user promotion successfully!`);
+        message.success(`Sent to ${value.length} users!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user promotion. Try again.`);
+      message.error(`Sending failed. Try again.`);
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -178,69 +212,59 @@ function PromotionSendUser({ singlepromotion }) {
     );
 
   return (
-    <div className="mt-5">
-      <div className="my-5 flex">
-        <p className="mr-3 mt-1">Used Time: </p>
+    <div className="mt-5 p-2 sm:p-4 bg-white rounded-lg shadow">
+      <div className="my-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+        <p className="text-gray-700 font-medium text-sm sm:text-base">
+          Filter by Usage:
+        </p>
         <Select
           placeholder="Select Used Time"
-          style={{
-            width: 200,
-          }}
+          className="w-full sm:w-48"
           onChange={handleChange}
           options={[
-            {
-              value: 0,
-              label: "Not Used",
-            },
-            {
-              value: 1,
-              label: "1 Time",
-            },
-            {
-              value: 2,
-              label: "2 Times",
-            },
-            {
-              value: 3,
-              label: "3 Times",
-            },
-            {
-              value: 4,
-              label: "4 Times",
-            },
-            {
-              value: 5,
-              label: "5 Times",
-            },
-            {
-              value: 6,
-              label: "6 Times",
-            },
-            {
-              value: "",
-              label: "Reset",
-            },
+            { value: 0, label: "Not Used" },
+            { value: 1, label: "1 Time" },
+            { value: 2, label: "2 Times" },
+            { value: 3, label: "3 Times" },
+            { value: 4, label: "4 Times" },
+            { value: 5, label: "5 Times" },
+            { value: 6, label: "6 Times" },
+            { value: "", label: "Reset" },
           ]}
         />
       </div>
 
-      <Table
-        rowSelection={rowSelection}
-        bordered
-        dataSource={dataSource}
-        columns={columns}
-        pagination={{ pageSize: 100 }}
-      />
+      <div className="overflow-x-auto">
+        <Table
+          rowSelection={rowSelection}
+          bordered
+          dataSource={dataSource}
+          columns={getColumns()}
+          pagination={{
+            pageSize: 100,
+            showSizeChanger: false,
+            className: "px-2 sm:px-4",
+            simple: screenWidth < 768,
+          }}
+          scroll={{ x: screenWidth < 768 ? 600 : 1300 }}
+          className="w-full"
+          size={screenWidth < 768 ? "small" : "middle"}
+        />
+      </div>
 
-      <div className="text-center mt-[-40px]">
+      <div className="text-center mt-4 mb-2">
         <Button
           onClick={() => onSelectedData(selectedRowKeys)}
           disabled={!hasSelected}
           loading={loading}
           type="primary"
-          className=" text-white font-semibold  py-6 px-6"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium h-10 px-4 sm:px-6"
         >
-          Send To Users
+          {hasSelected
+            ? `Send to ${selectedRowKeys.length} ${
+                screenWidth < 500 ? "" : "Selected"
+              } Users`
+            : "Send to Users"}
         </Button>
       </div>
     </div>

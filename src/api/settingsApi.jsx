@@ -220,6 +220,78 @@ export const useCouponSendUser = ({
   return { couponSendUser, isLoading, isError, error, refetch };
 };
 
+// get Dashboard
+export const useDashboard = ({ start_date, end_date } = {}) => {
+  const getDashboard = async () => {
+    const response = await API.get(`/dashboard`, {
+      params: { start_date, end_date },
+    });
+
+    return response.data;
+  };
+
+  const {
+    data: dashboardData = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["dashboardData", start_date, end_date],
+    queryFn: getDashboard,
+  });
+
+  return { dashboardData, isLoading, isError, error, refetch };
+};
+
+// get Dashboard Orders
+export const useDashboardOrder = ({ start_date, end_date } = {}) => {
+  const getDashboardOrders = async () => {
+    const response = await API.get(`/dashboard/orders`, {
+      params: { start_date, end_date },
+    });
+
+    return response.data;
+  };
+
+  const {
+    data: dashboardOrdersData = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["dashboardOrdersData", start_date, end_date],
+    queryFn: getDashboardOrders,
+  });
+
+  return { dashboardOrdersData, isLoading, isError, error, refetch };
+};
+
+// get Dashboard Orders
+export const useDashboardOrderFood = ({ start_date, end_date } = {}) => {
+  const getDashboardOrdersFood = async () => {
+    const response = await API.get(`/dashboard/orders-food`, {
+      params: { start_date, end_date },
+    });
+
+    return response.data;
+  };
+
+  const {
+    data: dashboardOrdersDataFood = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["dashboardOrdersDataFood", start_date, end_date],
+    queryFn: getDashboardOrdersFood,
+  });
+
+  return { dashboardOrdersDataFood, isLoading, isError, error, refetch };
+};
+
 // get Offers Send User
 export const useOffersSendUser = ({
   user_id,

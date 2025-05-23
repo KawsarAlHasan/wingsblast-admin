@@ -334,7 +334,7 @@ const Coupons = () => {
         />
         <AddCoupon refetch={refetch} />
       </div>
-      {data.length === 0 ? (
+      {data?.length === 0 ? (
         <div className="text-center text-gray-500">No data found</div>
       ) : (
         <Table

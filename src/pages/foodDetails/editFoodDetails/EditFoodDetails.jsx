@@ -10,6 +10,7 @@ import {
   Typography,
   InputNumber,
   Spin,
+  Divider,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useForm, Controller } from "react-hook-form";
@@ -122,7 +123,7 @@ const EditFoodDetails = ({
     fdDetails?.sandwichCustomize,
     fdDetails?.topping,
     fdDetails?.sauce,
-    fdDetails?.fishChoice,
+    fdDetails?.fish_choice,
   ];
 
   const sortedOptions = groupedOptions
@@ -159,6 +160,31 @@ const EditFoodDetails = ({
       };
     });
   };
+
+  // Merge default addons with existing data
+  // const getInitialDataSource = () => {
+  //   return initialAddons
+  //     .map((defaultItem) => {
+  //       const existingItem = sortedOptions.find(
+  //         (item) => item.type === defaultItem.type
+  //       );
+
+  //       // Use existing sn_number if available, otherwise use default
+  //       const sn_number = existingItem?.sn_number || defaultItem.sn_number;
+
+  //       return {
+  //         ...defaultItem,
+  //         ...existingItem,
+  //         // sn_number, // This will prioritize existing sn_number
+  //         how_many_select: existingItem?.how_many_select || 0,
+  //         how_many_choice: existingItem?.how_many_choice || 0,
+  //         is_extra_addon: existingItem?.is_extra_addon || false,
+  //         is_required: existingItem?.is_required || false,
+  //         selected_options: existingItem?.selected_options || [],
+  //       };
+  //     })
+  //     .sort((a, b) => a.sn_number - b.sn_number); // Sort by sn_number
+  // };
 
   const [dataSource, setDataSource] = useState(getInitialDataSource());
 
@@ -424,6 +450,8 @@ const EditFoodDetails = ({
               )}
             />
           </Form.Item>
+
+          <Divider>Food Modification</Divider>
 
           {/* drag and dcollapse */}
           <DndContext

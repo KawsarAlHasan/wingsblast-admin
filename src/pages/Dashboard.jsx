@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Button, Row, Col, Card, DatePicker, Divider, message } from "antd";
+import {
+  Button,
+  Row,
+  Col,
+  Card,
+  DatePicker,
+  Divider,
+  message,
+  Spin,
+} from "antd";
 import {
   ReloadOutlined,
   ShareAltOutlined,
@@ -13,22 +22,35 @@ import RevenueChart from "../components/RevenueChart.js";
 import OrdersByFoodChart from "../components/OrdersByFoodChart.jsx";
 import DashboardCard from "../components/DashboardCard.jsx";
 import { API } from "../api/api.jsx";
+import { useDashboard } from "../api/settingsApi.jsx";
 
 const { RangePicker } = DatePicker;
 
 function Dashboard() {
+  const [start_date, setStartDate] = useState(null);
+  const [end_date, setEndDate] = useState(null);
+  const { dashboardData, isLoading, isError, error, refetch } = useDashboard({
+    start_date: start_date,
+    end_date: end_date,
+  });
+
   // State to hold selected date range
-  const [dates, setDates] = useState(null);
-  const [timeNow, setTimeNow] = useState();
+  const [month, setMonth] = useState("Current month");
 
   // Handler for date change
-  const onDateChange = (dates) => {
-    setDates(dates);
+  const onDateChange = (dates, dateString) => {
+    setStartDate(dateString[0]);
+    setEndDate(dateString[1]);
+    setMonth(`${dateString[0]} to ${dateString[1]}`);
   };
 
   const onRefresh = () => {
     window.location.reload();
   };
+
+  if (isLoading) {
+    return <Spin size="large" className="block mx-auto my-10" />;
+  }
 
   return (
     <div>
@@ -47,33 +69,30 @@ function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 ">
         <DashboardCard
-          title="New Users"
-          value="34.7k"
-          icon={<UserOutlined />}
-          description="23 (22%)"
-          change="23 (22%)"
-          changeType="increase"
-        />
-        <DashboardCard
           title="Total Sales"
-          value="$34,545"
+          value={`$${dashboardData?.data?.totalSales.toFixed(2)}`}
           icon={<DollarOutlined />}
-          description="Current month"
+          description={month}
         />
+
         <DashboardCard
-          title="Pending Leads"
-          value="450"
-          icon={<DatabaseOutlined />}
-          description="50 in hot leads"
+          title="New Users"
+          value={dashboardData?.data?.newUsersThisPeriod}
+          icon={<UserOutlined />}
+          description={month}
+          changeType="increase"
         />
 
         <DashboardCard
           title="Active Users"
-          value="5.6k"
-          description="300 (18%)"
+          value={dashboardData?.data?.activeUserCount}
           icon={<UserOutlined />}
-          change="300 (18%)"
           changeType="decrease"
+        />
+        <DashboardCard
+          title="Total Users"
+          value={dashboardData?.data?.userCount}
+          icon={<DatabaseOutlined />}
         />
       </div>
 

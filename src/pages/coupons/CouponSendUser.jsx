@@ -34,10 +34,10 @@ function CouponSendUser({ singlepromotion }) {
       const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
-        message.success(`Send to user Coupons successfully!`);
+        message.success(`Coupon sent to user successfully!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user Coupons. Try again.`);
+      message.error(`Failed to send coupon to user. Please try again.`);
       console.error("Error:", error);
     } finally {
       setSingleLoading(false);
@@ -52,17 +52,17 @@ function CouponSendUser({ singlepromotion }) {
 
   const columns = [
     {
-      title: "SN",
-      dataIndex: "sn_number",
-      key: "sn_number",
-      render: (text, record, index) => index + 1,
+      title: "User ID",
+      dataIndex: "user_id",
+      key: "user_id",
+      responsive: ["sm"],
     },
     {
       title: "Name",
       dataIndex: "first_name",
       key: "first_name",
       render: (_, record) => (
-        <div>
+        <div className="whitespace-nowrap">
           {record.first_name} {record.last_name}
         </div>
       ),
@@ -71,19 +71,30 @@ function CouponSendUser({ singlepromotion }) {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      responsive: ["md"],
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+      responsive: ["lg"],
     },
     {
       title: "Send Time",
       dataIndex: "sent_time",
       key: "sent_time",
+      responsive: ["xl"],
     },
     {
-      title: "Last Time Send",
+      title: "Last Sent",
       dataIndex: "sent_at",
       key: "sent_at",
       render: (_, record) => (
-        <div>{new Date(record.sent_at).toLocaleString()}</div>
+        <div className="whitespace-nowrap">
+          {new Date(record.sent_at).toLocaleString()}
+        </div>
       ),
+      responsive: ["xl"],
     },
     {
       title: "Carry Out Used",
@@ -95,6 +106,7 @@ function CouponSendUser({ singlepromotion }) {
         ) : (
           <div>{record.carry_out_used_time}</div>
         ),
+      responsive: ["xl"],
     },
     {
       title: "Delivery Used",
@@ -106,21 +118,24 @@ function CouponSendUser({ singlepromotion }) {
         ) : (
           <div>{record.delivery_used_time}</div>
         ),
+      responsive: ["xl"],
     },
     {
-      title: "Last Time Used",
+      title: "Last Used",
       dataIndex: "used_at",
       key: "used_at",
       render: (_, record) =>
         record.delivery_used_time == 0 && record.delivery_used_time == 0 ? (
           <div>Not Used</div>
         ) : (
-          <div>{new Date(record.used_at).toLocaleString()}</div>
+          <div className="whitespace-nowrap">
+            {new Date(record.used_at).toLocaleString()}
+          </div>
         ),
+      responsive: ["xl"],
     },
-
     {
-      title: "Send Button",
+      title: "Action",
       dataIndex: "send_button",
       render: (_, record) => (
         <Button
@@ -128,8 +143,9 @@ function CouponSendUser({ singlepromotion }) {
           onClick={() => sendToUser(record.user_id)}
           type="primary"
           size="small"
+          className="bg-blue-600 hover:bg-blue-700"
         >
-          Send to User
+          Send
         </Button>
       ),
     },
@@ -156,10 +172,10 @@ function CouponSendUser({ singlepromotion }) {
       const response = await API.post(`/offer`, submitData);
 
       if (response.status === 200) {
-        message.success(`Send to user coupons successfully!`);
+        message.success(`Coupons sent to selected users successfully!`);
       }
     } catch (error) {
-      message.error(`Failed to Send to user coupons. Try again.`);
+      message.error(`Failed to send coupons. Please try again.`);
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -176,14 +192,12 @@ function CouponSendUser({ singlepromotion }) {
     );
 
   return (
-    <div className="mt-5">
-      <div className="my-5 flex">
-        <p className="mr-3 mt-1">Used Time: </p>
+    <div className="mt-5 p-4 bg-white rounded-lg shadow">
+      <div className="my-5 flex flex-wrap items-center gap-3">
+        <p className="text-gray-700 font-medium">Used Time:</p>
         <Select
           placeholder="Select Used Time"
-          style={{
-            width: 200,
-          }}
+          className="w-full sm:w-48"
           onChange={handleChange}
           options={[
             {
@@ -222,23 +236,33 @@ function CouponSendUser({ singlepromotion }) {
         />
       </div>
 
-      <Table
-        rowSelection={rowSelection}
-        bordered
-        dataSource={dataSource}
-        columns={columns}
-        pagination={{ pageSize: 100 }}
-      />
+      <div className="overflow-x-auto">
+        <Table
+          rowSelection={rowSelection}
+          bordered
+          dataSource={dataSource}
+          columns={columns}
+          pagination={{
+            pageSize: 100,
+            showSizeChanger: false,
+            className: "px-4",
+          }}
+          scroll={{ x: true }}
+          className="w-full"
+        />
+      </div>
 
-      <div className="text-center mt-[-40px]">
+      <div className="text-center mt-4">
         <Button
           onClick={() => onSelectedData(selectedRowKeys)}
           disabled={!hasSelected}
           loading={loading}
           type="primary"
-          className=" text-white font-semibold  py-6 px-6"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium h-10 px-6"
         >
-          Send To Users
+          {hasSelected
+            ? `Send to ${selectedRowKeys.length} Users`
+            : "Send to Users"}
         </Button>
       </div>
     </div>

@@ -8,6 +8,7 @@ import {
   Upload,
   Select,
   message,
+  Divider,
 } from "antd";
 
 import { DndContext } from "@dnd-kit/core";
@@ -345,6 +346,8 @@ const AddFoodDetails = () => {
             )}
           />
         </Form.Item>
+
+        <Divider>Food Modification</Divider>
 
         {/* drag and dcollapse */}
         <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
