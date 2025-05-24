@@ -292,6 +292,30 @@ export const useDashboardOrderFood = ({ start_date, end_date } = {}) => {
   return { dashboardOrdersDataFood, isLoading, isError, error, refetch };
 };
 
+// get Dashboard Orders
+export const useYearlyOrders = ({ year } = {}) => {
+  const getData = async () => {
+    const response = await API.get(`/dashboard/orders-yearly`, {
+      params: { year },
+    });
+
+    return response.data;
+  };
+
+  const {
+    data: yearlyOrders = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["yearlyOrders", year],
+    queryFn: getData,
+  });
+
+  return { yearlyOrders, isLoading, isError, error, refetch };
+};
+
 // get Offers Send User
 export const useOffersSendUser = ({
   user_id,

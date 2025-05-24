@@ -86,8 +86,6 @@ const OrderSummaryDashboard = () => {
     }).format(value);
   };
 
-  console.log("dashboardOrdersDataFood", dashboardOrdersDataFood);
-
   const data = dashboardOrdersDataFood?.data?.map((item, index) => ({
     key: index,
     ...item,
@@ -110,7 +108,7 @@ const OrderSummaryDashboard = () => {
       title: "price",
       dataIndex: "price",
       key: "price",
-      render: (price) => <span>$ {price}</span>,
+      render: (price) => <span>$ {price.toFixed(2)}</span>,
     },
     {
       title: "Quantity",
@@ -121,7 +119,7 @@ const OrderSummaryDashboard = () => {
       title: "Total Price",
       dataIndex: "total_price",
       key: "total_price",
-      render: (total_price) => <span>$ {total_price}</span>,
+      render: (total_price) => <span>$ {total_price.toFixed(2)}</span>,
     },
   ];
 

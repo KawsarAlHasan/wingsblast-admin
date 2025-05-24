@@ -23,6 +23,7 @@ import OrdersByFoodChart from "../components/OrdersByFoodChart.jsx";
 import DashboardCard from "../components/DashboardCard.jsx";
 import { API } from "../api/api.jsx";
 import { useDashboard } from "../api/settingsApi.jsx";
+import YearlyOrdersChart from "../components/YearlyOrdersChart.jsx";
 
 const { RangePicker } = DatePicker;
 
@@ -99,7 +100,7 @@ function Dashboard() {
       <Divider />
 
       {/* Monthly Active Users and Revenue Charts */}
-      <Row gutter={16}>
+      {/* <Row gutter={16}>
         <Col span={12}>
           <Card
             title="Monthly Active Users (in K)"
@@ -118,15 +119,21 @@ function Dashboard() {
             <RevenueChart />
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       <Card
-        title="Orders by Food"
+        title={`Orders by Food (${month})`}
         bordered={false}
         style={{ borderRadius: "8px" }}
       >
-        <OrdersByFoodChart />
+        <OrdersByFoodChart
+          start_date={start_date}
+          end_date={end_date}
+          month={month}
+        />
       </Card>
+
+      <YearlyOrdersChart />
     </div>
   );
 }
